@@ -40,6 +40,8 @@ npm-debug.log
 yarn-error.log
 testem.log
 /typings
+#File containing John's personal comments
+NOTES.txt
 
 # System Files
 .DS_Store

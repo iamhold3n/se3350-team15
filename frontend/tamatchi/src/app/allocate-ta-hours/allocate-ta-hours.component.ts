@@ -41,4 +41,13 @@ export class AllocateTaHoursComponent implements OnInit {
 
   }//end of ngOnInit
 
+  /**
+   * For now, This doesnt do anything
+   * In later versions, should send the JSON data to the backend
+   * 
+   */
+  saveChanges(){
+
+  }//end of saveChanges
+
 }//end of class

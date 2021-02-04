@@ -24,7 +24,7 @@
         <th> {{course.ta_hr_prev}} </th>
         <th> {{course.enrollment_current}} </th>
         <th> {{course.ta_hr_prev * course.enrollment_current / course.enrollment_prev}} </th> <!-- Formula : (Prev TA hrs)*(Current Enrollment)/(Prev enrollment) -->
-        <th> {{course.allocated_hrs}} </th> <!--Need a two-way binding here-->
+        <th> <input [(ngModel)]="course.allocated_hrs" placeholder = 0/> </th> <!--Two-way binding for the "manually allocated TA hour" values-->
     </tr>
     <!--End of content rows -->
 

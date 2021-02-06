@@ -1,0 +1,38 @@
+<p>assign-ta works. For now, this component uses seperate data from the "allocate-ta-hours" component</p>
+
+<label for="courses">Choose a course:</label>
+
+<select name="courses" id="courses">
+    <option value="">---</option>
+    <option *ngFor="let c of course_list" value="{{c}}">{{c}}</option>
+</select>
+
+<!--main editor is two vertical columns-->
+<table>
+    <tr>
+        <!--Section displaying assigned TAs-->
+        <th>
+            <h2>Assigned TAs</h2>
+        </th>
+        <!--Section listing all potential Candidates-->
+        <th>
+            <h2>Candidates</h2>
+        </th>
+    </tr>
+
+    <tr>
+        <!--Section displaying assigned TAs-->
+        <td>
+            <div></div>
+        </td>
+        <!--Section listing all potential Candidates-->
+        <td>
+            <!--Div for each candidate-->
+            <div *ngFor="let c of candidate_list" class="candidate">
+                <p>ID: {{c.id}}</p>
+                <p>Name: {{c.name}}</p>
+                <p>Priority: {{c.priority}}</p>
+            </div>
+        </td>
+    </tr>
+</table>

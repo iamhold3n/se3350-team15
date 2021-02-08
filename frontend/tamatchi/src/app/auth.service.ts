@@ -22,7 +22,7 @@ export class AuthService {
       {
         //Do post account creation things here.
         this.login(username, password); //then log the user in.
-      }).catch(err => {alert("Email already in use.")});
+      }).catch(err => {alert(err)});
   }
 
   login(username, password) //login
@@ -50,6 +50,7 @@ export class AuthService {
   logOut() //logout
   {
     this.af.signOut();
+    this.cookie.deleteAll();
   }
 
 

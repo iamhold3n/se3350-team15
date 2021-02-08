@@ -1,5 +1,7 @@
-<h1>Rank the TA's you would like in your course</h1>
+<h2>Rank the TAs you would like in your course</h2>
 
-<ol>
-    <li *ngFor="let ta of talist">{{ta.name}}</li>
-</ol>
+<div cdkDropList>
+    <div class="list" cdkDrag *ngFor='let ta of talist'>
+        {{ta.rank}}. {{ta.name}}
+    </div>
+</div>

@@ -1,0 +1,47 @@
+<p>course-information works!</p>
+
+<div class="container">
+
+    <h2>Enter Course Information:</h2>
+    <div>
+
+        <hr />
+        <input type="text" [(ngModel)]="courseCode" placeholder="Course Code" />
+        <input type="text" [(ngModel)]="courseName" placeholder="Course Name" />
+        <input type="number" [(ngModel)]="lecHours" placeholder="Lec Hours" />
+        <input type="number" [(ngModel)]="labOrTutHours" placeholder="Lab/Tut Hours" />
+        <input type="number" [(ngModel)]="sections" placeholder="# of sections" />
+        
+
+
+        <button (click)="buttonClicked()">Add Course</button>
+
+        <br><br>
+
+    </div>
+    <table class="table table-responsive table-striped">
+        <tr>
+            <th>Course Code</th>
+            <th>Course Name</th>
+            <th>Lecture Hours</th>
+            <th>Lab/Tutorial Hours</th>
+            <th>No. of Sections</th>
+            
+            
+
+
+
+        </tr>
+        <tr *ngFor="let row of rows">
+            <td>{{row.courseCode}}</td>
+            <td>{{row.courseName}}</td>
+            <td>{{row.lecHours}}</td>
+            <td>{{row.labOrTutHours}}</td>
+            <td>{{row.sections}}</td>
+            
+
+
+        </tr>
+    </table>
+
+</div>

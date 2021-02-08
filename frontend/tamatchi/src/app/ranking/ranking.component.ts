@@ -1,14 +1,5 @@
+import { moveItemInArray, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
-
-class TA{
-  rank: number;
-  name: string;
-
-  constructor(rank:number, name:string){
-    this.rank=rank;
-    this.name=name;
-  }
-}
 
 @Component({
   selector: 'app-ranking',
@@ -23,16 +14,15 @@ export class RankingComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  //list of ta names to be ranked
   talist = [
-    new TA(1, "ta1"), 
-    new TA(2, "ta2"), 
-    new TA(3, "ta3")
+    "ta1", 
+    "ta2", 
+    "ta3"
   ];
-  
-  sortTaList()
-  {
-    this.talist.sort((a, b) => {
-      return a.rank - b.rank;
-    });
+
+  //This method will reorder the array when items are dragged around
+  drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.talist, event.previousIndex, event.currentIndex);
   }
 }

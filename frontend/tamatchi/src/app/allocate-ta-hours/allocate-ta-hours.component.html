@@ -12,7 +12,7 @@
         <th> <p>TA Hours for {{current_year-1}}</p> </th>
         <th> <p>Enrollment {{current_year}}</p> </th>
         <th> <p>Estimated {{current_year}} Hours</p> </th>
-        <th> <p>TA Hours for {{current_year}} </p><p>(Enter Manually)</p> </th>
+        <th> <p>TA Hours for {{current_year}} </p><p>(Undergrad Chair Enters Manually)</p> </th>
     </tr>
     <!--End of header/title rows-->
 
@@ -28,6 +28,18 @@
     </tr>
     <!--End of content rows -->
 
+    <!--Row for Submit button -->
+    <tr>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th> 
+        <th> <button (click)="saveChanges()" >SAVE CHANGES</button> </th>
+    </tr>
+    <!--End of Row for Submit button -->
+
 </table>
 
 <!--Message that displays if there are no courses with enrollment data-->
@@ -35,5 +47,5 @@
     No Course Records were found
 </h3>
 
-<button (click)="saveChanges()" >SAVE CHANGES</button>
+
 

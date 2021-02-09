@@ -1,4 +1,4 @@
-<p>assign-ta works. For now, this component uses seperate data from the "allocate-ta-hours" component</p>
+<p>assign-ta works. For now, this component uses seperate data from the "allocate-ta-hours" component. Also none of the buttons/checkboxes/dropdowns do anything yet</p>
 
 <label for="courses">Choose a course:</label>
 
@@ -23,7 +23,14 @@
     <tr>
         <!--Section displaying assigned TAs-->
         <td>
-            <div></div>
+            <!--Div for each assigned TA-->
+            <div *ngFor="let a of candidate_list; let i=index" class="candidate">
+                <p>ID: {{a.id}}</p>
+                <p>Name: {{a.name}}</p>
+                <p>Priority: {{a.priority}}</p>
+                <input type="checkbox" id="check-{{i}}">
+                <label for="check-{{i}}">instructor checks this to accept or reject</label>
+            </div>
         </td>
         <!--Section listing all potential Candidates-->
         <td>
@@ -32,6 +39,7 @@
                 <p>ID: {{c.id}}</p>
                 <p>Name: {{c.name}}</p>
                 <p>Priority: {{c.priority}}</p>
+                <button>Undergrad Chair clicks to assign this student</button>
             </div>
         </td>
     </tr>

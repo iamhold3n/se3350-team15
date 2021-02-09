@@ -1,0 +1,10 @@
+[{"courseCode":"SE2202","courseName":"Scripting Programming Language Fundamentals","lecHrs":2,"labHrs":1,"tutHrs":3,"sec":2},
+{"courseCode":"SE2203","courseName":"Software Design","lecHrs":3,"labHrs":1,"tutHrs":1,"sec":4},
+{"courseCode":"SE2205","courseName":"Algorithms and Data Structures","lecHrs":2,"labHrs":3,"tutHrs":2,"sec":4},
+{"courseCode":"SE2250","courseName":"Software Construction","lecHrs":1,"labHrs":3,"tutHrs":1,"sec":4},
+{"courseCode":"SE3316","courseName":"Web Technologies","lecHrs":4,"labHrs":1,"tutHrs":1,"sec":1},
+{"courseCode":"SE3313","courseName":"Operating Systems for Software Engineering","lecHrs":3,"labHrs":1,"tutHrs":1,"sec":4},
+{"courseCode":"SE3314","courseName":"Computer Network Applications","lecHrs":2,"labHrs":1,"tutHrs":3,"sec":1},
+{"courseCode":"SE3310","courseName":"Theoretical Foundations of Software Engineering","lecHrs":4,"labHrs":3,"tutHrs":2,"sec":4},
+{"courseCode":"SE3309","courseName":"Database Management Systems","lecHrs":3,"labHrs":1,"tutHrs":3,"sec":1},
+{"courseCode":"SE3350","courseName":"Software Engineering Design I","lecHrs":3,"labHrs":3,"tutHrs":1,"sec":4}]

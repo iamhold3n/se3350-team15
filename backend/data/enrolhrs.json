@@ -1,0 +1,10 @@
+[{"courseCode":"SE2202","labHrs":1,"tutHrs":3,"prevEnrol":222,"prevHrs":28,"currEnrol":205},
+{"courseCode":"SE2203","labHrs":1,"tutHrs":1,"prevEnrol":237,"prevHrs":27,"currEnrol":227},
+{"courseCode":"SE2205","labHrs":3,"tutHrs":2,"prevEnrol":240,"prevHrs":24,"currEnrol":145},
+{"courseCode":"SE2250","labHrs":3,"tutHrs":1,"prevEnrol":190,"prevHrs":22,"currEnrol":244},
+{"courseCode":"SE3316","labHrs":1,"tutHrs":1,"prevEnrol":232,"prevHrs":24,"currEnrol":249},
+{"courseCode":"SE3313","labHrs":1,"tutHrs":1,"prevEnrol":227,"prevHrs":23,"currEnrol":192},
+{"courseCode":"SE3314","labHrs":1,"tutHrs":3,"prevEnrol":102,"prevHrs":27,"currEnrol":109},
+{"courseCode":"SE3310","labHrs":3,"tutHrs":2,"prevEnrol":137,"prevHrs":29,"currEnrol":100},
+{"courseCode":"SE3309","labHrs":1,"tutHrs":3,"prevEnrol":224,"prevHrs":27,"currEnrol":194},
+{"courseCode":"SE3350","labHrs":3,"tutHrs":1,"prevEnrol":179,"prevHrs":25,"currEnrol":119}]

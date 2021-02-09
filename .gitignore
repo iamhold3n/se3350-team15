@@ -105,3 +105,9 @@ dist
 
 # macOS users
 .DS_Store
+
+# Hide secure key
+*/key
+
+# VSCode Settings
+.vscode

@@ -1,0 +1,51 @@
+<p>allocate-ta-hours works! It is on the main page for now, since this will make it easier to combine with the rest of the app later on. Creating an entire app routing module may cause merging conflicts down the road</p>
+
+<!--Main Table for displaying data to be viewed and edited-->
+<!--Only shows up if there is enrollment data for at least one course-->
+<table *ngIf="enroll_record_list?.length > 0">
+
+    <!--Header/title rows-->
+    <tr> 
+        <th>Course</th>
+        <th>Instructor</th>
+        <th> <p>Enrollment {{current_year-1}}</p> </th>
+        <th> <p>TA Hours for {{current_year-1}}</p> </th>
+        <th> <p>Enrollment {{current_year}}</p> </th>
+        <th> <p>Estimated {{current_year}} Hours</p> </th>
+        <th> <p>TA Hours for {{current_year}} </p><p>(Undergrad Chair Enters Manually)</p> </th>
+    </tr>
+    <!--End of header/title rows-->
+
+    <!--Content rows -->
+    <tr *ngFor="let course of enroll_record_list">
+        <th> {{course.course_id}} </th>
+        <th> {{course.instructor}} </th>
+        <th> {{course.enrollment_prev}} </th>
+        <th> {{course.ta_hr_prev}} </th>
+        <th> {{course.enrollment_current}} </th>
+        <th> {{course.ta_hr_prev * course.enrollment_current / course.enrollment_prev}} </th> <!-- Formula : (Prev TA hrs)*(Current Enrollment)/(Prev enrollment) -->
+        <th> <input [(ngModel)]="course.allocated_hrs" placeholder = 0/> </th> <!--Two-way binding for the "manually allocated TA hour" values-->
+    </tr>
+    <!--End of content rows -->
+
+    <!--Row for Submit button -->
+    <tr>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th> 
+        <th> <button (click)="saveChanges()" >SAVE CHANGES</button> </th>
+    </tr>
+    <!--End of Row for Submit button -->
+
+</table>
+
+<!--Message that displays if there are no courses with enrollment data-->
+<h3 *ngIf="enroll_record_list?.length == 0">
+    No Course Records were found
+</h3>
+
+
+

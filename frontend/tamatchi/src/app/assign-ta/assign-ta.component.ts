@@ -11,15 +11,27 @@ export class AssignTaComponent implements OnInit {
   //list of course codes for all courses that are being assigned TAs
   course_list: string[];
 
+  //course that is currently being viewed
+  current_course: string;
+
   //list of TA candidates
   candidate_list: Candidate[];
+
+  //list of TAs assigned to the current course
+  assign_list: Candidate[];
 
   constructor() { }
 
   ngOnInit(): void {
 
+    //initialize and populate course_list array
     this.generateCourses();
+
+    //initialize and populate candidate_list array
     this.generateCandidates();
+
+    //initialize assigned_list array
+    this.assign_list=[];
 
   }//end of ngOnInit
 
@@ -62,5 +74,26 @@ export class AssignTaComponent implements OnInit {
     }//end of candidate generation loop
 
   }//end of generateCandidates
+
+  assignTa(newTa: Candidate ){
+
+    //check if TA is already assigned
+    if(!this.assign_list.includes(newTa)){
+      //if not then push it
+      this.assign_list.push(newTa);
+    }
+
+  }
+
+  removeTa(index: number){
+
+    //take all elements before and after the target index
+    let temp_1 = this.assign_list.slice(0,index);
+    let temp_2 = this.assign_list.slice(index+1);
+
+    //concatentate them together
+    this.assign_list= temp_1.concat(temp_2);
+
+  }
 
 }//end of class

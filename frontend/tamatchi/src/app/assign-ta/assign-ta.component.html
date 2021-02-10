@@ -24,12 +24,25 @@
         <!--Section displaying assigned TAs-->
         <td>
             <!--Div for each assigned TA-->
-            <div *ngFor="let a of candidate_list; let i=index" class="candidate">
+            <div *ngFor="let a of assign_list; let i=index" class="candidate">
                 <p>ID: {{a.id}}</p>
                 <p>Name: {{a.name}}</p>
                 <p>Priority: {{a.priority}}</p>
-                <input type="checkbox" id="check-{{i}}">
-                <label for="check-{{i}}">instructor checks this to accept or reject</label>
+                
+                <!--Button to remove TA-->
+                <button (click)="removeTa(i)">Undergrad Chair clicks to remove this candidate</button>
+
+                <div>
+                <!--radio button to show approval/rejection-->
+                <!--Make sure they have the same "name" attribute-->
+                <input type="radio" id="accept-{{i}}" name="confirm">
+                <label for="accept-{{i}}">instructor checks this to accept </label>
+                </div>
+                <div>
+                <input type="radio" id="reject-{{i}}" name="confirm">
+                <label for="reject-{{i}}">instructor checks this to reject</label>
+                </div>
+
             </div>
         </td>
         <!--Section listing all potential Candidates-->
@@ -39,8 +52,12 @@
                 <p>ID: {{c.id}}</p>
                 <p>Name: {{c.name}}</p>
                 <p>Priority: {{c.priority}}</p>
-                <button>Undergrad Chair clicks to assign this student</button>
+
+                <!--Button to add TA-->
+                <button (click)="assignTa(c)">Undergrad Chair clicks to assign this candidate</button>
             </div>
         </td>
     </tr>
 </table>
+
+<button>Save Changes (Not working yet)</button>

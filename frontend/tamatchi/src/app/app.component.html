@@ -7,6 +7,9 @@
 <table>
     <tr>
         <th>
+            <a routerLink='/login'>login</a>
+        </th>
+        <th>
             <a routerLink='/course-information'>course info</a>
         </th>
         <th>
@@ -27,12 +30,3 @@
 
 <router-outlet></router-outlet>
 
-
-
-<div class = topbar>
-  Email: <input #email type="email">
-  Password: <input #pass type = "password">
-  <button mat-raised-button (click) = "register(email.value, pass.value)">Register</button>
-  <button mat-raised-button (click) = "login(email.value, pass.value)">Login</button>
-  <button mat-raised-button (click) = "logout()">Logout</button>
-</div>

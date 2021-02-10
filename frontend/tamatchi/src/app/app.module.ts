@@ -9,6 +9,9 @@ import { FormComponent } from './form/form.component';
 
 import { AllocateTaHoursComponent } from './allocate-ta-hours/allocate-ta-hours.component';
 import { AssignTaComponent } from './assign-ta/assign-ta.component';
+import { RankingComponent } from './ranking/ranking.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DragDropModule } from '@angular/cdk/drag-drop'
 
 @NgModule({
   declarations: [
@@ -16,12 +19,15 @@ import { AssignTaComponent } from './assign-ta/assign-ta.component';
     CourseInformationComponent,
     FormComponent,
     AllocateTaHoursComponent,
-    AssignTaComponent
+    AssignTaComponent,
+    RankingComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule
+    FormsModule,
+    BrowserAnimationsModule,
+    DragDropModule
   ],
   providers: [],
   bootstrap: [AppComponent]

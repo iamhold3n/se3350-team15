@@ -116,9 +116,16 @@
               "devServerTarget": "tamatchi:serve:production"
             }
           }
+        },
+        "deploy": {
+          "builder": "@angular/fire:deploy",
+          "options": {}
         }
       }
     }
   },
-  "defaultProject": "tamatchi"
+  "defaultProject": "tamatchi",
+  "cli": {
+    "analytics": "c7584dfd-549e-41ac-bf33-823e0d8e2842"
+  }
 }

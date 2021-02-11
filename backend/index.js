@@ -1,6 +1,5 @@
 const express = require('express')
 const app = express();
-const admin = require('firebase-admin');
 const port = 3000;
 
 const admin = require('firebase-admin');
@@ -47,9 +46,7 @@ async function verifyUser(token, perms) //Function for verifying that a token me
   return verifPromise;
 }
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-});
+app.use('/', express.static('static'));
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}!`)

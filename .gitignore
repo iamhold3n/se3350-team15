@@ -111,3 +111,5 @@ dist
 
 # VSCode Settings
 .vscode
+
+backend/static

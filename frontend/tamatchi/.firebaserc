@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "se3350-tamatchi": {
+      "hosting": {
+        "tamatchi": [
+          "se3350-tamatchi"
+        ]
+      }
+    }
+  }
+}

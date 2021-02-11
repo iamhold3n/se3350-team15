@@ -1,0 +1,47 @@
+<p>form works!</p>
+
+<h3>For Course Instructors</h3>
+
+
+<h5>Please enter your name:</h5>
+<input type="text" [(ngModel)]="courseInstructor" placeholder="Enter Name..." />
+<br>
+
+<h5>Please select the course you would like TAs for:</h5>
+
+<select name="Course" [(ngModel)]="listCourses">
+
+    <option selected="selected" value="one">Course 1</option>
+    <option value="two">Course 2</option>
+    <option value="three">Course 3</option>
+</select>
+<br> 
+
+<h5>How many TAs would you like?</h5>
+
+<div class="minAndMax">
+
+<input type="number" placeholder="Min.">
+<input type="number" placeholder="Max.">
+
+</div>
+
+
+
+<div class="questions">
+
+        <!-- <label>Text Area</label>
+        <textarea> Your text here</textarea> -->
+
+<h5>Questions you would like to ask TAs:</h5>
+
+<textarea type="text" placeholder="Question 1"></textarea> <br>
+<textarea type="text" placeholder="Question 2"></textarea> <br>
+<textarea type="text" placeholder="Question 3"></textarea> <br>
+<textarea type="text" placeholder="Additional Questions"></textarea>
+
+
+<br><br>
+</div>
+
+<button>Submit form</button>

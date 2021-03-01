@@ -105,3 +105,6 @@ dist
 
 # macOS users
 .DS_Store
+
+#apikey
+backend/apikey.json

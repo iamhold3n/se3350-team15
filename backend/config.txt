@@ -1,0 +1,1 @@
+{"databaseURL":"se3350-tamatchi.firebaseapp.com","port":3000,"defaultAdminID":"IBrv424a2eY3usGCogXZUgSskgK2","apikey":"./apikey.json"}

@@ -1,10 +1,12 @@
 const express = require('express')
 const app = express();
 const admin = require('firebase-admin');
-const port = 3000;
+const Config = require('./config.js');
+Config.init();
+const port = Config.getConfig("port");
 
 admin.initializeApp({
-  credential: admin.credential.applicationDefault(),
+  credential: admin.credential.cert(Config.getConfig("apikey")),
   databaseURL: "se3350-tamatchi.firebaseapp.com"
 });
 

@@ -15,7 +15,8 @@ import { AssignTaComponent } from './assign-ta/assign-ta.component';
 import { RankingComponent } from './ranking/ranking.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { LoginComponent } from './login/login.component'
+import { LoginComponent } from './login/login.component';
+import { AdminComponent } from './admin/admin.component'
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { LoginComponent } from './login/login.component'
     AllocateTaHoursComponent,
     AssignTaComponent,
     RankingComponent,
-    LoginComponent
+    LoginComponent,
+    AdminComponent
   ],
   imports: [
     BrowserModule,

@@ -1,10 +1,13 @@
 
 <label for="courses">Choose a course:</label>
 
-<select name="courses" id="courses">
-    <option value="">---</option>
-    <option *ngFor="let c of course_list" value="{{c}}">{{c}}</option>
+<!-- '#courses' assigns the name 'courses' to this select element -->
+<select #courses (change)="courseView(courses.value)" id="courses">
+    <option value="-1">{{empty_course.courseCode}}</option>
+    <option *ngFor="let c of course_list, index as a" value="{{a}}">{{c.courseCode}}</option>
 </select>
+
+<h2>Now Viewing Course: {{current_course.courseCode}}</h2>
 
 <!--main editor is two vertical columns-->
 <table>

@@ -1,5 +1,6 @@
 export interface Candidate{
-    id:string; //could be student number or whatnot
+
+    id:string; //could be student number or email or whatnot
     name:string;
     priority: number; //1 for fundable, 2 for unfundable, 3 for external
 

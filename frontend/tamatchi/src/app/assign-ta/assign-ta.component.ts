@@ -15,22 +15,20 @@ export class AssignTaComponent implements OnInit {
   empty_course: Course; 
 
   //course that is currently being viewed
-  current_course: Course;
+  viewed_course: Course;
 
   //list of TA candidates
   candidate_list: Candidate[];
 
-  //list of TAs assigned to the current course
-  assign_list: Candidate[];
 
   constructor() { }
 
   ngOnInit(): void {
 
     //initialize the empty course
-    this.empty_course={courseCode:"---", taHours:0};
+    this.empty_course={courseCode:"---", taHours:0, assignList:[]};
     //initialize the current course to be empty
-    this.current_course = this.empty_course;
+    this.viewed_course = this.empty_course;
 
     //initialize and populate course_list array
     this.generateCourses();
@@ -38,8 +36,6 @@ export class AssignTaComponent implements OnInit {
     //initialize and populate candidate_list array
     this.generateCandidates();
 
-    //initialize assigned_list array
-    this.assign_list=[];
 
   }//end of ngOnInit
 
@@ -51,9 +47,9 @@ export class AssignTaComponent implements OnInit {
    */
   generateCourses(){
     this.course_list=[
-      {courseCode:"3314", taHours:3},
-      {courseCode:"3310", taHours:6},
-      {courseCode:"2202", taHours:5},
+      {courseCode:"3314", taHours:3, assignList:[]},
+      {courseCode:"3310", taHours:6, assignList:[]},
+      {courseCode:"2202", taHours:5, assignList:[]},
     ];
   }//end of loadCourses
 
@@ -73,9 +69,11 @@ export class AssignTaComponent implements OnInit {
       //choose random # of courses from course_list (at least one course)
       //choose that number of selected courses from start of course_list
       temp_course_list=[];
+
       for(let b=0; b<Math.floor(Math.random()*num_courses) +1; b++){
-        temp_course_list.push(this.course_list[b]); //push the course code into the array
+        temp_course_list.push(this.course_list[b].courseCode); //push the Course code into the array
       }
+
 
       //create a "Candidate" object with randomized values
       temp = {
@@ -101,24 +99,50 @@ export class AssignTaComponent implements OnInit {
   courseView(index: number){
 
     if(index == -1){
-      this.current_course = this.empty_course;
+      this.viewed_course = this.empty_course;
     }
     else{
-      this.current_course = this.course_list[index];
+      this.viewed_course = this.course_list[index];
     }
 
   }
 
+
+  /**
+   * This is used by the array pipe to filters the *ngFor
+   * Builds a callback function and returns it so the pipe can use it for filtering
+   * In this case: for filtering out candidates that dont match the currently viewed course
+   */
+  isApplicant(){
+
+    //get the currently viewed course and make it a scope variable
+    var crs_code = this.viewed_course.courseCode;
+
+    /** 
+     * Returns true if the given Candidate applied for the course
+    */
+    function isApplicant(candidate: Candidate){
+      return candidate.ranked_courses.indexOf(crs_code) != -1; //takes the scope variable 'crs_code'
+    }
+
+    //return the newly built function to be used in the callback pipe
+    return isApplicant;
+  }
+
+
+
   /**
    * Adds a TA to the currently viewed course in the editor
+   * Checks if all ta hours for this course have been allocated
+   * 
    * @param newTa : object representing the TA to be added
    */
   assignTa(newTa: Candidate ){
 
     //check if TA is already assigned
-    if(!this.assign_list.includes(newTa)){
+    if(!this.viewed_course.assignList.includes(newTa)){
       //if not then push it
-      this.assign_list.push(newTa);
+      this.viewed_course.assignList.push(newTa);
     }
 
   }
@@ -130,12 +154,19 @@ export class AssignTaComponent implements OnInit {
   removeTa(index: number){
 
     //take all elements before and after the target index
-    let temp_1 = this.assign_list.slice(0,index);
-    let temp_2 = this.assign_list.slice(index+1);
+    let temp_1 = this.viewed_course.assignList.slice(0,index);
+    let temp_2 = this.viewed_course.assignList.slice(index+1);
 
     //concatentate them together
-    this.assign_list= temp_1.concat(temp_2);
+    this.viewed_course.assignList= temp_1.concat(temp_2);
 
+  }
+
+  /**
+   * Saves changes made to the course that is currently viewed in the editor
+   */
+  saveChanges(){
+    //this.viewed_course.do_something();
   }
 
 }//end of class

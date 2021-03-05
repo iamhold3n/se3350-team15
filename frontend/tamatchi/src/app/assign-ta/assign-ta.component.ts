@@ -66,7 +66,7 @@ export class AssignTaComponent implements OnInit {
     //initialize the candidate_list array
     this.candidate_list = [];
 
-    let num_candidates = 10;
+    let num_candidates = 3;
     let temp;
     let num_courses = this.course_list.length;
     let temp_course_list;
@@ -84,7 +84,7 @@ export class AssignTaComponent implements OnInit {
 
       //create a "Candidate" object with randomized values
       temp = {
-        id: a+"", //placeholder id
+        id: a, //placeholder id
         name: "Student "+(a+1), //placeholder name
         priority: Math.floor(Math.random()*3) +1 , //random priority between 1 and 3
         ranked_courses: temp_course_list //the array of randomized selected courses that was generated above
@@ -126,8 +126,19 @@ export class AssignTaComponent implements OnInit {
 
     //check if TA is already assigned
     if(!course.assignList.includes(newTa)){
-      //if not then push it
+
+      //if not then push it to the assigned list
       course.assignList.push(newTa);
+
+      let index = this.candidate_list.indexOf(newTa);
+
+      //take all elements before and after the target index
+      let temp_1 = this.candidate_list.slice(0,index);
+      let temp_2 = this.candidate_list.slice(index+1);
+
+      //concatentate them together to remove the TA
+      this.candidate_list= temp_1.concat(temp_2);
+
     }
 
   }
@@ -138,11 +149,14 @@ export class AssignTaComponent implements OnInit {
    */
   removeTa(index: number){
 
+    //add the TA back into the candidate list
+    this.candidate_list.push(this.viewed_course.assignList[index])
+
     //take all elements before and after the target index
     let temp_1 = this.viewed_course.assignList.slice(0,index);
     let temp_2 = this.viewed_course.assignList.slice(index+1);
 
-    //concatentate them together
+    //concatentate them together to remove the TA
     this.viewed_course.assignList= temp_1.concat(temp_2);
 
   }

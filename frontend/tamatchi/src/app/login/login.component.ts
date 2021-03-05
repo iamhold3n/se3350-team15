@@ -10,10 +10,10 @@ export class LoginComponent implements OnInit {
 
   constructor(private auth : AuthService) { }
 
-  register(username, pass) //for debugging purpose only
+  /*register(username, pass) //for debugging purpose only
   {
     this.auth.newUser(username, pass);
-  }
+  }*/
 
   login(username, pass)
   {

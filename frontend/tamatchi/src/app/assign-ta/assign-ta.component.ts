@@ -36,6 +36,13 @@ export class AssignTaComponent implements OnInit {
     //initialize and populate candidate_list array
     this.generateCandidates();
 
+    /**
+     * Oncce all courses and candidates have been initialized
+     * Perform the initial auto-assignment
+     */
+    for(let c of this.course_list){
+      this.autoAssign(c);
+    }
 
   }//end of ngOnInit
 
@@ -59,7 +66,7 @@ export class AssignTaComponent implements OnInit {
     //initialize the candidate_list array
     this.candidate_list = [];
 
-    let num_candidates = 3;
+    let num_candidates = 10;
     let temp;
     let num_courses = this.course_list.length;
     let temp_course_list;
@@ -107,42 +114,20 @@ export class AssignTaComponent implements OnInit {
 
   }
 
-
   /**
-   * This is used by the array pipe to filters the *ngFor
-   * Builds a callback function and returns it so the pipe can use it for filtering
-   * In this case: for filtering out candidates that dont match the currently viewed course
-   */
-  isApplicant(){
-
-    //get the currently viewed course and make it a scope variable
-    var crs_code = this.viewed_course.courseCode;
-
-    /** 
-     * Returns true if the given Candidate applied for the course
-    */
-    function isApplicant(candidate: Candidate){
-      return candidate.ranked_courses.indexOf(crs_code) != -1; //takes the scope variable 'crs_code'
-    }
-
-    //return the newly built function to be used in the callback pipe
-    return isApplicant;
-  }
-
-
-
-  /**
-   * Adds a TA to the currently viewed course in the editor
+   * Adds a TA to a course 
+   * Targets the currently viewed course by default (pass a Course object as a parameter if otherwise)
    * Checks if all ta hours for this course have been allocated
    * 
    * @param newTa : object representing the TA to be added
+   * @param course : course to add to. default value is 'viewed_course'
    */
-  assignTa(newTa: Candidate ){
+  assignTa(newTa: Candidate, course = this.viewed_course){
 
     //check if TA is already assigned
-    if(!this.viewed_course.assignList.includes(newTa)){
+    if(!course.assignList.includes(newTa)){
       //if not then push it
-      this.viewed_course.assignList.push(newTa);
+      course.assignList.push(newTa);
     }
 
   }
@@ -159,6 +144,62 @@ export class AssignTaComponent implements OnInit {
 
     //concatentate them together
     this.viewed_course.assignList= temp_1.concat(temp_2);
+
+  }
+
+  /**
+   * This is used by the array pipe to filters the *ngFor
+   * Builds a callback function and returns it so the pipe can use it for filtering
+   * In this case: for filtering out candidates that dont match the course
+   */
+  isApplicant(course: Course){
+
+    //get the currently viewed course and make it a scope variable
+    var crs_code = course.courseCode;
+
+    /** 
+     * Returns true if the given Candidate applied for the course
+    */
+    function isApplicant(candidate: Candidate){
+      return candidate.ranked_courses.indexOf(crs_code) != -1; //takes the scope variable 'crs_code'
+    }
+
+    //return the newly built function to be used in the callback pipe
+    return isApplicant;
+  }
+
+  /**
+   * Sorts the aaplicants by priority
+   * Takes all the applicnats that applied to the given course
+   * returns a new array with them sorted by priority (1,2,or3)
+   */
+  sortApplicant(course: Course){
+
+    //filter the candidate list for applkicants that applied to the currently viewed course
+    var result = this.candidate_list.filter(this.isApplicant(course));
+
+    //sort the applicants based on their priority number
+
+    //return the resultant array
+    return result;
+
+  }
+
+  /**
+   * Automistiaclly assigns the candidates for a given course
+   * For now, the algorithm just assigns by priority (1,2,or 3)
+   * 
+   * @param course : 
+   */
+  autoAssign(course: Course){
+
+    var applicants = this.sortApplicant(course);
+
+    for(let a of applicants){
+
+      //assign the TA from the sorted list to the course
+      this.assignTa(a, course);
+    }
 
   }
 

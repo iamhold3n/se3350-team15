@@ -9,6 +9,8 @@
 
 <h2>Now Viewing Course: {{viewed_course.courseCode}}</h2>
 
+<!--Empty Course View Message-->
+<div *ngIf = "viewed_course == empty_course" >PLEASE SELECT A COURSE TO VIEW</div>
 
 <!--Assignment editor-->
 <!--Only show it if an actual course has been selected from the dropdown-->
@@ -20,10 +22,18 @@
             <!--Header for assigned TAs-->
             <th>
                 <h2>Assigned TAs</h2>
+
+                <!--Submit Button-->
+                <button (click)="saveChanges()">Save Changes (Not working yet)</button>
+
             </th>
             <!--Header for potential Candidates-->
             <th>
                 <h2>Candidates</h2>
+
+                <!--Auto-Assign Button-->
+                <button (click)="autoAssign(viewed_course)">Auto Assign</button>
+
             </th>
         </tr>
 
@@ -56,7 +66,7 @@
             <td>
                 <!--Div for each candidate-->
                 <!-- ' | callback:isApplicant() ' filters the list for only candidates that applied for the viewed course -->
-                <div *ngFor="let c of candidate_list | callback:isApplicant()" class="candidate">
+                <div *ngFor="let c of candidate_list | callback:isApplicant(viewed_course)" class="candidate">
                     <p>ID: {{c.id}}</p>
                     <p>Name: {{c.name}}</p>
                     <p>Priority: {{c.priority}}</p>
@@ -71,6 +81,5 @@
         </tr>
     </table>
 
-    <!--Submit Button-->
-    <button (click)="saveChanges()">Save Changes (Not working yet)</button>
+
 </div>

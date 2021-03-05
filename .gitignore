@@ -108,3 +108,6 @@ dist
 
 #apikey
 backend/apikey.json
+
+#ignore images
+*.svg

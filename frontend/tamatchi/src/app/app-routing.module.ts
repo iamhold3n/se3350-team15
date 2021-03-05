@@ -6,6 +6,7 @@ import { CourseInformationComponent } from './course-information/course-informat
 import { FormComponent } from './form/form.component';
 import { LoginComponent } from './login/login.component';
 import { RankingComponent } from './ranking/ranking.component';
+import { SubmitSpreadsheetComponent } from './submit-spreadsheet/submit-spreadsheet.component';
 
 const routes: Routes = [
   {path: 'login', component:LoginComponent},
@@ -13,7 +14,8 @@ const routes: Routes = [
   {path: 'form', component: FormComponent},
   {path: 'allocate-ta-hours', component:AllocateTaHoursComponent},
   {path: 'assign-ta', component:AssignTaComponent},
-  {path: 'ranking', component:RankingComponent}
+  {path: 'ranking', component:RankingComponent},
+  {path: 'submit-spreadsheet', component:SubmitSpreadsheetComponent}
 
 ];
 

@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireDatabaseModule } from '@angular/fire/database';
+import { AngularFireStorageModule } from '@angular/fire/storage';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms'; 
 import { environment } from 'src/environments/environment';
@@ -15,7 +17,11 @@ import { AssignTaComponent } from './assign-ta/assign-ta.component';
 import { RankingComponent } from './ranking/ranking.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { LoginComponent } from './login/login.component'
+import { LoginComponent } from './login/login.component';
+import { SubmitSpreadsheetComponent } from './submit-spreadsheet/submit-spreadsheet.component';
+import { UploadFormComponent } from './upload-form/upload-form.component';
+import { UploadListComponent } from './upload-list/upload-list.component';
+import { UploadDetailsComponent } from './upload-details/upload-details.component'
 
 @NgModule({
   declarations: [
@@ -25,7 +31,11 @@ import { LoginComponent } from './login/login.component'
     AllocateTaHoursComponent,
     AssignTaComponent,
     RankingComponent,
-    LoginComponent
+    LoginComponent,
+    SubmitSpreadsheetComponent,
+    UploadFormComponent,
+    UploadListComponent,
+    UploadDetailsComponent
   ],
   imports: [
     BrowserModule,
@@ -33,7 +43,9 @@ import { LoginComponent } from './login/login.component'
     FormsModule,
     BrowserAnimationsModule,
     DragDropModule,
-    AngularFireModule.initializeApp(environment.firebase)
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireDatabaseModule,
+    AngularFireStorageModule
   ],
   providers: [AngularFireModule],
   bootstrap: [AppComponent]

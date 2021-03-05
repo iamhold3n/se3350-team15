@@ -105,3 +105,4 @@ dist
 
 # macOS users
 .DS_Store
+backend/service-account-file.json

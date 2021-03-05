@@ -1,62 +1,87 @@
 
 <label for="courses">Choose a course:</label>
 
-<select name="courses" id="courses">
-    <option value="">---</option>
-    <option *ngFor="let c of course_list" value="{{c}}">{{c}}</option>
+<!-- '#courses' assigns the name 'courses' to this select element -->
+<select #courses (change)="courseView(courses.value)" id="courses">
+    <option value="-1">{{empty_course.courseCode}}</option>
+    <option *ngFor="let c of course_list, index as a" value="{{a}}">{{c.courseCode}}</option>
 </select>
 
-<!--main editor is two vertical columns-->
-<table>
-    <tr>
-        <!--Section displaying assigned TAs-->
-        <th>
-            <h2>Assigned TAs</h2>
-        </th>
-        <!--Section listing all potential Candidates-->
-        <th>
-            <h2>Candidates</h2>
-        </th>
-    </tr>
+<h2>Now Viewing Course: {{viewed_course.courseCode}}</h2>
+<h4>Total TA Hours: {{viewed_course.taHours}}<h4>
 
-    <tr>
-        <!--Section displaying assigned TAs-->
-        <td>
-            <!--Div for each assigned TA-->
-            <div *ngFor="let a of assign_list; let i=index" class="candidate">
-                <p>ID: {{a.id}}</p>
-                <p>Name: {{a.name}}</p>
-                <p>Priority: {{a.priority}}</p>
-                
-                <!--Button to remove TA-->
-                <button (click)="removeTa(i)">Undergrad Chair clicks to remove this candidate</button>
+<!--Empty Course View Message-->
+<div *ngIf = "viewed_course == empty_course" >PLEASE SELECT A COURSE TO VIEW</div>
 
-                <div>
-                <!--radio button to show approval/rejection-->
-                <!--Make sure they have the same "name" attribute-->
-                <input type="radio" id="accept-{{i}}" name="confirm">
-                <label for="accept-{{i}}">instructor checks this to accept </label>
+<!--Assignment editor-->
+<!--Only show it if an actual course has been selected from the dropdown-->
+<div *ngIf = "viewed_course != empty_course" >
+
+    <!--Main editor area is a 2x2 table-->
+    <table>
+        <tr>
+            <!--Header for assigned TAs-->
+            <th>
+                <h2>Assigned TAs</h2>
+
+                <!--Submit Button-->
+                <button (click)="saveChanges()">Save Changes (Not working yet)</button>
+
+            </th>
+            <!--Header for potential Candidates-->
+            <th>
+                <h2>Candidates</h2>
+
+                <!--Auto-Assign Button-->
+                <button (click)="autoAssign(viewed_course)">Auto Assign</button>
+
+            </th>
+        </tr>
+
+        <tr>
+            <!--Section displaying assigned TAs-->
+            <td>
+                <!--Div for each assigned TA-->
+                <div *ngFor="let a of viewed_course.assignList; let i=index" class="candidate">
+                    <p>ID: {{a.id}}</p>
+                    <p>Name: {{a.name}}</p>
+                    <p>Priority: {{a.priority}}</p>
+                    <p>TA Hours: {{a.taHours}}</p>
+                    
+                    <!--Button to remove TA-->
+                    <button (click)="removeTa(i)">Undergrad Chair clicks to remove this candidate</button>
+
+                    <div>
+                    <!--radio button to show approval/rejection-->
+                    <!--Make sure they have the same "name" attribute-->
+                    <input type="radio" id="accept-{{i}}" name="confirm">
+                    <label for="accept-{{i}}">instructor checks this to accept </label>
+                    </div>
+                    <div>
+                    <input type="radio" id="reject-{{i}}" name="confirm">
+                    <label for="reject-{{i}}">instructor checks this to reject</label>
+                    </div>
+
                 </div>
-                <div>
-                <input type="radio" id="reject-{{i}}" name="confirm">
-                <label for="reject-{{i}}">instructor checks this to reject</label>
+            </td>
+            <!--Section listing all potential Candidates-->
+            <td>
+                <!--Div for each candidate-->
+                <!-- ' | callback:isApplicant() ' filters the list for only candidates that applied for the viewed course -->
+                <div *ngFor="let c of candidate_list | callback:isApplicant(viewed_course)" class="candidate">
+                    <p>ID: {{c.id}}</p>
+                    <p>Name: {{c.name}}</p>
+                    <p>Priority: {{c.priority}}</p>
+
+                    <p>Ranked Courses: </p>
+                    <div *ngFor="let r of c.ranked_courses" >{{r}}</div>
+
+                    <!--Button to add TA-->
+                    <button (click)="assignTa(c)">Undergrad Chair clicks to assign this candidate</button>
                 </div>
+            </td>
+        </tr>
+    </table>
 
-            </div>
-        </td>
-        <!--Section listing all potential Candidates-->
-        <td>
-            <!--Div for each candidate-->
-            <div *ngFor="let c of candidate_list" class="candidate">
-                <p>ID: {{c.id}}</p>
-                <p>Name: {{c.name}}</p>
-                <p>Priority: {{c.priority}}</p>
 
-                <!--Button to add TA-->
-                <button (click)="assignTa(c)">Undergrad Chair clicks to assign this candidate</button>
-            </div>
-        </td>
-    </tr>
-</table>
-
-<button>Save Changes (Not working yet)</button>
+</div>

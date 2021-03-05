@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { AssignTaComponent } from './assign-ta.component';
+
 
 describe('AssignTaComponent', () => {
   let component: AssignTaComponent;
@@ -8,7 +8,7 @@ describe('AssignTaComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AssignTaComponent ]
+      declarations: [ AssignTaComponent]
     })
     .compileComponents();
   });

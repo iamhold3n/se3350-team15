@@ -8,6 +8,7 @@
 </select>
 
 <h2>Now Viewing Course: {{viewed_course.courseCode}}</h2>
+<h4>Total TA Hours: {{viewed_course.taHours}}<h4>
 
 <!--Empty Course View Message-->
 <div *ngIf = "viewed_course == empty_course" >PLEASE SELECT A COURSE TO VIEW</div>
@@ -45,6 +46,7 @@
                     <p>ID: {{a.id}}</p>
                     <p>Name: {{a.name}}</p>
                     <p>Priority: {{a.priority}}</p>
+                    <p>TA Hours: {{a.taHours}}</p>
                     
                     <!--Button to remove TA-->
                     <button (click)="removeTa(i)">Undergrad Chair clicks to remove this candidate</button>

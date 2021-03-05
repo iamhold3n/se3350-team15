@@ -66,7 +66,7 @@ export class AssignTaComponent implements OnInit {
     //initialize the candidate_list array
     this.candidate_list = [];
 
-    let num_candidates = 3;
+    let num_candidates = 10;
     let temp;
     let num_courses = this.course_list.length;
     let temp_course_list;
@@ -87,6 +87,7 @@ export class AssignTaComponent implements OnInit {
         id: a, //placeholder id
         name: "Student "+(a+1), //placeholder name
         priority: Math.floor(Math.random()*3) +1 , //random priority between 1 and 3
+        taHours: 1,
         ranked_courses: temp_course_list //the array of randomized selected courses that was generated above
       };
 
@@ -124,8 +125,28 @@ export class AssignTaComponent implements OnInit {
    */
   assignTa(newTa: Candidate, course = this.viewed_course){
 
-    //check if TA is already assigned
-    if(!course.assignList.includes(newTa)){
+    //Callback fucntion to help calcualte remaining TA hours in this course
+    function sumHours(total, hours){
+      return total+hours;
+    }
+
+    //Callback fucntion to help calcualte remaining TA hours in this course
+    function mapHours(TA){
+      return TA.taHours;
+    }
+
+    //calcualte remaining TA hours in this course
+    var remainingHours = course.taHours;
+    if(course.assignList.length > 0){
+      remainingHours -= course.assignList.map(mapHours).reduce(sumHours);
+    }
+
+    /**
+     * Only assign the TA if the following is true
+     *  -TA is NOT already assigned to this course
+     *  -Sufficient TA hours available
+     */
+    if(!course.assignList.includes(newTa) && remainingHours >= newTa.taHours ){
 
       //if not then push it to the assigned list
       course.assignList.push(newTa);
@@ -193,6 +214,10 @@ export class AssignTaComponent implements OnInit {
     var result = this.candidate_list.filter(this.isApplicant(course));
 
     //sort the applicants based on their priority number
+    function sortPriority(a,b){
+      return a.priority - b.priority;
+    }
+    result = result.sort(sortPriority);
 
     //return the resultant array
     return result;
@@ -202,6 +227,7 @@ export class AssignTaComponent implements OnInit {
   /**
    * Automistiaclly assigns the candidates for a given course
    * For now, the algorithm just assigns by priority (1,2,or 3)
+   * The algorithm will not touch any TAs already assigned to the course
    * 
    * @param course : 
    */

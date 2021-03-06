@@ -18,6 +18,9 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { LoginComponent } from './login/login.component';
 import { CourseQuestionsComponent } from './course-questions/course-questions.component';
 
+import { CallbackPipe } from './callback.pipe'; //allows for filtering of *ngFor using a specified callback function
+import { AdminComponent } from './admin/admin.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -27,7 +30,9 @@ import { CourseQuestionsComponent } from './course-questions/course-questions.co
     AssignTaComponent,
     RankingComponent,
     LoginComponent,
-    CourseQuestionsComponent
+    CourseQuestionsComponent,
+    CallbackPipe,
+    AdminComponent,
   ],
   imports: [
     BrowserModule,

@@ -16,14 +16,13 @@ export class AuthService {
     this.user = af.authState;
   }
 
-  newUser(username, password) //create new user
+  /*newUser(username, password) //create new user
   {
     this.af.createUserWithEmailAndPassword(username, password).then(res =>
       {
         //Do post account creation things here.
-        this.login(username, password); //then log the user in.
       }).catch(err => {alert(err)});
-  }
+  }*/
 
   login(username, password) //login
   {
@@ -52,6 +51,20 @@ export class AuthService {
     this.af.signOut();
     this.cookie.deleteAll();
   }
+
+  getLoggedIn()
+  {
+    if (firebase.auth().currentUser)
+    {
+      return true;
+    }
+    else
+    {
+      this.logOut(); //just incase the cookie remains
+      return false;
+    }
+  }
+
 
 
 }

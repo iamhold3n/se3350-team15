@@ -36,14 +36,6 @@ export class AssignTaComponent implements OnInit {
     //initialize and populate candidate_list array
     this.generateCandidates();
 
-    /**
-     * Oncce all courses and candidates have been initialized
-     * Perform the initial auto-assignment
-     */
-    for(let c of this.course_list){
-      this.autoAssign(c);
-    }
-
   }//end of ngOnInit
 
   /**

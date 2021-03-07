@@ -16,6 +16,7 @@ import { RankingComponent } from './ranking/ranking.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { LoginComponent } from './login/login.component';
+import { CourseQuestionsComponent } from './course-questions/course-questions.component';
 
 import { CallbackPipe } from './callback.pipe'; //allows for filtering of *ngFor using a specified callback function
 import { AdminComponent } from './admin/admin.component';
@@ -29,6 +30,7 @@ import { AdminComponent } from './admin/admin.component';
     AssignTaComponent,
     RankingComponent,
     LoginComponent,
+    CourseQuestionsComponent,
     CallbackPipe,
     AdminComponent,
   ],

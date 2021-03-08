@@ -10,7 +10,7 @@ const faker = require('faker');
 let courseNum = 10;
 let instructorsNum = 15;
 let enrolhrsNum = 10;
-let applicantsNum = 50;
+let applicantsNum = 30;
 let allocationNum = 10;
 
 // =============
@@ -20,7 +20,7 @@ let courses = [];
 for (let i = 0; i < courseNum; i++) {
     courses.push({
         courseCode: faker.random.arrayElement(['SE', 'ECE']) + (Math.floor(Math.random() * 3) + 1) + Math.floor(Math.random() * 3) + Math.floor(Math.random() * 9) + Math.floor(Math.random() * 9),
-        courseName: faker.random.arrayElement(['Intro ', 'Theoretical ', 'Software ']) + faker.random.arrayElement(['Design', 'Engineering', 'Foundations']),
+        courseName: faker.random.arrayElement(['Intro ', 'Theoretical ', 'Software ', 'Quantum ']) + faker.random.arrayElement(['Design', 'Engineering', 'Foundations', 'Pottery', 'Basket Weaving']),
         labOrTutHrs: Math.floor(Math.random() * 3) + 1,
         lecHrs: Math.floor(Math.random() * 4) + 1,
         questions: uniqueQuestions(),
@@ -30,9 +30,12 @@ for (let i = 0; i < courseNum; i++) {
 
 let instructors = [];
 for (let i = 0; i < instructorsNum; i++) {
+    let fname = faker.name.firstName();
+    let lname = faker.name.lastName();
+
     instructors.push({
-        email: faker.internet.email(),
-        name: faker.name.firstName() + ' ' + faker.name.lastName()
+        email: faker.internet.email(fname, lname, 'uwo.ca'),
+        name: fname + ' ' + lname
     })
 }
 
@@ -49,12 +52,17 @@ for (let i = 0; i < enrolhrsNum; i++) {
 
 let applicants = [];
 for (let i = 0; i < applicantsNum; i++) {
-    let c = Math.floor(Math.random() * (courseNum - 1));
+    let c = uniqueCourses();
+    let fname = faker.name.firstName();
+    let lname = faker.name.lastName();
+
     applicants.push({
-        course: courses[c].courseCode,
-        email: faker.internet.email(),
-        name: faker.name.firstName() + ' ' + faker.name.lastName(),
+        course: getCourses(c),
+        email: faker.internet.email(fname, lname, 'uwo.ca'),
+        hrs: getHrs(c.length),
+        name: fname + ' ' + lname,
         questions: questionAnswers(c),
+        ranks: getRanks(c.length),
         status: Math.floor(Math.random() * 3) + 1
     })
 }
@@ -78,19 +86,56 @@ for (let i = 0; i < allocationNum; i++) {
 
 function uniqueQuestions() {
     let q = new Set();
-    let m = Math.floor(Math.random() * 4) + 1;
-    while(q.size < m) {
+    let max = Math.floor(Math.random() * 4) + 1;
+    while(q.size < max) {
         q.add(faker.random.arrayElement(['Know Java?','Know Javascript?','Know Matlab?','Know C++?','Know C?','Know Rust?','Know Python?','Know Ruby?','Know R?','Teaching certificate?','Know DBMS?']));
     }
 
     return Array.from(q);
 }
 
-function questionAnswers(c) {
+function uniqueCourses() {
+    let c = new Set();
+    let max = Math.floor(Math.random() * 4) + 1;
+    while(c.size < max) {
+        c.add(Math.floor(Math.random() * (courseNum - 1)))
+    }
+
+    return Array.from(c);
+}
+
+function getCourses(c) {
+    let cArr = [];
+    c.forEach(x => cArr.push(courses[x].courseCode));
+
+    return cArr;
+}
+
+function getHrs(sz) {
+    let h = [];
+    for (let i = 0; i < sz; i++) h.push((Math.floor(Math.random() * 2) + 1)*5);
+
+    return h;
+}
+
+function getRanks(sz) { // making it simple and doing it 1 to max in order
+    let r = [];
+    for (let i = 0; i < sz; i++) r.push(i+1);
+
+    return r;
+}
+
+function questionAnswers(cArr) {
+    let uq = new Set();
     let qa = [];
-    courses[c].questions.forEach(q => {
+    
+    for (let i = 0; i < cArr.length; i++) {
+        courses[cArr[i]].questions.forEach(q => uq.add(q))
+    }
+
+    uq.forEach(e => {
         qa.push({
-            question: q,
+            question: e,
             answer: faker.random.boolean()
         })
     })

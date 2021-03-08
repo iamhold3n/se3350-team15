@@ -59,18 +59,28 @@ export class AssignTaComponent implements OnInit {
     this.candidate_list = [];
 
     let num_candidates = 10;
-    let temp;
+    let temp; //temp storage for randomly generated Candidate objects
     let num_courses = this.course_list.length;
-    let temp_course_list;
+    let temp1; //temp storage for a  ranom sized array of random course codes
+    let temp2; //temps storage for Courses that havent been randomly chosen yet
+    let crs_code; //temp storage for a course code
 
     for(let a=0; a<num_candidates; a++){
 
       //choose random # of courses from course_list (at least one course)
       //choose that number of selected courses from start of course_list
-      temp_course_list=[];
+      temp1=[];
+      temp2 = this.course_list;
 
+      //loop a random numer of times (between 1 and the number of courses)
       for(let b=0; b<Math.floor(Math.random()*num_courses) +1; b++){
-        temp_course_list.push(this.course_list[b].courseCode); //push the Course code into the array
+
+        //get course code of a random Course
+        crs_code = temp2[Math.floor(Math.random()*temp2.length)].courseCode; 
+        //push the course code into the array
+        temp1.push(crs_code); 
+        //decrease the pool of course codes to randomly choose from
+        temp2 = temp2.filter( e =>{return e.courseCode != crs_code} );
       }
 
 
@@ -80,7 +90,7 @@ export class AssignTaComponent implements OnInit {
         name: "Student "+(a+1), //placeholder name
         priority: Math.floor(Math.random()*3) +1 , //random priority between 1 and 3
         taHours: 1,
-        ranked_courses: temp_course_list //the array of randomized selected courses that was generated above
+        ranked_courses: temp1 //the array of randomized selected courses that was generated above
       };
 
       //add the new object to the list of "Candidate" objects
@@ -217,6 +227,28 @@ export class AssignTaComponent implements OnInit {
   }
 
   /**
+   * un-assigns all TAs that are assigned to the currently viewed course
+   */
+  clearTa(){
+
+    //get the nubmer of TAs assigned to the currently viewed course
+    let num = this.viewed_course.assignList.length;
+
+    //keep removing the TA at the top of the assignList until none are left
+    for(let a=0; a<num; a++){
+      this.removeTa(0);
+    }
+
+  }
+
+  /**
+   * Saves changes made to the course that is currently viewed in the editor
+   */
+   saveChanges(){
+    //this.viewed_course.do_something();
+  }
+
+  /**
    * Automistiaclly assigns the candidates for a given course
    * For now, the algorithm just assigns by priority (1,2,or 3)
    * The algorithm will not touch any TAs already assigned to the course
@@ -233,13 +265,6 @@ export class AssignTaComponent implements OnInit {
       this.assignTa(a, course);
     }
 
-  }
-
-  /**
-   * Saves changes made to the course that is currently viewed in the editor
-   */
-  saveChanges(){
-    //this.viewed_course.do_something();
   }
 
 }//end of class

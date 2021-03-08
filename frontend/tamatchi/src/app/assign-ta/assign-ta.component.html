@@ -24,6 +24,9 @@
             <th>
                 <h2>Assigned TAs</h2>
 
+                <!--Clear Button-->
+                <button (click)="clearTa()">Remove All</button>
+
                 <!--Submit Button-->
                 <button (click)="saveChanges()">Save Changes (Not working yet)</button>
 
@@ -41,44 +44,75 @@
         <tr>
             <!--Section displaying assigned TAs-->
             <td>
-                <!--Div for each assigned TA-->
-                <div *ngFor="let a of viewed_course.assignList; let i=index" class="candidate">
-                    <p>ID: {{a.id}}</p>
-                    <p>Name: {{a.name}}</p>
-                    <p>Priority: {{a.priority}}</p>
-                    <p>TA Hours: {{a.taHours}}</p>
-                    
-                    <!--Button to remove TA-->
-                    <button (click)="removeTa(i)">Undergrad Chair clicks to remove this candidate</button>
 
-                    <div>
-                    <!--radio button to show approval/rejection-->
-                    <!--Make sure they have the same "name" attribute-->
-                    <input type="radio" id="accept-{{i}}" name="confirm">
-                    <label for="accept-{{i}}">instructor checks this to accept </label>
-                    </div>
-                    <div>
-                    <input type="radio" id="reject-{{i}}" name="confirm">
-                    <label for="reject-{{i}}">instructor checks this to reject</label>
-                    </div>
+                <!--div containing everything in this td for style purposes-->
+                <div class="list">
+                    <!--Div for each assigned TA-->
+                    <div *ngFor="let a of viewed_course.assignList; let i=index" class="candidate">
 
+                        <!--Split the Candidate info into two horizontally adjacent columns-->
+                        <table>
+                            <tr>
+                                <td>
+                                    <p>ID: {{a.id}}</p>
+                                    <p>Name: {{a.name}}</p>
+                                    <p>Priority: {{a.priority}}</p>
+                                    <p>TA Hours: {{a.taHours}}</p>
+                                </td>
+                                <td>
+                                    <p>Ranked Courses: </p>
+                                    <div *ngFor="let r of a.ranked_courses" >{{r}}</div>
+                                </td>
+                            <tr>
+                        </table>
+                        
+                        <!--Button to remove TA-->
+                        <button (click)="removeTa(i)">Undergrad Chair clicks to remove this candidate</button>
+
+                        <div>
+                        <!--radio button to show approval/rejection-->
+                        <!--Make sure they have the same "name" attribute-->
+                        <input type="radio" id="accept-{{i}}" name="confirm">
+                        <label for="accept-{{i}}">instructor checks this to accept </label>
+                        </div>
+                        <div>
+                        <input type="radio" id="reject-{{i}}" name="confirm">
+                        <label for="reject-{{i}}">instructor checks this to reject</label>
+                        </div>
+
+                    </div>
                 </div>
+
             </td>
             <!--Section listing all potential Candidates-->
-            <td>
-                <!--Div for each candidate-->
-                <!-- ' | callback:isApplicant() ' filters the list for only candidates that applied for the viewed course -->
-                <div *ngFor="let c of candidate_list | callback:isApplicant(viewed_course)" class="candidate">
-                    <p>ID: {{c.id}}</p>
-                    <p>Name: {{c.name}}</p>
-                    <p>Priority: {{c.priority}}</p>
+            <td class = "list">
 
-                    <p>Ranked Courses: </p>
-                    <div *ngFor="let r of c.ranked_courses" >{{r}}</div>
+                <!--div containing everything in this td for style purposes-->
+                <div class="list">
+                    <!--Div for each candidate-->
+                    <!-- ' | callback:isApplicant() ' filters the list for only candidates that applied for the viewed course -->
+                    <div *ngFor="let c of candidate_list | callback:isApplicant(viewed_course)" class="candidate">
 
-                    <!--Button to add TA-->
-                    <button (click)="assignTa(c)">Undergrad Chair clicks to assign this candidate</button>
+                        <!--Split the Candidate info into two horizontally adjacent columns-->
+                        <table>
+                            <tr>
+                                <td>
+                                    <p>ID: {{c.id}}</p>
+                                    <p>Name: {{c.name}}</p>
+                                    <p>Priority: {{c.priority}}</p>
+                                </td>
+                                <td>
+                                    <p>Ranked Courses: </p>
+                                    <div *ngFor="let r of c.ranked_courses" >{{r}}</div>
+                                </td>
+                            <tr>
+                        </table>
+
+                        <!--Button to add TA-->
+                        <button (click)="assignTa(c)">Undergrad Chair clicks to assign this candidate</button>
+                    </div>
                 </div>
+
             </td>
         </tr>
     </table>

@@ -1,22 +1,4 @@
-/*table{
-    background-color: black;
-    border: 1px solid black;
-    border-radius: 5px;
-    margin: 5px;
-    width: 100%;
-}
-th{
-    background-color: black;
-    color: white;
-    padding: 5px;
-}
-td{
-    background-color: white;
-    border: 1px solid black;
-    border-radius: 5px;
-    color: black;
-    padding: 5px;
-}*/
+
 select{
     margin-left: 20px;
 }
@@ -27,6 +9,11 @@ select{
     text-align: left;
     padding: 15px;
     margin: 5px;
+}
+.list{
+    width: 600px;
+    height: 600px;
+    overflow: scroll;
 }
 table {
     font-family: arial, sans-serif;

@@ -1,45 +1,67 @@
 /* You can add global styles to this file, and also import other style files */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;900&display=swap');
 body {
-    font-family: 'Roboto', sans-serif;
     background-color: white;
-}
-h1 {
-    font-size: 75px;
-    margin: 0;
-}
-#ta {
-    color: #4F2683;
-    padding-left: 10px;
+    font-family: 'Roboto', sans-serif;
 }
 #darkened {
-    top: 0px;
-    left: 0px;
-    width: 100%;
-    height: 100%;
-    z-index: 500;
-    display: none;
     background-color: black;
+    display: none;
     filter: alpha(opacity=30);
+    height: 100%;
+    left: 0px;
     opacity: 0.3;
     position: fixed;
+    top: 0px;
+    width: 100%;
+    z-index: 500;
 }
-
 #popup {
+    display: none;
     left: 0px;
+    position: fixed;
     top: 20%;
     width: 100%;
     z-index: 550;
-    display: none;
-    position: fixed;
 }
-
 #popupContent {
-    display: block;
-    padding: 5px;
-    width: 450px;
-    margin: auto;
     background-color: white;
     border: 15px solid transparent;
     border-radius: 15px;
+    display: block;
+    padding: 5px;
+    margin: auto;
+    width: 450px;
+}
+button {
+    background-color: #4F2683;
+    border: 5px solid transparent;
+    border-radius: 5px;
+    color: white;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 900;
+    margin: 10px;
+    padding: 5px;
+    text-align: center;
+    text-decoration: none;
+}
+input {
+    border: 1px solid #807F83;
+    border-radius: 5px;
+    background-color: white;
+    font-size: 20px;
+    height: 24px;
+    line-height: 24px;
+    margin: 0px;
+    padding: 5px;
+
+}
+select {
+    background-color: white;
+    border: 1px solid #807F83;
+    border-radius: 5px;
+    color: black;
+    font-size: 20px;
+    padding: 5px;
 }

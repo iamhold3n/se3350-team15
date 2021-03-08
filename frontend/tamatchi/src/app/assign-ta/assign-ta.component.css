@@ -1,14 +1,29 @@
 table{
-    border-collapse: collapse;
-}
-th,td{
+    background-color: black;
     border: 1px solid black;
-    text-align: left;
-    padding: 15px;
+    border-radius: 5px;
+    margin: 5px;
+    width: 100%;
 }
-
+th{
+    background-color: black;
+    color: white;
+    padding: 5px;
+}
+td{
+    background-color: white;
+    color: black;
+    padding: 5px;
+}
 .candidate{    
-    border: 1px solid black;
+    background: #bebebe;
+    border: 1px solid #bebebe;
+    border-radius: 5px;
     text-align: left;
     padding: 15px;
+    margin: 5px;
+}
+select {
+    margin-top: 30px;
+    margin-left: 20px;
 }

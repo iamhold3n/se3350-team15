@@ -1,9 +1,41 @@
-table{
-    border-collapse: collapse;
+#logo {
+    float: left;
+    font-size: 75px;
+    font-weight: 900;
+    margin: 0;
+    vertical-align: middle;
+    width: 400px;
+    white-space: nowrap;
 }
-th,td{
-    border: 1px solid black;
-    text-align: left;
-    padding: 15px;
+#ta {
+    color: #4F2683;
+    padding-left: 10px;
 }
-div.topbar {border-style: solid; padding: 10px;}
+#nav {
+    float: right;
+    margin-top: 25px;
+    padding: 0px;
+    white-space: nowrap;
+}
+#nav span {
+    background-color: #4F2683;
+    border: 5px solid transparent;
+    color: white;
+    cursor: pointer;
+    display: inline-block;
+    font-weight: 900;
+    font-size: 20px;
+    margin: 0;
+    padding: 10px;
+}
+#nav span:hover {
+    background-color: black;
+}
+.left {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+#content {
+    float: left;
+    width: 100%;
+}

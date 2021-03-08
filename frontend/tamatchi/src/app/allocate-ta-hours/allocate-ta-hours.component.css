@@ -1,8 +1,34 @@
-table{
+/*table{
     border-collapse: collapse;
 }
 th,td{
     border: 1px solid black;
     text-align: left;
     padding: 15px;
+}*/
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    height: 100%;
+}
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    height: 100%;
+}
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+input {
+    margin: 10px;
+    height: 20px;
+    width: 159px;
+}
+button {
+    width: auto;
+    height: auto;
+    display: inline-block;
+    margin: 20px;
 }

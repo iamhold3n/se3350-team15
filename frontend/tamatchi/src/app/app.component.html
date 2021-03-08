@@ -4,14 +4,17 @@
 
 <!-- Dashboard -->
 <div id="nav">
-    <span class="left" routerLink='/login'>LOGIN</span>
-    <span routerLink='/course-information'>COURSE INFO</span>
-    <span routerLink='/form'>FORM</span>
-    <span routerLink='/allocate-ta-hours'>ALLOCATE</span>
-    <span routerLink='/assign-ta'>ASSIGN</span>
-    <span routerLink='/ranking'>RANKING</span>
+    <span id="nav-login" class="left" routerLink='/login' (click)="markActive(0)">LOGIN</span>
+    <span id="nav-course" routerLink='/course-information' (click)="markActive(1)">COURSE INFO</span>
+    <span id="nav-form" routerLink='/form' (click)="markActive(2)">FORM</span>
+    <span id="nav-allocate" routerLink='/allocate-ta-hours' (click)="markActive(3)">ALLOCATE</span>
+    <span id="nav-assign" routerLink='/assign-ta' (click)="markActive(4)">ASSIGN</span>
+    <span id="nav-ranking" routerLink='/ranking' (click)="markActive(5)">RANKING</span>
 </div>
 
-<div id="content">
-    <router-outlet></router-outlet>
+<div id="container">
+    <hr>
+    <div id="content">
+        <router-outlet></router-outlet>
+    </div>
 </div>

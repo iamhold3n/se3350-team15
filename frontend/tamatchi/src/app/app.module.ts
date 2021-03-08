@@ -20,6 +20,8 @@ import { CourseQuestionsComponent } from './course-questions/course-questions.co
 
 import { CallbackPipe } from './callback.pipe'; //allows for filtering of *ngFor using a specified callback function
 import { AdminComponent } from './admin/admin.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSliderModule } from '@angular/material/slider';
 
 @NgModule({
   declarations: [
@@ -40,7 +42,9 @@ import { AdminComponent } from './admin/admin.component';
     FormsModule,
     BrowserAnimationsModule,
     DragDropModule,
-    AngularFireModule.initializeApp(environment.firebase)
+    AngularFireModule.initializeApp(environment.firebase),
+    MatFormFieldModule,
+    MatSliderModule
   ],
   providers: [AngularFireModule],
   bootstrap: [AppComponent]

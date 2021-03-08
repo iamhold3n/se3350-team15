@@ -1,3 +1,8 @@
+hr {
+    height: 2px;
+    background-color: #4F2683;
+    border-width: 0px;
+}
 #logo {
     float: left;
     font-size: 75px;
@@ -31,11 +36,19 @@
 #nav span:hover {
     background-color: black;
 }
+#nav span.active {
+    background-color: white;
+    color: #4F2683;
+}
 .left {
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
 }
-#content {
+#container {
     float: left;
     width: 100%;
+}
+#content {
+    display: flex;
+    justify-content: center;
 }

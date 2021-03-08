@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;900&display=swap');
 body {
     background-color: white;
-    font-family: 'Roboto', sans-serif;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 #darkened {
     background-color: black;
@@ -55,7 +55,6 @@ input {
     line-height: 24px;
     margin: 0px;
     padding: 5px;
-
 }
 select {
     background-color: white;

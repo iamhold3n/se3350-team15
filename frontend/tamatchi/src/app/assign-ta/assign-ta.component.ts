@@ -226,7 +226,7 @@ export class AssignTaComponent implements OnInit {
      */
     function sort(a,b){
 
-      let diff = (a.priority + a.ranked_courses.indexOf(crs_code)) - (b.priority + b.ranked_courses.indexOf(crs_code))
+      let diff = (a.priority*3 + a.ranked_courses.indexOf(crs_code)) - (b.priority*3 + b.ranked_courses.indexOf(crs_code))
 
       return diff ;
     }

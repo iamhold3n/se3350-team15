@@ -1,5 +1,5 @@
 <div id="popup">
-    <div id="popupContent">
+    <div *ngIf="courseSelected != undefined" id="popupContent">
         <span id="courseCode">{{courseSelected.courseCode}}</span>
         <span id="courseName">{{courseSelected.courseName}}</span>
         <ul id='questions'>

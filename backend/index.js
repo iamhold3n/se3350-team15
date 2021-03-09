@@ -10,6 +10,8 @@ admin.initializeApp({
   databaseURL: Config.getConfig("databaseURL")
 });
 
+const db = admin.firestore();
+
 //Make sure the admin account has full permissions
 //Email: admin@uwo.ca
 //Password: admin123
@@ -122,3 +124,27 @@ app.put('/api/users', (req, res) =>
     }
   )
 });
+
+// ========================
+// DATA RETRIEVAL FUNCTIONS
+// ========================
+// grab questions for a specific course
+app.get('/api/questions/:course', (req, res) => {
+  db.collection('courses').where('courseCode', '==', req.params.course).get().then(q => {
+    if (q.empty || q.size > 1) res.status(404).send(); // expecting only one or none to be found, error out if more than 1
+    else q.forEach(d => res.status(200).send(d.data()));
+  })
+});
+
+// grab list of all courses
+app.get('/api/courses/', (req, res) => {
+  db.collection('courses').get().then(all => {
+    let allCourses = [];
+    all.forEach(c => {
+      allCourses.push(c.data());
+    })
+
+    if (allCourses.length > 0) res.status(200).send(allCourses);
+    else res.status(404).send();
+  })
+})

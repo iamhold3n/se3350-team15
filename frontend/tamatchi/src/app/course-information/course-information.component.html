@@ -6,9 +6,9 @@
         <hr />
         <input type="text" [(ngModel)]="courseCode" placeholder="Course Code" />
         <input type="text" [(ngModel)]="courseName" placeholder="Course Name" />
-        <input type="number" [(ngModel)]="lecHours" placeholder="Lec Hours" />
-        <input type="number" [(ngModel)]="labOrTutHours" placeholder="Lab/Tut Hours" />
-        <input type="number" [(ngModel)]="sections" placeholder="# of sections" />
+        <input type="number" [(ngModel)]="lecHrs" placeholder="Lec Hours" />
+        <input type="number" [(ngModel)]="labOrTutHrs" placeholder="Lab/Tut Hours" />
+        <input type="number" [(ngModel)]="sec" placeholder="# of sections" />
         
 
 
@@ -33,9 +33,9 @@
         <tr *ngFor="let row of rows">
             <td (click)="showQuestions(row.courseCode)">{{row.courseCode}}</td>
             <td>{{row.courseName}}</td>
-            <td>{{row.lecHours}}</td>
-            <td>{{row.labOrTutHours}}</td>
-            <td>{{row.sections}}</td>
+            <td>{{row.lecHrs}}</td>
+            <td>{{row.labOrTutHrs}}</td>
+            <td>{{row.sec}}</td>
             
 
 

@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CourseQuestionsComponent } from '../course-questions/course-questions.component';
+import { DataService } from '../data.service';
 
 @Component({
   selector: 'app-course-information',
@@ -9,31 +10,32 @@ import { CourseQuestionsComponent } from '../course-questions/course-questions.c
 export class CourseInformationComponent implements OnInit {
   @ViewChild(CourseQuestionsComponent) private questions: CourseQuestionsComponent;
 
-  constructor() { }
+  constructor(private data: DataService) { }
 
   public courseCode: string;
   public courseName: string;
-  public lecHours: number;
-  public labOrTutHours: number;
-  public sections: number;
+  public lecHrs: number;
+  public labOrTutHrs: number;
+  public sec: number;
 
 
 
 
-  public rows: Array<{courseCode: string, courseName: string, lecHours: number,labOrTutHours: number, sections: number }> = [];
+  //public rows: Array<{courseCode: string, courseName: string, lecHours: number,labOrTutHours: number, sections: number }> = [];
+  public rows;
 
 
   buttonClicked() {
-    this.rows.push( {courseCode: this.courseCode, courseName: this.courseName, lecHours: this.lecHours, labOrTutHours: this.labOrTutHours, sections: this.sections} );
+    this.rows.push( {courseCode: this.courseCode, courseName: this.courseName, lecHours: this.lecHrs, labOrTutHours: this.labOrTutHrs, sections: this.sec} );
 
     
 
     //if you want to clear input
     this.courseCode = null;
     this.courseName = null;
-    this.lecHours = null;
-    this.labOrTutHours = null;
-    this.sections = null;
+    this.lecHrs = null;
+    this.labOrTutHrs = null;
+    this.sec = null;
   
 
   }
@@ -42,6 +44,9 @@ export class CourseInformationComponent implements OnInit {
 
 
   ngOnInit(): void {
+    this.data.getCourses().subscribe(res => {
+      this.rows = res;
+    })
   }
 
   showQuestions(c) {

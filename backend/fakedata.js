@@ -191,7 +191,9 @@ applicants.forEach(x => {
         course: x.course,
         name: x.name,
         email: x.email,
+        hrs: x.hrs,
         status: x.status,
+        ranks: x.ranks,
         questions: x.questions
     }).then(x => {
         console.log("Added applicant");

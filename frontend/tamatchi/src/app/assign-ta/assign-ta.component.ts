@@ -46,9 +46,9 @@ export class AssignTaComponent implements OnInit {
    */
   generateCourses(){
     this.course_list=[
-      {courseCode:"3314", taHours:3, assignList:[]},
-      {courseCode:"3310", taHours:6, assignList:[]},
-      {courseCode:"2202", taHours:5, assignList:[]},
+      {courseCode:"3314", taHours:30, assignList:[]},
+      {courseCode:"3310", taHours:50, assignList:[]},
+      {courseCode:"2202", taHours:75, assignList:[]},
     ];
   }//end of loadCourses
 
@@ -89,7 +89,7 @@ export class AssignTaComponent implements OnInit {
         id: a, //placeholder id
         name: "Student "+(a+1), //placeholder name
         priority: Math.floor(Math.random()*3) +1 , //random priority between 1 and 3
-        taHours: 1,
+        taHours: (Math.floor(Math.random()*2) +1) * 5, //randomly pick between 5 or 10
         ranked_courses: temp1 //the array of randomized selected courses that was generated above
       };
 
@@ -206,20 +206,32 @@ export class AssignTaComponent implements OnInit {
   }
 
   /**
-   * Sorts the aaplicants by priority
+   * Sorts the aaplicants based on pre-defined criteria
    * Takes all the applicnats that applied to the given course
-   * returns a new array with them sorted by priority (1,2,or3)
+   * returns a new array with them sorted by:
+   *    -priority (1,2,or 3)
+   *    -applicant's ranked preferences
    */
   sortApplicant(course: Course){
 
     //filter the candidate list for applkicants that applied to the currently viewed course
     var result = this.candidate_list.filter(this.isApplicant(course));
 
-    //sort the applicants based on their priority number
-    function sortPriority(a,b){
-      return a.priority - b.priority;
+    var crs_code = course.courseCode;
+
+    /**
+     * sort the applicants based on:
+     *    -priority (1,2,or 3)
+     *    -applicant's ranked preferences
+     */
+    function sort(a,b){
+
+      let diff = (a.priority + a.ranked_courses.indexOf(crs_code)) - (b.priority + b.ranked_courses.indexOf(crs_code))
+
+      return diff ;
     }
-    result = result.sort(sortPriority);
+
+    result = result.sort(sort);
 
     //return the resultant array
     return result;

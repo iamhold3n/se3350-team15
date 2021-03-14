@@ -58,7 +58,7 @@ export class AssignTaComponent implements OnInit {
     //initialize the candidate_list array
     this.candidate_list = [];
 
-    let num_candidates = 10;
+    let num_candidates = 25;
     let temp; //temp storage for randomly generated Candidate objects
     let num_courses = this.course_list.length;
     let temp1; //temp storage for a  ranom sized array of random course codes
@@ -206,7 +206,7 @@ export class AssignTaComponent implements OnInit {
   }
 
   /**
-   * Sorts the aaplicants based on pre-defined criteria
+   * Sorts the applicants based on pre-defined criteria
    * Takes all the applicnats that applied to the given course
    * returns a new array with them sorted by:
    *    -priority (1,2,or 3)
@@ -277,6 +277,17 @@ export class AssignTaComponent implements OnInit {
       this.assignTa(a, course);
     }
 
+  }
+
+  /**
+   * Runs the auto-assign algorithm for all courses
+   * NOTES:
+   *  -JUst like the auto-assign for inidividual courses. It will not touch TAs that have already been assigned
+   */
+  autoAssignAll(){
+    for(let course of this.course_list){
+      this.autoAssign(course);
+    }
   }
 
 }//end of class

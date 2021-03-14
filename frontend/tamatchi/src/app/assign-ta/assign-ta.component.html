@@ -10,6 +10,8 @@
 <h2>Now Viewing Course: {{viewed_course.courseCode}}</h2>
 <h4>Total TA Hours: {{viewed_course.taHours}}<h4>
 
+<button (click)="autoAssignAll()">Auto-Assign All Courses</button>
+
 <!--Empty Course View Message-->
 <div *ngIf = "viewed_course == empty_course" >PLEASE SELECT A COURSE TO VIEW</div>
 

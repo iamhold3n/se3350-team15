@@ -25,7 +25,7 @@ export class CourseQuestionsComponent implements OnInit {
       darkened.style.display = 'block';
       popup.style.display = 'block';
     })
-    
+
     // dummy data for now
     /*this.courseSelected.questions = [];
     this.courseSelected.courseCode = course;
@@ -34,24 +34,27 @@ export class CourseQuestionsComponent implements OnInit {
     console.log(this.courseSelected);*/
 
     // popup effect
-    
+
   }
 
   addQuestion() {
+
     this.courseSelected.questions.push('');
+
+
   }
 
   removeQuestion(i) {
     this.courseSelected.questions.splice(i, 1);
   }
 
-  saveQuestions() {
+  saveQuestions(q: Array<object>) {
     // send updated questions to server
 
-    // for now, just print to console
-    console.log(this.courseSelected);
-    
+   
     this.closeQuestions();
+
+
   }
 
   closeQuestions() {

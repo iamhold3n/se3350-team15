@@ -25,8 +25,13 @@ export class CourseInformationComponent implements OnInit {
   public rows;
 
 
-  buttonClicked() {
-    this.rows.push( {courseCode: this.courseCode, courseName: this.courseName, lecHours: this.lecHrs, labOrTutHours: this.labOrTutHrs, sections: this.sec} );
+  addCourses() {
+    this.rows.push( {
+      courseCode: this.courseCode, 
+      courseName: this.courseName, 
+      lecHrs: this.lecHrs, 
+      labOrTutHrs: this.labOrTutHrs, 
+      sec: this.sec} );
 
     
 
@@ -37,6 +42,12 @@ export class CourseInformationComponent implements OnInit {
     this.labOrTutHrs = null;
     this.sec = null;
   
+
+  }
+
+ 
+
+  saveCourses(){
 
   }
 

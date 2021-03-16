@@ -111,3 +111,5 @@ backend/apikey.json
 
 #ignore images
 *.svg
+
+backend/service-account-file.json

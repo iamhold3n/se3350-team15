@@ -18,7 +18,6 @@ export class CourseQuestionsComponent implements OnInit {
     // query server for existing course questions
     this.data.getQuestions(course).subscribe(res => {
       this.courseSelected = res;
-      console.log(this.courseSelected);
 
       const darkened = document.getElementById('darkened');
       const popup = document.getElementById('popup');

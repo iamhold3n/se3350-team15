@@ -150,6 +150,19 @@ app.get('/api/courses/', (req, res) => {
   })
 })
 
+// grab allocation for all courses
+app.get('/api/allocation', (req, res) => {
+  db.collection('allocation').get().then(all => {
+    let allCourses = [];
+    all.forEach(c => {
+      allCourses.push(c.data());
+    })
+
+    if (allCourses.length > 0) res.status(200).send(allCourses);
+    else res.status(404).send();
+  })
+})
+
 // ===========================
 // DATA MODIFICATION FUNCTIONS
 // ===========================

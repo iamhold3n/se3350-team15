@@ -21,4 +21,8 @@ export class DataService {
     return this.http.get(`${this.url}/courses/`);
   }
 
+  getAllocationHrs() {
+    return this.http.get(`${this.url}/allocation/`);
+  }
+
 }

@@ -125,6 +125,10 @@ app.put('/api/users', (req, res) =>
   )
 });
 
+app.put('/api/allocation', (req, res) =>
+{
+});
+
 // ========================
 // DATA RETRIEVAL FUNCTIONS
 // ========================
@@ -147,6 +151,7 @@ app.get('/api/courses/', (req, res) => {
     if (allCourses.length > 0) res.status(200).send(allCourses);
     else res.status(404).send();
   })
+
 })
 
 // grab list of all allocations

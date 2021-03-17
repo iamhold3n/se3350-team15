@@ -1,7 +1,11 @@
+import { listLazyRoutes } from '@angular/compiler/src/aot/lazy_routes';
 import { Component, OnInit } from '@angular/core';
 import { Candidate } from '../candidate';
 import {Course} from '../course';
 import { DataService } from '../data.service';
+
+import {AuthService} from '../auth.service';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-assign-ta',
@@ -21,8 +25,10 @@ export class AssignTaComponent implements OnInit {
   //list of TA candidates
   candidate_list: Candidate[];
 
+  loggedIn: boolean;
 
-  constructor(private data: DataService) { }
+
+  constructor(private data: DataService, private auth : AuthService) { }
 
   ngOnInit(): void {
 
@@ -31,13 +37,17 @@ export class AssignTaComponent implements OnInit {
     //initialize the current course to be empty
     this.viewed_course = this.empty_course;
 
-    //initialize and populate course data
-    this.getCourses();
-
     //initialize and populate TA candidate data
+    //once that's done, populate the course data
     this.getCandidates();
 
+    this.checkLoggedIn();
+
   }//end of ngOnInit
+
+  checkLoggedIn(){
+    this.loggedIn = this.auth.getLoggedIn();
+  }
 
   /**
    * Get relevant course data from back-end
@@ -54,11 +64,15 @@ export class AssignTaComponent implements OnInit {
 
       //adjsut the data to be compatible with this component
       this.course_list = temp.map( course => {
-        return {
+        let obj = {
           courseCode: course.course, 
           taHours: course.currHrs, 
-          assignList: course.assignList
+          assignList: [], //assignList will be populated later in this fucntion.
         }
+
+        this.loadAssignments(obj, course.assignList); //populate assignList with saved TA assignments
+
+        return obj;
       });
 
       //console.log(this.course_list);
@@ -83,11 +97,13 @@ export class AssignTaComponent implements OnInit {
           name:ta.name,
           priority:ta.status,
           taHours:5,
-          ranked_courses:this.processCandidateRankings(ta),
+          ranked_courses:this.loadRankings(ta),
         }
       });
 
       //console.log(this.candidate_list);
+
+      this.getCourses();
 
     });//end of processing course list from back-end
 
@@ -95,8 +111,9 @@ export class AssignTaComponent implements OnInit {
 
   /**
    * Some extra functions to adjust the back-end data for this component
+   * Loads each candidates' saved course rankings
    */
-  processCandidateRankings(ta){
+  loadRankings(ta){
 
     let ranked_list=[];
     let rankings = ta.ranks;
@@ -108,7 +125,31 @@ export class AssignTaComponent implements OnInit {
 
     return ranked_list;
 
-  }//end of processCandidateRankings
+  }//end of loadRankings
+
+  /**
+   * Loads all saved assigned TAs for the specified course
+   * Assumes that "getCandidates()" has already run to completion
+   * 
+   * @param 
+   */
+  loadAssignments(crs: Course, assignList: String[]){
+
+    if(assignList.length > 0){
+
+      //loop through each course code in the assignList
+      for(let email of assignList){
+
+        //find and push the candidate object corresponding to each course code
+        this.assignTa(
+          this.candidate_list.find( e=>{return e.email == email }),
+          crs
+        );
+
+      }
+    }
+
+  }//end of loadAssignments
 
   /**
    * Changes which course is currently being viewed in the editor

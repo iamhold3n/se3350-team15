@@ -8,7 +8,9 @@
     <option *ngFor="let c of course_list, index as a" value="{{a}}">{{c.courseCode}}</option>
 </select>
 
-<button (click)="autoAssignAll()">Auto-Assign All Courses</button>
+<!--Button to run the auto-assign algorithm for ALL courses-->
+<!--Only show if user is logged in as admin-->
+<button (click)="autoAssignAll()" *ngIf="loggedIn">Auto-Assign All Courses</button>
 
 <h2>Now Viewing Course: {{viewed_course.courseCode}}</h2>
 <h4>Total TA Hours: {{viewed_course.taHours}}<h4>
@@ -20,6 +22,10 @@
 <!--Only show it if an actual course has been selected from the dropdown-->
 <div *ngIf = "viewed_course != empty_course" >
 
+    <!--Save Button-->
+    <!--Only show if user is logged in as admin-->
+    <button (click)="saveChanges()" *ngIf="loggedIn">Save Changes to all Courses</button>
+
     <!--Main editor area is a 2x2 table-->
     <table>
         <tr>
@@ -30,10 +36,6 @@
                 <!--Clear Button-->
                 <!--Only show if user is logged in as admin-->
                 <button (click)="clearTa()" *ngIf="loggedIn">Remove All</button>
-
-                <!--Submit Button-->
-                <!--Only show if user is logged in as admin-->
-                <button (click)="saveChanges()" *ngIf="loggedIn">Save Changes (Not working yet)</button>
 
             </th>
             <!--Header for potential Candidates-->

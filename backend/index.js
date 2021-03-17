@@ -155,20 +155,6 @@ app.get('/api/courses/', (req, res) => {
 
 })
 
-// grab list of all allocations
-// aka: Course data which is relevant to the TA matching algorithm
-app.get('/api/allocations/', (req, res) => {
-  db.collection('allocation').get().then(all => {
-    let allCourses = [];
-    all.forEach(c => {
-      allCourses.push(c.data());
-    })
-
-    if (allCourses.length > 0) res.status(200).send(allCourses);
-    else res.status(404).send();
-  })
-})
-
 //grab ALL TAs that are in the system
 app.get('/api/applicants/',(req,res)=>{
   db.collection('applicants').get().then(all => {
@@ -183,6 +169,7 @@ app.get('/api/applicants/',(req,res)=>{
 })
 
 // grab allocation for all courses
+// will be used to allocate hours & TAs to courses
 app.get('/api/allocation', (req, res) => {
   db.collection('allocation').get().then(all => {
     let allCourses = [];
@@ -215,7 +202,7 @@ app.post('/api/questions/:course', [
 })
 
 // change allocated hours
-app.post('/api/allocation', [
+app.post('/api/allocation/hrs', [
   body('*').isArray(),
   body('*.course').trim().escape(),
   body('*.currHrs').trim().escape()
@@ -227,4 +214,19 @@ app.post('/api/allocation', [
   })
 
   res.status(200).send({ success: 'Allocated hours successfully modified.' });
+})
+
+// change assigned TAs
+app.post('/api/allocation/tas', [
+  body('*').isArray(),
+  body('*.course').trim().escape(),
+  body('*.assignList').isArray(),
+], (req, res) => {
+  req.body.forEach(e => {
+    db.collection('allocation').where('course', '==', e.course).get().then(x => {
+        x.forEach(d => db.collection('allocation').doc(d.id).update({ assignList : e.assignList }) )
+    })
+  })
+
+  res.status(200).send({ success: 'Assigned TAs successfully modified.' });
 })

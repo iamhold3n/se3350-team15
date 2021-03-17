@@ -25,8 +25,8 @@ export class AssignTaComponent implements OnInit {
   //list of TA candidates
   candidate_list: Candidate[];
 
+  //determine which functions to hide/show
   loggedIn: boolean;
-
 
   constructor(private data: DataService, private auth : AuthService) { }
 
@@ -41,13 +41,15 @@ export class AssignTaComponent implements OnInit {
     //once that's done, populate the course data
     this.getCandidates();
 
-    this.checkLoggedIn();
-
   }//end of ngOnInit
 
+  /**
+   * Checks if user is currently logged in
+   * and updates this component as necessary to reflect that
+   */
   checkLoggedIn(){
     this.loggedIn = this.auth.getLoggedIn();
-  }
+  }//end of checkLoggedIn
 
   /**
    * Get relevant course data from back-end
@@ -58,7 +60,7 @@ export class AssignTaComponent implements OnInit {
     let temp;
 
     //get the list of courses from back-end
-    this.data.getAllocations().subscribe(res => {
+    this.data.getAllocation().subscribe(res => {
 
       temp = res;
 
@@ -163,10 +165,16 @@ export class AssignTaComponent implements OnInit {
       this.viewed_course = this.empty_course;
     }
     else{
+
+      //check if the user is currently logged in
+      //to determine if certain buttons and such will be visible
+      this.checkLoggedIn();
+
+      //update this component to view the course
       this.viewed_course = this.course_list[index];
     }
 
-  }
+  }//end of courseView
 
   /**
    * Adds a TA to a course 
@@ -215,7 +223,7 @@ export class AssignTaComponent implements OnInit {
 
     }
 
-  }
+  }//end of assignTa
 
   /**
    * Removes a TA from the currently viewed course in the editor
@@ -233,7 +241,7 @@ export class AssignTaComponent implements OnInit {
     //concatentate them together to remove the TA
     this.viewed_course.assignList= temp_1.concat(temp_2);
 
-  }
+  }//end of removeTa
 
   /**
    * This is used by the array pipe to filters the *ngFor
@@ -254,7 +262,7 @@ export class AssignTaComponent implements OnInit {
 
     //return the newly built function to be used in the callback pipe
     return isApplicant;
-  }
+  }//end of isApplicant
 
   /**
    * Takes all the applicnats that applied to the given course
@@ -319,14 +327,7 @@ export class AssignTaComponent implements OnInit {
       this.removeTa(0);
     }
 
-  }
-
-  /**
-   * Saves changes made to the course that is currently viewed in the editor
-   */
-   saveChanges(){
-    //this.viewed_course.do_something();
-  }
+  }//end of clearTa
 
   /**
    * Automistiaclly assigns the candidates for a given course
@@ -345,7 +346,7 @@ export class AssignTaComponent implements OnInit {
       this.assignTa(a, course);
     }
 
-  }
+  }//end of autoAssign
 
   /**
    * Runs the auto-assign algorithm for all courses
@@ -356,6 +357,25 @@ export class AssignTaComponent implements OnInit {
     for(let course of this.course_list){
       this.autoAssign(course);
     }
-  }
+  }//end of autoAssignAll
+
+  /**
+   * Saves changes made to all courses
+   */
+   saveChanges(){
+
+    let list=[];
+
+    for(let course of this.course_list){
+      list.push( {
+        "course": course.courseCode, 
+        "assignList":course.assignList.map( e =>{return e.email} ), //dont return the objects representing the TAs, just return the email-strings for each TA
+      } );
+    }
+
+    this.data.updateAllocationTas(list).subscribe(res => {
+      alert('Allocated TAs successfully updated for all courses.');
+    });
+  }//end of saveChanges
 
 }//end of class

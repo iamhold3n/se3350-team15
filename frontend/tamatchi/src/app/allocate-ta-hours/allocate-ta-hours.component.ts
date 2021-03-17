@@ -22,38 +22,22 @@ export class AllocateTaHoursComponent implements OnInit {
   constructor(private data: DataService) { }
 
   ngOnInit(): void {
-    this.data.getAllocationHrs().subscribe(res => {
+    this.data.getAllocation().subscribe(res => {
       this.enroll_record_list = res;
     })
-
-    //HARD-CODED PLACEHOLDER DATA
-    //Will probably pull this data from the backend in later versions
 
     //current year for display purposes
     this.current_year =2021; 
 
-    //array containing enrollment info for all courses
-    //"allocated_hrs" should be 0 by default
-    /*this.enroll_record_list = [
-      {courseCode: "SE3310", instructor:"Person A", prevEnrol: 100, prevHrs:20, currEnrol: 120, currHrs: 0},
-      {courseCode: "SE3350", instructor:"Person B", prevEnrol: 200, prevHrs:40, currEnrol: 220, currHrs: 0},
-      {courseCode: "ECE4436", instructor:"Person C", prevEnrol: 300, prevHrs:60, currEnrol: 320, currHrs: 0},
-      {courseCode: "MATH1200A", instructor:"Person D", prevEnrol: 400, prevHrs:80, currEnrol: 420, currHrs: 0},
-      {courseCode: "CHEM1000B", instructor:"Person E", prevEnrol: 500, prevHrs:100, currEnrol: 520, currHrs: 0}
-    ];*/
-
-    //END OF HARD CODED PLACEHOLDER DATA
-
   }//end of ngOnInit
 
   /**
-   * For now, This doesnt do anything
-   * In later versions, should send the JSON data to the backend
+   * Send the JSON data to the backend
    * 
    */
   saveChanges(){
     this.data.updateAllocationHrs(this.enroll_record_list).subscribe(res => {
-      alert('Allocated hours successfully updated.');
+      alert('Allocated hours successfully updated for all courses.');
     });
   }//end of saveChanges
 

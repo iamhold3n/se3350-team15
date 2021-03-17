@@ -4,6 +4,7 @@ const admin = require('firebase-admin');
 const Config = require('./config.js');
 Config.init();
 const port = Config.getConfig("port");
+const { body, validationResult } = require('express-validator');
 
 admin.initializeApp({
   credential: admin.credential.cert(Config.getConfig("apikey")),
@@ -147,4 +148,23 @@ app.get('/api/courses/', (req, res) => {
     if (allCourses.length > 0) res.status(200).send(allCourses);
     else res.status(404).send();
   })
+})
+
+// ===========================
+// DATA MODIFICATION FUNCTIONS
+// ===========================
+// change course questions
+app.post('/api/questions/:course', [
+  body('courseCode').trim().escape(),
+  body('courseName').trim().escape(),
+  body('questions').isArray(),
+  body('questions.*').trim().escape(),
+  ], (req, res) => {
+    db.collection('courses').where('courseCode', '==', req.params.course).get().then(q => {
+      if (q.empty || q.size > 1) res.status(404).send();
+      else q.forEach(d => {
+        db.collection('courses').doc(d.id).update({ questions : req.body.questions });
+        res.status(200).send({ success: 'Questions successfully modified.'});
+      })
+    })
 })

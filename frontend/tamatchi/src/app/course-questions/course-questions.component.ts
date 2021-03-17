@@ -24,17 +24,7 @@ export class CourseQuestionsComponent implements OnInit {
       const popup = document.getElementById('popup');
       darkened.style.display = 'block';
       popup.style.display = 'block';
-    })
-    
-    // dummy data for now
-    /*this.courseSelected.questions = [];
-    this.courseSelected.courseCode = course;
-    this.courseSelected.courseName = 'Intro Course';
-    this.courseSelected.questions.push('Know Javascript?');
-    console.log(this.courseSelected);*/
-
-    // popup effect
-    
+    })    
   }
 
   addQuestion() {
@@ -47,9 +37,9 @@ export class CourseQuestionsComponent implements OnInit {
 
   saveQuestions() {
     // send updated questions to server
-
-    // for now, just print to console
-    console.log(this.courseSelected);
+    this.data.updateQuestions(this.courseSelected.courseCode, this.courseSelected).subscribe(
+      res => alert('Questions successfully updated.'),
+      err => console.log(err));
     
     this.closeQuestions();
   }

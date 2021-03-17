@@ -7,23 +7,23 @@
     <tr> 
         <th>Course</th>
         <th>Instructor</th>
-        <th> <p>Enrollment {{current_year-1}}</p> </th>
+        <th> <p>Enrolment {{current_year-1}}</p> </th>
         <th> <p>TA Hours for {{current_year-1}}</p> </th>
-        <th> <p>Enrollment {{current_year}}</p> </th>
+        <th> <p>Enrolment {{current_year}}</p> </th>
         <th> <p>Estimated {{current_year}} Hours</p> </th>
-        <th> <p>TA Hours for {{current_year}} </p><p>(Undergrad Chair Enters Manually)</p> </th>
+        <th> <p>TA Hours for {{current_year}} </p><p></p> </th>
     </tr>
     <!--End of header/title rows-->
 
     <!--Content rows -->
-    <tr *ngFor="let course of enroll_record_list">
-        <th> {{course.course_id}} </th>
-        <th> {{course.instructor}} </th>
-        <th> {{course.enrollment_prev}} </th>
-        <th> {{course.ta_hr_prev}} </th>
-        <th> {{course.enrollment_current}} </th>
-        <th> {{course.ta_hr_prev * course.enrollment_current / course.enrollment_prev}} </th> <!-- Formula : (Prev TA hrs)*(Current Enrollment)/(Prev enrollment) -->
-        <th> <input [(ngModel)]="course.allocated_hrs" placeholder = 0/> </th> <!--Two-way binding for the "manually allocated TA hour" values-->
+    <tr *ngFor="let c of enroll_record_list">
+        <th> {{c.course}} </th>
+        <th> {{c.instructor}} </th>
+        <th> {{c.prevEnrol}} </th>
+        <th> {{c.prevHrs}} </th>
+        <th> {{c.currEnrol}} </th>
+        <th> {{c.estHrs}} </th> <!-- Formula : (Prev TA hrs)*(Current Enrollment)/(Prev enrollment) --> <!-- c.prevHrs * c.currEnrol / c.prevEnrol -->
+        <th> <input [(ngModel)]="c.currHrs" placeholder = 0/> </th> <!--Two-way binding for the "manually allocated TA hour" values-->
     </tr>
     <!--End of content rows -->
 
@@ -35,7 +35,7 @@
         <th></th>
         <th></th>
         <th></th> 
-        <th> <button (click)="saveChanges()" >SAVE CHANGES (Doesnt work yet)</button> </th>
+        <th> <button (click)="saveChanges()" >SAVE</button> </th>
     </tr>
     <!--End of Row for Submit button -->
 

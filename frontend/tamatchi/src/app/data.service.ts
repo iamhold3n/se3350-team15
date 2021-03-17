@@ -13,16 +13,30 @@ export class DataService {
     return this.http.get(`${this.url}/questions/${c}`);
   }
 
+  updateQuestions(c, questions) {
+    return this.http.post(`${this.url}/questions/${c}`, questions);
+  }
+
   getCourses() {
     return this.http.get(`${this.url}/courses/`);
   }
 
-  getAllocations(){
-    return this.http.get(`${this.url}/allocations/`);
-  }
-
   getApplicants(){
     return this.http.get(`${this.url}/applicants/`);
+  }
+
+  /**
+   * Use this to get data for:
+   * -Allocating TA hours to courses
+   * -Assigning TAs to courses
+   * @returns 
+   */
+  getAllocation() {
+    return this.http.get(`${this.url}/allocation/`);
+  }
+
+  updateAllocationHrs(hrs) {
+    return this.http.post(`${this.url}/allocation/`, hrs)
   }
 
 }

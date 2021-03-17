@@ -4,6 +4,7 @@ const admin = require('firebase-admin');
 const Config = require('./config.js');
 Config.init();
 const port = Config.getConfig("port");
+const { body, validationResult } = require('express-validator');
 
 admin.initializeApp({
   credential: admin.credential.cert(Config.getConfig("apikey")),
@@ -179,4 +180,51 @@ app.get('/api/applicants/',(req,res)=>{
     if (allApplicants.length > 0) res.status(200).send(allApplicants);
     else res.status(404).send();
   })
+})
+
+// grab allocation for all courses
+app.get('/api/allocation', (req, res) => {
+  db.collection('allocation').get().then(all => {
+    let allCourses = [];
+    all.forEach(c => {
+      allCourses.push(c.data());
+    })
+
+    if (allCourses.length > 0) res.status(200).send(allCourses);
+    else res.status(404).send();
+  })
+})
+
+// ===========================
+// DATA MODIFICATION FUNCTIONS
+// ===========================
+// change course questions
+app.post('/api/questions/:course', [
+  body('courseCode').trim().escape(),
+  body('courseName').trim().escape(),
+  body('questions').isArray(),
+  body('questions.*').trim().escape(),
+  ], (req, res) => {
+    db.collection('courses').where('courseCode', '==', req.params.course).get().then(q => {
+      if (q.empty || q.size > 1) res.status(404).send();
+      else q.forEach(d => {
+        db.collection('courses').doc(d.id).update({ questions : req.body.questions });
+        res.status(200).send({ success: 'Questions successfully modified.'});
+      })
+    })
+})
+
+// change allocated hours
+app.post('/api/allocation', [
+  body('*').isArray(),
+  body('*.course').trim().escape(),
+  body('*.currHrs').trim().escape()
+], (req, res) => {
+  req.body.forEach(e => {
+    db.collection('allocation').where('course', '==', e.course).get().then(x => {
+        x.forEach(d => db.collection('allocation').doc(d.id).update({ currHrs : e.currHrs }) )
+    })
+  })
+
+  res.status(200).send({ success: 'Allocated hours successfully modified.' });
 })

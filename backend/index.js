@@ -181,3 +181,18 @@ app.post('/api/questions/:course', [
       })
     })
 })
+
+// change allocated hours
+app.post('/api/allocation', [
+  body('*').isArray(),
+  body('*.course').trim().escape(),
+  body('*.currHrs').trim().escape()
+], (req, res) => {
+  req.body.forEach(e => {
+    db.collection('allocation').where('course', '==', e.course).get().then(x => {
+        x.forEach(d => db.collection('allocation').doc(d.id).update({ currHrs : e.currHrs }) )
+    })
+  })
+
+  res.status(200).send({ success: 'Allocated hours successfully modified.' });
+})

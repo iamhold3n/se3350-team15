@@ -25,4 +25,8 @@ export class DataService {
     return this.http.get(`${this.url}/allocation/`);
   }
 
+  updateAllocationHrs(hrs) {
+    return this.http.post(`${this.url}/allocation/`, hrs)
+  }
+
 }

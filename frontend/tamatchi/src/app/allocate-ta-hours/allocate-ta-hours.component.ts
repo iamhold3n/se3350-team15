@@ -52,7 +52,9 @@ export class AllocateTaHoursComponent implements OnInit {
    * 
    */
   saveChanges(){
-
+    this.data.updateAllocationHrs(this.enroll_record_list).subscribe(res => {
+      alert('Allocated hours successfully updated.');
+    });
   }//end of saveChanges
 
 }//end of class

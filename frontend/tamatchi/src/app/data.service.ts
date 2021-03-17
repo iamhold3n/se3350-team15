@@ -13,7 +13,20 @@ export class DataService {
     return this.http.get(`${this.url}/questions/${c}`);
   }
 
+  updateQuestions(c, questions) {
+    return this.http.post(`${this.url}/questions/${c}`, questions);
+  }
+
   getCourses() {
     return this.http.get(`${this.url}/courses/`);
   }
+
+  getAllocationHrs() {
+    return this.http.get(`${this.url}/allocation/`);
+  }
+
+  updateAllocationHrs(hrs) {
+    return this.http.post(`${this.url}/allocation/`, hrs)
+  }
+
 }

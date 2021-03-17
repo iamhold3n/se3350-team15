@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { EnrollmentRecord } from '../enrollment-record';
+import { DataService } from '../data.service';
 
 @Component({
   selector: 'app-allocate-ta-hours',
@@ -12,14 +13,18 @@ export class AllocateTaHoursComponent implements OnInit {
   current_year : number;
 
   //An array. Each item relates to a single course and its enrollment data from previous and current year
-  enroll_record_list : EnrollmentRecord[]; 
+  //enroll_record_list : EnrollmentRecord[]; 
+  enroll_record_list;
 
   //An array. Each item will be the manual input for each courses' TA hours (two-way binding)
   allocated_hours : number;
 
-  constructor() { }
+  constructor(private data: DataService) { }
 
   ngOnInit(): void {
+    this.data.getAllocationHrs().subscribe(res => {
+      this.enroll_record_list = res;
+    })
 
     //HARD-CODED PLACEHOLDER DATA
     //Will probably pull this data from the backend in later versions
@@ -29,13 +34,13 @@ export class AllocateTaHoursComponent implements OnInit {
 
     //array containing enrollment info for all courses
     //"allocated_hrs" should be 0 by default
-    this.enroll_record_list = [
-      {course_id: "SE3310", instructor:"Person A", enrollment_prev: 100, ta_hr_prev:20, enrollment_current: 120, allocated_hrs: 0},
-      {course_id: "SE3350", instructor:"Person B", enrollment_prev: 200, ta_hr_prev:40, enrollment_current: 220, allocated_hrs: 0},
-      {course_id: "ECE4436", instructor:"Person C", enrollment_prev: 300, ta_hr_prev:60, enrollment_current: 320, allocated_hrs: 0},
-      {course_id: "MATH1200A", instructor:"Person D", enrollment_prev: 400, ta_hr_prev:80, enrollment_current: 420, allocated_hrs: 0},
-      {course_id: "CHEM1000B", instructor:"Person E", enrollment_prev: 500, ta_hr_prev:100, enrollment_current: 520, allocated_hrs: 0}
-    ];
+    /*this.enroll_record_list = [
+      {courseCode: "SE3310", instructor:"Person A", prevEnrol: 100, prevHrs:20, currEnrol: 120, currHrs: 0},
+      {courseCode: "SE3350", instructor:"Person B", prevEnrol: 200, prevHrs:40, currEnrol: 220, currHrs: 0},
+      {courseCode: "ECE4436", instructor:"Person C", prevEnrol: 300, prevHrs:60, currEnrol: 320, currHrs: 0},
+      {courseCode: "MATH1200A", instructor:"Person D", prevEnrol: 400, prevHrs:80, currEnrol: 420, currHrs: 0},
+      {courseCode: "CHEM1000B", instructor:"Person E", prevEnrol: 500, prevHrs:100, currEnrol: 520, currHrs: 0}
+    ];*/
 
     //END OF HARD CODED PLACEHOLDER DATA
 
@@ -47,7 +52,9 @@ export class AllocateTaHoursComponent implements OnInit {
    * 
    */
   saveChanges(){
-
+    this.data.updateAllocationHrs(this.enroll_record_list).subscribe(res => {
+      alert('Allocated hours successfully updated.');
+    });
   }//end of saveChanges
 
 }//end of class

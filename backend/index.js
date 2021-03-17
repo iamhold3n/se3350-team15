@@ -148,3 +148,30 @@ app.get('/api/courses/', (req, res) => {
     else res.status(404).send();
   })
 })
+
+// grab list of all allocations
+// aka: Course data which is relevant to the TA matching algorithm
+app.get('/api/allocations/', (req, res) => {
+  db.collection('allocation').get().then(all => {
+    let allCourses = [];
+    all.forEach(c => {
+      allCourses.push(c.data());
+    })
+
+    if (allCourses.length > 0) res.status(200).send(allCourses);
+    else res.status(404).send();
+  })
+})
+
+//grab ALL TAs that are in the system
+app.get('/api/applicants/',(req,res)=>{
+  db.collection('applicants').get().then(all => {
+    let allApplicants = [];
+    all.forEach(c => {
+      allApplicants.push(c.data());
+    })
+
+    if (allApplicants.length > 0) res.status(200).send(allApplicants);
+    else res.status(404).send();
+  })
+})

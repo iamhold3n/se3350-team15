@@ -16,4 +16,13 @@ export class DataService {
   getCourses() {
     return this.http.get(`${this.url}/courses/`);
   }
+
+  getAllocations(){
+    return this.http.get(`${this.url}/allocations/`);
+  }
+
+  getApplicants(){
+    return this.http.get(`${this.url}/applicants/`);
+  }
+
 }

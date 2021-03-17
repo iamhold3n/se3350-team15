@@ -7,10 +7,10 @@
     <option *ngFor="let c of course_list, index as a" value="{{a}}">{{c.courseCode}}</option>
 </select>
 
+<button (click)="autoAssignAll()">Auto-Assign All Courses</button>
+
 <h2>Now Viewing Course: {{viewed_course.courseCode}}</h2>
 <h4>Total TA Hours: {{viewed_course.taHours}}<h4>
-
-<button (click)="autoAssignAll()">Auto-Assign All Courses</button>
 
 <!--Empty Course View Message-->
 <div *ngIf = "viewed_course == empty_course" >PLEASE SELECT A COURSE TO VIEW</div>
@@ -56,7 +56,7 @@
                         <table>
                             <tr>
                                 <td>
-                                    <p>ID: {{a.id}}</p>
+                                    <p>ID: {{a.email}}</p>
                                     <p>Name: {{a.name}}</p>
                                     <p>Priority: {{a.priority}}</p>
                                     <p>TA Hours: {{a.taHours}}</p>
@@ -99,7 +99,7 @@
                         <table>
                             <tr>
                                 <td>
-                                    <p>ID: {{c.id}}</p>
+                                    <p>ID: {{c.email}}</p>
                                     <p>Name: {{c.name}}</p>
                                     <p>Priority: {{c.priority}}</p>
                                 </td>

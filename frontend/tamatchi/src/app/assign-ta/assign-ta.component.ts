@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Candidate } from '../candidate';
 import {Course} from '../course';
+import { DataService } from '../data.service';
 
 @Component({
   selector: 'app-assign-ta',
@@ -10,7 +11,7 @@ import {Course} from '../course';
 export class AssignTaComponent implements OnInit {
 
   //list of  all courses that are being assigned TAs
-  course_list: Course[];
+  course_list;
   //empty course. For when no selection has been made
   empty_course: Course; 
 
@@ -21,7 +22,7 @@ export class AssignTaComponent implements OnInit {
   candidate_list: Candidate[];
 
 
-  constructor() { }
+  constructor(private data: DataService) { }
 
   ngOnInit(): void {
 
@@ -30,75 +31,84 @@ export class AssignTaComponent implements OnInit {
     //initialize the current course to be empty
     this.viewed_course = this.empty_course;
 
-    //initialize and populate course_list array
-    this.generateCourses();
+    //initialize and populate course data
+    this.getCourses();
 
-    //initialize and populate candidate_list array
-    this.generateCandidates();
+    //initialize and populate TA candidate data
+    this.getCandidates();
 
   }//end of ngOnInit
 
   /**
-   * Generate placeholder course data
-   * each object contians:
-   *  -course code
-   *  -number of ta hours
+   * Get relevant course data from back-end
+   * In the back-end this relevant data is under "Allocations" not "Courses"
    */
-  generateCourses(){
-    this.course_list=[
-      {courseCode:"3314", taHours:30, assignList:[]},
-      {courseCode:"3310", taHours:50, assignList:[]},
-      {courseCode:"2202", taHours:75, assignList:[]},
-    ];
-  }//end of loadCourses
+  getCourses(){
+    
+    let temp;
 
-  //Generate placeholder candidate data
-  generateCandidates(){
+    //get the list of courses from back-end
+    this.data.getAllocations().subscribe(res => {
 
-    //initialize the candidate_list array
-    this.candidate_list = [];
+      temp = res;
 
-    let num_candidates = 25;
-    let temp; //temp storage for randomly generated Candidate objects
-    let num_courses = this.course_list.length;
-    let temp1; //temp storage for a  ranom sized array of random course codes
-    let temp2; //temps storage for Courses that havent been randomly chosen yet
-    let crs_code; //temp storage for a course code
+      //adjsut the data to be compatible with this component
+      this.course_list = temp.map( course => {
+        return {
+          courseCode: course.course, 
+          taHours: course.currHrs, 
+          assignList: course.assignList
+        }
+      });
 
-    for(let a=0; a<num_candidates; a++){
+      //console.log(this.course_list);
 
-      //choose random # of courses from course_list (at least one course)
-      //choose that number of selected courses from start of course_list
-      temp1=[];
-      temp2 = this.course_list;
+    });//end of processing course list from back-end
 
-      //loop a random numer of times (between 1 and the number of courses)
-      for(let b=0; b<Math.floor(Math.random()*num_courses) +1; b++){
+  }//end of getCourses
 
-        //get course code of a random Course
-        crs_code = temp2[Math.floor(Math.random()*temp2.length)].courseCode; 
-        //push the course code into the array
-        temp1.push(crs_code); 
-        //decrease the pool of course codes to randomly choose from
-        temp2 = temp2.filter( e =>{return e.courseCode != crs_code} );
-      }
+  getCandidates(){
 
+    let temp;
 
-      //create a "Candidate" object with randomized values
-      temp = {
-        id: a, //placeholder id
-        name: "Student "+(a+1), //placeholder name
-        priority: Math.floor(Math.random()*3) +1 , //random priority between 1 and 3
-        taHours: (Math.floor(Math.random()*2) +1) * 5, //randomly pick between 5 or 10
-        ranked_courses: temp1 //the array of randomized selected courses that was generated above
-      };
+    //get the list of courses from back-end
+    this.data.getApplicants().subscribe(res => {
 
-      //add the new object to the list of "Candidate" objects
-      this.candidate_list.push(temp);
+      temp = res;
 
-    }//end of candidate generation loop
+      //adjsut the data to be compatible with this component
+      this.candidate_list = temp.map( ta => {
+        return {
+          email:ta.email,
+          name:ta.name,
+          priority:ta.status,
+          taHours:5,
+          ranked_courses:this.processCandidateRankings(ta),
+        }
+      });
 
-  }//end of generateCandidates
+      //console.log(this.candidate_list);
+
+    });//end of processing course list from back-end
+
+  }//end of getCandidates
+
+  /**
+   * Some extra functions to adjust the back-end data for this component
+   */
+  processCandidateRankings(ta){
+
+    let ranked_list=[];
+    let rankings = ta.ranks;
+    let courses = ta.course;
+
+    for(let a=0; a<rankings.length; a++){
+      ranked_list[rankings[a]-1] = courses[a];
+    }
+
+    return ranked_list;
+
+  }//end of processCandidateRankings
 
   /**
    * Changes which course is currently being viewed in the editor
@@ -206,13 +216,12 @@ export class AssignTaComponent implements OnInit {
   }
 
   /**
-   * Sorts the applicants based on pre-defined criteria
    * Takes all the applicnats that applied to the given course
    * returns a new array with them sorted by:
    *    -priority (1,2,or 3)
    *    -applicant's ranked preferences
    */
-  sortApplicant(course: Course){
+  sortApplicantPriority(course: Course){
 
     //filter the candidate list for applkicants that applied to the currently viewed course
     var result = this.candidate_list.filter(this.isApplicant(course));
@@ -236,7 +245,25 @@ export class AssignTaComponent implements OnInit {
     //return the resultant array
     return result;
 
-  }
+  } //end of sortApplicantPriority
+
+  /**
+   * Sorts the candidate list based on a criteria
+   * @param criteria:
+   *      - "priority" to sort by priority then applicant's ranked preferences
+   */
+  sortCandidateList(criteria){
+
+    switch (criteria) {
+      case "priority":
+        this.candidate_list = this.sortApplicantPriority(this.viewed_course);
+        break;
+    
+      default:
+        break;
+    }//end of switch
+
+  } //end of sortCandidateList
 
   /**
    * un-assigns all TAs that are assigned to the currently viewed course
@@ -269,7 +296,7 @@ export class AssignTaComponent implements OnInit {
    */
   autoAssign(course: Course){
 
-    var applicants = this.sortApplicant(course);
+    var applicants = this.sortApplicantPriority(course);
 
     for(let a of applicants){
 

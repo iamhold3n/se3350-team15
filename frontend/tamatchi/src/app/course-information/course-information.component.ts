@@ -44,6 +44,12 @@ export class CourseInformationComponent implements OnInit {
       labOrTutHrs: this.labOrTutHrs, 
       sec: this.sec} );
 
+      this.data.postCourses(this.rows[this.rows.length -5]).subscribe(
+        res => alert('Courses successfully saved.'),
+        err => console.log(err));
+
+     
+
     
 
     //if you want to clear input
@@ -59,12 +65,8 @@ export class CourseInformationComponent implements OnInit {
  
 
   saveCourses(){
-    this.data.postCourses(this.rows[this.rows.length -5]).subscribe(
-      res => alert('Courses successfully saved.'),
-      err => console.log(err));
+    
     }
-
- 
 
 
   ngOnInit(): void {

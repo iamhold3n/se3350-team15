@@ -33,39 +33,32 @@ export class CourseInformationComponent implements OnInit {
   //public rows: Array<{courseCode: string, courseName: string, lecHours: number,labOrTutHours: number, sections: number }> = [];
   public rows;
 
-  
 
 
-  addCourses() {
-    this.rows.push( {
-      courseCode: this.courseCode, 
-      courseName: this.courseName, 
-      lecHrs: this.lecHrs, 
-      labOrTutHrs: this.labOrTutHrs, 
-      sec: this.sec} );
 
-      this.data.postCourses(this.rows[this.rows.length -2]).subscribe(
-        res => alert('Courses successfully saved.'),
+  buttonClicked() {
+    let course = {
+      courseCode: this.courseCode,
+      courseName: this.courseName,
+      lecHrs: this.lecHrs,
+      labOrTutHrs: this.labOrTutHrs,
+      sec: this.sec,
+      questions: []
+    };
+
+    this.data.addCourse(course).subscribe(
+      () => alert('Course successfully added.'),
         err => console.log(err));
 
-     
+      this.rows.push(course);
+      //if you want to clear input
+      this.courseCode = null;
+      this.courseName = null;
+      this.lecHrs = null;
+      this.labOrTutHrs = null;
+      this.sec = null;
 
-    
 
-    //if you want to clear input
-    this.courseCode = null;
-    this.courseName = null;
-    this.lecHrs = null;
-    this.labOrTutHrs = null;
-    this.sec = null;
-  
-
-  }
-
- 
-
-  saveCourses(){
-    
     }
 
 

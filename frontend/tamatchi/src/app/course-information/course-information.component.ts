@@ -44,7 +44,7 @@ export class CourseInformationComponent implements OnInit {
       labOrTutHrs: this.labOrTutHrs, 
       sec: this.sec} );
 
-      this.data.postCourses(this.rows[this.rows.length -5]).subscribe(
+      this.data.postCourses(this.rows[this.rows.length -2]).subscribe(
         res => alert('Courses successfully saved.'),
         err => console.log(err));
 

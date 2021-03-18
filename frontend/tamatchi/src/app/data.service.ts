@@ -17,5 +17,10 @@ export class DataService {
     return this.http.get(`${this.url}/courses/`);
   }
 
+  postCourses(courses) {
+    return this.http.post(`${this.url}/courses/`, courses);
+
+  }
+
   
 }

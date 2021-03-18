@@ -12,6 +12,12 @@ export class CourseInformationComponent implements OnInit {
 
   constructor(private data: DataService) { }
 
+  // public courseCode: string;
+  // public courseName: string;
+  // public lecHrs: number;
+  // public labOrTutHrs: number;
+  // public sec: number;
+
   public courseCode: string;
   public courseName: string;
   public lecHrs: number;
@@ -21,8 +27,13 @@ export class CourseInformationComponent implements OnInit {
 
 
 
+
+
+
   //public rows: Array<{courseCode: string, courseName: string, lecHours: number,labOrTutHours: number, sections: number }> = [];
   public rows;
+
+  
 
 
   addCourses() {
@@ -48,8 +59,10 @@ export class CourseInformationComponent implements OnInit {
  
 
   saveCourses(){
-
-  }
+    this.data.postCourses(this.rows[this.rows.length -5]).subscribe(
+      res => alert('Courses successfully saved.'),
+      err => console.log(err));
+    }
 
  
 

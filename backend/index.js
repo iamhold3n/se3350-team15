@@ -5,6 +5,8 @@ const Config = require('./config.js');
 Config.init();
 const port = Config.getConfig("port");
 const { body, validationResult } = require('express-validator');
+const { auth } = require('firebase-admin');
+const { response } = require('express');
 
 admin.initializeApp({
   credential: admin.credential.cert(Config.getConfig("apikey")),
@@ -23,7 +25,7 @@ admin.auth().setCustomUserClaims("IBrv424a2eY3usGCogXZUgSskgK2", {admin : true})
 //debugging test
 admin.auth().getUser("3A9c8PeAIYSFy11LtqeQ9R5FFoL2").then((userRecord) =>
 {
-  console.log(userRecord.toJSON());
+  //console.log(userRecord.toJSON());
 })
 
 async function verifyUser(token, perms) //Function for verifying that a token meets a set of claims permissions.
@@ -76,6 +78,7 @@ app.listen(port, () => {
 });
 
 app.use(express.json());
+
 app.post('/api/users', (req, res) => {  //adjust user permissions
 
   verifyUser(req.header('authorization'), {"admin" : true}).then(
@@ -99,7 +102,39 @@ app.post('/api/users', (req, res) => {  //adjust user permissions
 
 });
 
-app.put('/api/users', (req, res) =>
+app.get('/api/users/list', (req, res) => //get a list of all users
+{
+  verifyUser(req.header('authorization'), {"admin": true}).then(
+  (val) => {
+    if (!val)
+    {
+      res.status(404).send();
+    }
+    else
+    {
+      admin.auth().listUsers().then((results) =>
+      {
+        //Now to filter these results down to only essential data.
+        //assuming the only valid claim types are: admin, faculty, professor, chair
+        var list = [];
+        for (var i = 0; i < results["users"].length; i++)
+        {
+          obj = {
+            uid : results["users"][i]["uid"],
+            email : results["users"][i]["email"],
+            claims : results["users"][i]["customClaims"],
+            disabled : results["users"][i]["disabled"]
+          }
+          list.push(obj);
+        }
+        res.json(list).send();
+      });
+    }
+  }
+  )
+});
+
+app.put('/api/users', (req, res) => //account creation
 {
 
    verifyUser(req.header('authorization'), {"admin" : true}).then(
@@ -116,14 +151,29 @@ app.put('/api/users', (req, res) =>
         //password: string
         admin.auth().createUser({
           email: acc["email"],
-          password: acc["password"]
+          password: generateRandomPassword()
         }).then(
-          (resolve) => {res.status(200).send();},
+          (resolve) => {
+            res.status(200).send();
+          },
           (rej) => {res.send(rej["message"]);}
         );
       }
     }
   )
+});
+
+app.get(`/api/users`, (req, res) => //get claims
+{
+  console.log("Searching for claims");
+  admin.auth().verifyIdToken(req.header('authorization')).then((claims) =>
+  {
+    console.log("Claims found, sending..");
+    res.send(claims);
+  }).catch(() => {
+    console.log("Error");
+    res.send({});
+  }); //send empty obj if it fails to validate. 
 });
 
 // ========================
@@ -196,3 +246,15 @@ app.post('/api/allocation', [
 
   res.status(200).send({ success: 'Allocated hours successfully modified.' });
 })
+
+function generateRandomPassword() //generate a random default password
+{
+  var allowedChars = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!@#%^&*";
+  var  length = Math.floor(Math.random() * 8) + 8;
+  var output = "";
+  for (var i = 0; i < length; i++)
+  {
+    output += allowedChars.split("")[Math.floor(Math.random() * allowedChars.length)];
+  }
+  return output;
+}

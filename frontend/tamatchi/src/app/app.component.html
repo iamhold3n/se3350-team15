@@ -10,6 +10,7 @@
     <span id="nav-allocate" routerLink='/allocate-ta-hours' (click)="markActive(3)">ALLOCATE</span>
     <span id="nav-assign" routerLink='/assign-ta' (click)="markActive(4)">ASSIGN</span>
     <span id="nav-ranking" routerLink='/ranking' (click)="markActive(5)">RANKING</span>
+    <span id="nav-admin" routerLink='/admin' (click)="markActive(6)" *ngIf="isAdmin()">ADMIN</span>
 </div>
 
 <div id="container">

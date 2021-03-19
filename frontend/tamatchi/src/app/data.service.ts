@@ -43,4 +43,10 @@ export class DataService {
     return this.http.post(`${this.url}/allocation/tas/`, tas)
   }
 
+  addCourse(c) {
+    return this.http.put(`${this.url}/courses/`, c);
+
+  }
+
+  
 }

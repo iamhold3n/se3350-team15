@@ -20,7 +20,7 @@ const db = admin.firestore();
 //Password: admin123
 //With the current setup, this account will ALWAYS have admin perms. It's password can be changed.
 //Probably need a better way to do this at some point.
-admin.auth().setCustomUserClaims("IBrv424a2eY3usGCogXZUgSskgK2", {admin : true}).then(() => {});
+admin.auth().setCustomUserClaims("IBrv424a2eY3usGCogXZUgSskgK2", { admin: true }).then(() => { });
 
 //debugging test
 admin.auth().getUser("3A9c8PeAIYSFy11LtqeQ9R5FFoL2").then((userRecord) =>
@@ -80,11 +80,11 @@ async function verifyUser(token, perms) //Function for verifying that a token me
 
 app.get('/', (req, res, next) => {
   console.log(`Received ${req.method} request for ${req.url}`);
-    res.append('Access-Control-Allow-Origin', ['*']); //adding headers here
-    res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-    res.append('Access-Control-Allow-Headers', 'Content-Type');
-    res.append('Access-Control-Allow-Headers', 'authorization');
-    next(); //then continue
+  res.append('Access-Control-Allow-Origin', ['*']); //adding headers here
+  res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.append('Access-Control-Allow-Headers', 'Content-Type');
+  res.append('Access-Control-Allow-Headers', 'authorization');
+  next(); //then continue
 });
 
 app.listen(port, () => {
@@ -96,19 +96,18 @@ app.use(express.json());
 app.post('/api/users', (req, res) => {  //adjust user permissions
   verifyUser(req.header('authorization'), {"admin" : true}).then(
     (val) => {
-      if(!val) //if it fails to validate..
+      if (!val) //if it fails to validate..
       {
         res.status(404).send();
       }
-      else
-      {
+      else {
         const userClaims = req.body;
         console.log(userClaims);
         //expect request to contain:
         //userID: string
         //perms : {}
         //for claims adjustment
-        admin.auth().setCustomUserClaims(userClaims["userID"], userClaims["perms"]).then(() => {});
+        admin.auth().setCustomUserClaims(userClaims["userID"], userClaims["perms"]).then(() => { });
         res.status(200).send();
       }
     }
@@ -151,14 +150,13 @@ app.get('/api/users/list', (req, res) => //get a list of all users
 app.put('/api/users', (req, res) => //account creation
 {
 
-   verifyUser(req.header('authorization'), {"admin" : true}).then(
+  verifyUser(req.header('authorization'), { "admin": true }).then(
     (val) => {
-      if(!val) //if it fails to validate..
+      if (!val) //if it fails to validate..
       {
         res.status(404).send();
       }
-      else
-      {
+      else {
         const acc = req.body;
         //expect request to contain:
         //email: string

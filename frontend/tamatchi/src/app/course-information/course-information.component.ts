@@ -12,6 +12,12 @@ export class CourseInformationComponent implements OnInit {
 
   constructor(private data: DataService) { }
 
+  // public courseCode: string;
+  // public courseName: string;
+  // public lecHrs: number;
+  // public labOrTutHrs: number;
+  // public sec: number;
+
   public courseCode: string;
   public courseName: string;
   public lecHrs: number;
@@ -21,26 +27,39 @@ export class CourseInformationComponent implements OnInit {
 
 
 
+
+
+
   //public rows: Array<{courseCode: string, courseName: string, lecHours: number,labOrTutHours: number, sections: number }> = [];
   public rows;
 
 
+
+
   buttonClicked() {
-    this.rows.push( {courseCode: this.courseCode, courseName: this.courseName, lecHours: this.lecHrs, labOrTutHours: this.labOrTutHrs, sections: this.sec} );
+    let course = {
+      courseCode: this.courseCode,
+      courseName: this.courseName,
+      lecHrs: this.lecHrs,
+      labOrTutHrs: this.labOrTutHrs,
+      sec: this.sec,
+      questions: []
+    };
 
-    
+    this.data.addCourse(course).subscribe(
+      () => alert('Course successfully added.'),
+        err => console.log(err));
 
-    //if you want to clear input
-    this.courseCode = null;
-    this.courseName = null;
-    this.lecHrs = null;
-    this.labOrTutHrs = null;
-    this.sec = null;
-  
+      this.rows.push(course);
+      //if you want to clear input
+      this.courseCode = null;
+      this.courseName = null;
+      this.lecHrs = null;
+      this.labOrTutHrs = null;
+      this.sec = null;
 
-  }
 
- 
+    }
 
 
   ngOnInit(): void {

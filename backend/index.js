@@ -209,7 +209,7 @@ app.post('/api/allocation/hrs', [
 ], (req, res) => {
   req.body.forEach(e => {
     db.collection('allocation').where('course', '==', e.course).get().then(x => {
-        x.forEach(d => db.collection('allocation').doc(d.id).update({ currHrs : e.currHrs }) )
+        x.forEach(d => db.collection('allocation').doc(d.id).update({ currHrs : parseInt(e.currHrs) }) )
     })
   })
 

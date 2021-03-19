@@ -26,7 +26,8 @@ export class AssignTaComponent implements OnInit {
   candidate_list: Candidate[];
 
   //determine which functions to hide/show
-  loggedIn: boolean;
+  admin: boolean;
+  instructor:boolean;
 
   constructor(private data: DataService, private auth : AuthService) { }
 
@@ -44,12 +45,20 @@ export class AssignTaComponent implements OnInit {
   }//end of ngOnInit
 
   /**
-   * Checks if user is currently logged in
+   * Checks if user has admin permissions (faculty admin or undergrad chair)
    * and updates this component as necessary to reflect that
    */
-  checkLoggedIn(){
-    this.loggedIn = this.auth.getLoggedIn();
-  }//end of checkLoggedIn
+  isAdmin()
+  {
+     
+    this.auth.getClaims().then((claims) =>
+    {
+ 
+      this.admin = claims["admin"] || claims["chair"];
+      this.instructor = claims["professor"];
+
+    });
+  }//end of isAdmin
 
   /**
    * Get relevant course data from back-end
@@ -168,7 +177,7 @@ export class AssignTaComponent implements OnInit {
 
       //check if the user is currently logged in
       //to determine if certain buttons and such will be visible
-      this.checkLoggedIn();
+      this.isAdmin();
 
       //update this component to view the course
       this.viewed_course = this.course_list[index];

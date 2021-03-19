@@ -10,7 +10,7 @@
 
 <!--Button to run the auto-assign algorithm for ALL courses-->
 <!--Only show if user is logged in as admin-->
-<button (click)="autoAssignAll()" *ngIf="loggedIn">Auto-Assign All Courses</button>
+<button (click)="autoAssignAll()" *ngIf="admin">Auto-Assign All Courses</button>
 
 <h2>Now Viewing Course: {{viewed_course.courseCode}}</h2>
 <h4>Total TA Hours: {{viewed_course.taHours}}<h4>
@@ -24,7 +24,11 @@
 
     <!--Save Button-->
     <!--Only show if user is logged in as admin-->
-    <button (click)="saveChanges()" *ngIf="loggedIn">Save Changes to all Courses</button>
+    <button (click)="saveChanges()" *ngIf="admin">Save Changes to all Courses</button>
+
+    <!--Submit Feedback Button-->
+    <!--Only show if user is logged in as instructor-->
+    <button (click)="saveChanges()" *ngIf="instructor">Submit Feedback (Not Working Yet)</button>
 
     <!--Main editor area is a 2x2 table-->
     <table>
@@ -35,7 +39,7 @@
 
                 <!--Clear Button-->
                 <!--Only show if user is logged in as admin-->
-                <button (click)="clearTa()" *ngIf="loggedIn">Remove All</button>
+                <button (click)="clearTa()" *ngIf="admin">Remove All</button>
 
             </th>
             <!--Header for potential Candidates-->
@@ -44,7 +48,7 @@
 
                 <!--Auto-Assign Button-->
                 <!--Only show if user is logged in as admin-->
-                <button (click)="autoAssign(viewed_course)" *ngIf="loggedIn">Auto Assign</button>
+                <button (click)="autoAssign(viewed_course)" *ngIf="admin">Auto Assign</button>
 
             </th>
         </tr>
@@ -76,19 +80,19 @@
                         
                         <!--Button to remove TA-->
                         <!--Only show it if user is logged in as admin-->
-                        <button (click)="removeTa(i)" *ngIf="loggedIn" >Undergrad Chair clicks to remove this candidate</button>
+                        <button (click)="removeTa(i)" *ngIf="admin" >Remove</button>
 
                         <!--Only show this part if user is logged in as instructor-->
-                        <div *ngIf="loggedIn">
+                        <div *ngIf="instructor">
                         <!--radio button to show approval/rejection-->
                         <!--Make sure they have the same "name" attribute-->
                         <input type="radio" id="accept-{{i}}" name="confirm">
-                        <label for="accept-{{i}}">instructor checks this to accept </label>
+                        <label for="accept-{{i}}">Accept </label>
                         </div>
                         <!--Only show this part if user is logged in as instructor-->
-                        <div *ngIf="loggedIn">
+                        <div *ngIf="instructor">
                         <input type="radio" id="reject-{{i}}" name="confirm">
-                        <label for="reject-{{i}}">instructor checks this to reject</label>
+                        <label for="reject-{{i}}">Reject</label>
                         </div>
 
                     </div>
@@ -121,7 +125,7 @@
 
                         <!--Button to add TA-->
                         <!--Only show it if user is logged in as admin-->
-                        <button (click)="assignTa(c)" *ngIf="loggedIn" >Undergrad Chair clicks to assign this candidate</button>
+                        <button (click)="assignTa(c)" *ngIf="admin" >Assign</button>
                     </div>
                 </div>
 

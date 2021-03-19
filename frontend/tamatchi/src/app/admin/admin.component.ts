@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service';
 import firebase from 'firebase/app';
 import 'firebase/auth';
@@ -31,6 +31,7 @@ export class AdminComponent implements OnInit {
         else
         {
           alert("Failed to create user."); //at some point, more details should be added to the failure message.
+          console.log(response);
         }
       },
       (error) => {alert("An error has occured"); console.log(error);}
@@ -39,13 +40,15 @@ export class AdminComponent implements OnInit {
 
   sendPasswordResetEmail(email) //send a password reset email
   {
+    console.log(email);
     var fAuth = firebase.auth();
     fAuth.sendPasswordResetEmail(email);
   }
 
   setClaims(uid, admin, professor, chair)
   {
-    this.api.setClaims(uid, {"admin": admin, "professor": professor, "chair": chair});
+    console.log("Setting claims on " + uid + admin + professor + chair);
+    this.api.setClaims(uid, {"admin": admin, "professor": professor, "chair": chair}).subscribe();
   }
 
   getUsers()
@@ -56,5 +59,17 @@ export class AdminComponent implements OnInit {
         this.userList = response as unknown as Array<object>;
       }
     )
+  }
+
+  getStatus(user, claim, checkbox)
+  {
+    var data = user['claims'][claim];
+    if (data == undefined)
+    {
+      data = false;
+    }
+    checkbox.checked = data; //checkbox doesn't properly update if you don't force it to update sometimes
+    return data;
+
   }
 }

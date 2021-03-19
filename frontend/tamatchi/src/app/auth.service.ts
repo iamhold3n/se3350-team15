@@ -68,16 +68,20 @@ export class AuthService {
 
   getClaims()
   {
-    var claims = this.api.getClaims();
-    if (claims["disabled"] == true)
+    return new Promise((resolve, reject) =>
     {
-      return {disabled: true}; //return an otherwise empty object if disabled so that no further disabled checking needs to be done
-    }
-    else
+      this.api.getClaims().subscribe((claims) =>
     {
-      return claims;
-    }
+      if (claims["disabled"] == true)
+      {
+        resolve({disabled: true}); //return an otherwise empty object if disabled so that no further disabled checking needs to be done
+      }
+      else
+      {
+        resolve(claims);
+      }
+    })
+    })
+    
   }
-
-
 }

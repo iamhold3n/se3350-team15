@@ -1,22 +1,22 @@
-<div style="border-radius: 2px; border-color: black; border-style: solid; width: 50%; float: left;">
+<div style="border-radius: 2px; border-color: black; border-style: solid; float: left;">
     Email Address: <input #email>
     <button (click) = "register(email.value)">Create Account</button>
     A password set link will be sent to the provided email.
 </div>
-
-<div style="border-radius: 2px; border-color: black; border-style: solid; width: 50%; float: left;">
+<br>
+<div style="border-radius: 2px; border-color: black; border-style: solid; float: left;">
     <ul>
         <li *ngFor="let user of userList">
             Email: {{user["email"]}}
             <br>
-            Professor: <input #prof type="checkbox" value="user[claims][professor]">
+            Professor: <input #prof type="checkbox" checked="{{getStatus(user, 'professor', prof)}}">
             <br>
-            Admin: <input #admin type="checkbox" value="user[claims][admin]">
+            Admin: <input #admin type="checkbox" checked="{{getStatus(user, 'admin', admin)}}">
             <br>
-            Chair: <input #chair type="checkbox" value="user[claims][chair]">
+            Chair: <input #chair type="checkbox" checked="{{getStatus(user, 'chair', chair)}}">
             <br>
-            <!--<button (click) = "setClaims(user['uid'], #admin.value, #prof.value, #chair.value);">Update User</button>-->
-            <button (click) = "sendPasswordResetEmail(user[email])">Send Password Reset</button>
+            <button (click) = "setClaims(user['uid'], admin.checked, prof.checked, chair.checked)">Update User</button>
+            <button (click) = "sendPasswordResetEmail(user['email'])">Send Password Reset</button>
             <br>
         </li>
     </ul>

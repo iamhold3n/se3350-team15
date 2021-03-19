@@ -45,7 +45,13 @@ async function verifyUser(token, perms) //Function for verifying that a token me
 
   var verifPromise = new Promise(function(resolve, reject)
   {
-    admin.auth().verifyIdToken(token).then((claims) => //verify the token first
+    if(token == undefined)
+    {
+      resolve(false);
+    }
+    try
+    {
+    admin.auth().verifyIdToken(token).catch((err) => resolve(false)).then((claims) => //verify the token first
       {
         if(claims["disabled"])
         {
@@ -59,7 +65,15 @@ async function verifyUser(token, perms) //Function for verifying that a token me
             }
           }
           resolve(true); //if they all match, true
+      }).catch((err) =>
+      {
+        resolve(false); //if the token isn't even properly formatted, fail authentication.
       });
+    }
+    catch(err)
+    {
+      resolve(false);//if the token isn't even properly formatted, fail authentication.
+    }
   });
   return verifPromise;
 }
@@ -80,7 +94,6 @@ app.listen(port, () => {
 app.use(express.json());
 
 app.post('/api/users', (req, res) => {  //adjust user permissions
-
   verifyUser(req.header('authorization'), {"admin" : true}).then(
     (val) => {
       if(!val) //if it fails to validate..
@@ -90,6 +103,7 @@ app.post('/api/users', (req, res) => {  //adjust user permissions
       else
       {
         const userClaims = req.body;
+        console.log(userClaims);
         //expect request to contain:
         //userID: string
         //perms : {}
@@ -128,7 +142,7 @@ app.get('/api/users/list', (req, res) => //get a list of all users
           list.push(obj);
         }
         res.json(list).send();
-      });
+      }).catch((err) => {});
     }
   }
   )
@@ -154,7 +168,7 @@ app.put('/api/users', (req, res) => //account creation
           password: generateRandomPassword()
         }).then(
           (resolve) => {
-            res.status(200).send();
+            res.send(true);
           },
           (rej) => {res.send(rej["message"]);}
         );
@@ -165,15 +179,19 @@ app.put('/api/users', (req, res) => //account creation
 
 app.get(`/api/users`, (req, res) => //get claims
 {
-  console.log("Searching for claims");
+  try
+  {
   admin.auth().verifyIdToken(req.header('authorization')).then((claims) =>
   {
-    console.log("Claims found, sending..");
     res.send(claims);
   }).catch(() => {
-    console.log("Error");
     res.send({});
   }); //send empty obj if it fails to validate. 
+}
+catch(err)
+{
+  res.send({});
+}
 });
 
 // ========================

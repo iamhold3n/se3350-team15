@@ -320,6 +320,28 @@ app.post('/api/allocation/tas', [
   res.status(200).send({ success: 'Assigned TAs successfully modified.' });
 });
 
+// add a course
+app.put('/api/courses'), [
+  body('courseCode').trim().escape(),
+  body('courseName').trim().escape(),
+  body('labOrTutHrs').trim().escape(),
+  body('lecHrs').trim().escape(),
+  body('sec').trim().escape(),
+], (req, res) => {
+  db.collection('courses').add({
+    courseCode: req.body.courseCode,
+    courseName: req.body.courseName,
+    labOrTutHrs: req.body.labOrTutHrs,
+    lecHrs: req.body.lecHrs,
+    questions: [],
+    sec: req.body.sec
+  }).then(() => {
+    res.status(200).send({ success: 'Course successfully added.' });
+  }).catch(err => {
+    res.status(400).send({ error: err });
+  })
+}
+
 function generateRandomPassword() //generate a random default password
 {
   var allowedChars = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!@#%^&*";

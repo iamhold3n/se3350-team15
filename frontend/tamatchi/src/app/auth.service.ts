@@ -5,6 +5,7 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 import { Observable } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
+import { APIService } from './api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ import { CookieService } from 'ngx-cookie-service';
 export class AuthService {
   user: Observable<firebase.User>;
 
-  constructor(public af: AngularFireAuth, public cookie: CookieService) {
+  constructor(public af: AngularFireAuth, public cookie: CookieService, public api: APIService) {
     this.user = af.authState;
   }
 
@@ -65,6 +66,22 @@ export class AuthService {
     }
   }
 
-
-
+  getClaims()
+  {
+    return new Promise((resolve, reject) =>
+    {
+      this.api.getClaims().subscribe((claims) =>
+    {
+      if (claims["disabled"] == true)
+      {
+        resolve({disabled: true}); //return an otherwise empty object if disabled so that no further disabled checking needs to be done
+      }
+      else
+      {
+        resolve(claims);
+      }
+    })
+    })
+    
+  }
 }

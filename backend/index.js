@@ -5,6 +5,8 @@ const Config = require('./config.js');
 Config.init();
 const port = Config.getConfig("port");
 const { body, validationResult } = require('express-validator');
+const { auth } = require('firebase-admin');
+const { response } = require('express');
 
 admin.initializeApp({
   credential: admin.credential.cert(Config.getConfig("apikey")),
@@ -23,7 +25,7 @@ admin.auth().setCustomUserClaims("IBrv424a2eY3usGCogXZUgSskgK2", {admin : true})
 //debugging test
 admin.auth().getUser("3A9c8PeAIYSFy11LtqeQ9R5FFoL2").then((userRecord) =>
 {
-  console.log(userRecord.toJSON());
+  //console.log(userRecord.toJSON());
 })
 
 async function verifyUser(token, perms) //Function for verifying that a token meets a set of claims permissions.
@@ -43,7 +45,13 @@ async function verifyUser(token, perms) //Function for verifying that a token me
 
   var verifPromise = new Promise(function(resolve, reject)
   {
-    admin.auth().verifyIdToken(token).then((claims) => //verify the token first
+    if(token == undefined)
+    {
+      resolve(false);
+    }
+    try
+    {
+    admin.auth().verifyIdToken(token).catch((err) => resolve(false)).then((claims) => //verify the token first
       {
         if(claims["disabled"])
         {
@@ -57,7 +65,15 @@ async function verifyUser(token, perms) //Function for verifying that a token me
             }
           }
           resolve(true); //if they all match, true
+      }).catch((err) =>
+      {
+        resolve(false); //if the token isn't even properly formatted, fail authentication.
       });
+    }
+    catch(err)
+    {
+      resolve(false);//if the token isn't even properly formatted, fail authentication.
+    }
   });
   return verifPromise;
 }
@@ -76,8 +92,8 @@ app.listen(port, () => {
 });
 
 app.use(express.json());
-app.post('/api/users', (req, res) => {  //adjust user permissions
 
+app.post('/api/users', (req, res) => {  //adjust user permissions
   verifyUser(req.header('authorization'), {"admin" : true}).then(
     (val) => {
       if(!val) //if it fails to validate..
@@ -87,6 +103,7 @@ app.post('/api/users', (req, res) => {  //adjust user permissions
       else
       {
         const userClaims = req.body;
+        console.log(userClaims);
         //expect request to contain:
         //userID: string
         //perms : {}
@@ -99,7 +116,39 @@ app.post('/api/users', (req, res) => {  //adjust user permissions
 
 });
 
-app.put('/api/users', (req, res) =>
+app.get('/api/users/list', (req, res) => //get a list of all users
+{
+  verifyUser(req.header('authorization'), {"admin": true}).then(
+  (val) => {
+    if (!val)
+    {
+      res.status(404).send();
+    }
+    else
+    {
+      admin.auth().listUsers().then((results) =>
+      {
+        //Now to filter these results down to only essential data.
+        //assuming the only valid claim types are: admin, faculty, professor, chair
+        var list = [];
+        for (var i = 0; i < results["users"].length; i++)
+        {
+          obj = {
+            uid : results["users"][i]["uid"],
+            email : results["users"][i]["email"],
+            claims : results["users"][i]["customClaims"],
+            disabled : results["users"][i]["disabled"]
+          }
+          list.push(obj);
+        }
+        res.json(list).send();
+      }).catch((err) => {});
+    }
+  }
+  )
+});
+
+app.put('/api/users', (req, res) => //account creation
 {
 
    verifyUser(req.header('authorization'), {"admin" : true}).then(
@@ -116,9 +165,11 @@ app.put('/api/users', (req, res) =>
         //password: string
         admin.auth().createUser({
           email: acc["email"],
-          password: acc["password"]
+          password: generateRandomPassword()
         }).then(
-          (resolve) => {res.status(200).send();},
+          (resolve) => {
+            res.send(true);
+          },
           (rej) => {res.send(rej["message"]);}
         );
       }
@@ -126,8 +177,21 @@ app.put('/api/users', (req, res) =>
   )
 });
 
-app.put('/api/allocation', (req, res) =>
+app.get(`/api/users`, (req, res) => //get claims
 {
+  try
+  {
+  admin.auth().verifyIdToken(req.header('authorization')).then((claims) =>
+  {
+    res.send(claims);
+  }).catch(() => {
+    res.send({});
+  }); //send empty obj if it fails to validate. 
+}
+catch(err)
+{
+  res.send({});
+}
 });
 
 // ========================
@@ -229,4 +293,16 @@ app.post('/api/allocation/tas', [
   })
 
   res.status(200).send({ success: 'Assigned TAs successfully modified.' });
-})
+});
+
+function generateRandomPassword() //generate a random default password
+{
+  var allowedChars = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!@#%^&*";
+  var  length = Math.floor(Math.random() * 8) + 8;
+  var output = "";
+  for (var i = 0; i < length; i++)
+  {
+    output += allowedChars.split("")[Math.floor(Math.random() * allowedChars.length)];
+  }
+  return output;
+}

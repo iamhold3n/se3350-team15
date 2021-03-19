@@ -7,11 +7,16 @@ import { AuthService } from './auth.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  constructor() {}
+  admin: boolean
+  constructor(private auth: AuthService) {}
+
+  ngOnInit(): void {
+    this.isAdmin();
+  }
 
   markActive(a) {
-    let nav = ['nav-login','nav-course','nav-form','nav-allocate','nav-assign','nav-ranking'];
-
+    let nav = ['nav-login','nav-course','nav-form','nav-allocate','nav-assign','nav-ranking', 'nav-admin'];
+    this.isAdmin();
     for (let i = 0; i < nav.length; i++) {
       let e = document.getElementById(nav[i]);
 
@@ -20,5 +25,23 @@ export class AppComponent {
 
       if (i === 0) e.className += ' left';
     }
+  }
+
+  isAdmin()
+  {
+    
+      this.auth.getClaims().then((claims) =>
+      {
+      //for debugging
+
+        if (claims["admin"] == true)
+        {
+          this.admin = true;
+        }
+        else
+        {
+          this.admin = false;
+        } 
+      });
   }
 }

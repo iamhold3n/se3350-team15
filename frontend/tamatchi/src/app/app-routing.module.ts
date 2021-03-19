@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AdminComponent } from './admin/admin.component';
 import { AllocateTaHoursComponent } from './allocate-ta-hours/allocate-ta-hours.component';
 import { AssignTaComponent } from './assign-ta/assign-ta.component';
 import { CourseInformationComponent } from './course-information/course-information.component';
@@ -13,7 +14,8 @@ const routes: Routes = [
   {path: 'form', component: FormComponent},
   {path: 'allocate-ta-hours', component:AllocateTaHoursComponent},
   {path: 'assign-ta', component:AssignTaComponent},
-  {path: 'ranking', component:RankingComponent}
+  {path: 'ranking', component:RankingComponent},
+  {path: 'admin', component:AdminComponent}
 
 ];
 

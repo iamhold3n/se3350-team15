@@ -68,6 +68,10 @@ export class AdminComponent implements OnInit {
     {
       data = false;
     }
+    if(claim == 'disabled')
+    {
+      data = user['disabled'];
+    }
     checkbox.checked = data; //checkbox doesn't properly update if you don't force it to update sometimes
     return data;
 

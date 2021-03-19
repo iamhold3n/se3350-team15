@@ -15,6 +15,8 @@
             <br>
             Chair: <input #chair type="checkbox" checked="{{getStatus(user, 'chair', chair)}}">
             <br>
+            Disabled: <input #disabled type="checkbox" checked="{{getStatus(user, 'disabled', disabled)}}">
+            <br>
             <button (click) = "setClaims(user['uid'], admin.checked, prof.checked, chair.checked)">Update User</button>
             <button (click) = "sendPasswordResetEmail(user['email'])">Send Password Reset</button>
             <br>

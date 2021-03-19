@@ -24,36 +24,23 @@ export class CourseQuestionsComponent implements OnInit {
       darkened.style.display = 'block';
       popup.style.display = 'block';
     })
-
-    // dummy data for now
-    /*this.courseSelected.questions = [];
-    this.courseSelected.courseCode = course;
-    this.courseSelected.courseName = 'Intro Course';
-    this.courseSelected.questions.push('Know Javascript?');
-    console.log(this.courseSelected);*/
-
-    // popup effect
-
   }
 
   addQuestion() {
-
     this.courseSelected.questions.push('');
-
-
   }
 
   removeQuestion(i) {
     this.courseSelected.questions.splice(i, 1);
   }
 
-  saveQuestions(q: Array<object>) {
+  saveQuestions() {
     // send updated questions to server
-
-   
+    this.data.updateQuestions(this.courseSelected.courseCode, this.courseSelected).subscribe(
+      res => alert('Questions successfully updated.'),
+      err => console.log(err));
+    
     this.closeQuestions();
-
-
   }
 
   closeQuestions() {

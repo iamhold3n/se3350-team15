@@ -7,6 +7,7 @@ import { CourseInformationComponent } from './course-information/course-informat
 import { FormComponent } from './form/form.component';
 import { LoginComponent } from './login/login.component';
 import { RankingComponent } from './ranking/ranking.component';
+import { FileUploadComponent } from './file-upload/file-upload.component';
 
 const routes: Routes = [
   {path: 'login', component:LoginComponent},
@@ -15,8 +16,8 @@ const routes: Routes = [
   {path: 'allocate-ta-hours', component:AllocateTaHoursComponent},
   {path: 'assign-ta', component:AssignTaComponent},
   {path: 'ranking', component:RankingComponent},
-  {path: 'admin', component:AdminComponent}
-
+  {path: 'admin', component:AdminComponent},
+  {path: 'file-upload', component:FileUploadComponent}
 ];
 
 @NgModule({

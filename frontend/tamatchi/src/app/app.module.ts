@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { AngularFireModule } from '@angular/fire';
+import { AngularFireStorageModule } from '@angular/fire/storage';
+import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms'; 
@@ -21,6 +23,7 @@ import { CourseQuestionsComponent } from './course-questions/course-questions.co
 import { CallbackPipe } from './callback.pipe'; //allows for filtering of *ngFor using a specified callback function
 import { AdminComponent } from './admin/admin.component';
 import { HttpClientModule } from '@angular/common/http';
+import { FileUploadComponent } from './file-upload/file-upload.component';
 
 
 @NgModule({
@@ -35,6 +38,7 @@ import { HttpClientModule } from '@angular/common/http';
     CourseQuestionsComponent,
     CallbackPipe,
     AdminComponent,
+    FileUploadComponent
   ],
   imports: [
     BrowserModule,
@@ -43,6 +47,8 @@ import { HttpClientModule } from '@angular/common/http';
     BrowserAnimationsModule,
     DragDropModule,
     AngularFireModule.initializeApp(environment.firebase),
+    AngularFireDatabaseModule,
+    AngularFireStorageModule,
     HttpClientModule
   ],
   providers: [AngularFireModule],

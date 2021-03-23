@@ -249,29 +249,34 @@ app.get('/api/allocation', (req, res) => {
 // ===========================
 // change course questions
 app.post('/api/questions/:course', [
-  body('courseCode').trim().escape(),
-  body('courseName').trim().escape(),
-  body('questions').isArray(),
-  body('questions.*').trim().escape(),
-  ], (req, res) => {
-    db.collection('courses').where('courseCode', '==', req.params.course).get().then(q => {
-      if (q.empty || q.size > 1) res.status(404).send();
-      else q.forEach(d => {
-        db.collection('courses').doc(d.id).update({ questions : req.body.questions });
-        res.status(200).send({ success: 'Questions successfully modified.'});
-      })
+  body('courseCode').trim().escape().exists(),
+  body('courseName').trim().escape().exists(),
+  body('questions').isArray().exists(),
+  body('questions.*').trim().escape().exists()
+], (req, res) => {
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+  
+  db.collection('courses').where('courseCode', '==', req.params.course).get().then(q => {
+    if (q.empty || q.size > 1) res.status(404).send();
+    else q.forEach(d => {
+      db.collection('courses').doc(d.id).update({ questions : req.body.questions });
+      res.status(200).send({ success: 'Questions successfully modified.'});
     })
+  })
 })
 
 // change allocated hours
 app.post('/api/allocation/hrs', [
-  body('*').isArray(),
-  body('*.course').trim().escape(),
-  body('*.currHrs').trim().escape()
+  body('*.course').trim().escape().exists(),
+  body('*.currHrs').isInt().exists()
 ], (req, res) => {
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+
   req.body.forEach(e => {
     db.collection('allocation').where('course', '==', e.course).get().then(x => {
-        x.forEach(d => db.collection('allocation').doc(d.id).update({ currHrs : parseInt(e.currHrs) }) )
+        x.forEach(d => db.collection('allocation').doc(d.id).update({ currHrs : e.currHrs }))
     })
   })
 
@@ -280,10 +285,12 @@ app.post('/api/allocation/hrs', [
 
 // change assigned TAs
 app.post('/api/allocation/tas', [
-  body('*').isArray(),
-  body('*.course').trim().escape(),
-  body('*.assignList').isArray(),
+  body('*.course').trim().escape().exists(),
+  body('*.assignList').isArray().exists()
 ], (req, res) => {
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+
   req.body.forEach(e => {
     db.collection('allocation').where('course', '==', e.course).get().then(x => {
         x.forEach(d => db.collection('allocation').doc(d.id).update({ assignList : e.assignList }) )
@@ -294,13 +301,16 @@ app.post('/api/allocation/tas', [
 });
 
 // add a course
-app.put('/api/courses'), [
-  body('courseCode').trim().escape(),
-  body('courseName').trim().escape(),
-  body('labOrTutHrs').trim().escape(),
-  body('lecHrs').trim().escape(),
-  body('sec').trim().escape(),
+app.put('/api/courses', [
+  body('courseCode').trim().escape().exists(),
+  body('courseName').trim().escape().exists(),
+  body('labOrTutHrs').isInt().exists(),
+  body('lecHrs').isInt().exists(),
+  body('sec').isInt().exists()
 ], (req, res) => {
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+
   db.collection('courses').add({
     courseCode: req.body.courseCode,
     courseName: req.body.courseName,
@@ -313,7 +323,86 @@ app.put('/api/courses'), [
   }).catch(err => {
     res.status(400).send({ error: err });
   })
-}
+})
+
+// batch add applicants
+app.put('/api/batch/applicants', [
+  body('*.course').isArray().exists(),
+  body('*.email').isEmail().exists(),
+  body('*.hrs').isInt().exists(),
+  body('*.name').trim().escape().exists(),
+  body('*.questions').isArray().exists(),
+  body('*.ranks').isArray().exists(),
+  body('*.status').isInt().exists()
+], (req, res) => {
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+
+  let batch = db.batch();
+
+  req.body.forEach(e => batch.set(db.collection('applicants').doc(e.email), e));
+
+  batch.commit()
+    .then(() => res.status(200).send({ success: 'Applicants successfully added.' }))
+    .catch(err => res.status(400).send({ error: err }));
+})
+
+// batch add courses
+app.put('/api/batch/courses', [
+  body('*.courseCode').trim().escape().exists(),
+  body('*.courseName').trim().escape().exists(),
+  body('*.labOrTutHrs').isInt().exists(),
+  body('*.lecHrs').isInt().exists(),
+  body('*.sec').isInt().exists()
+], (req, res) => {
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+
+  let batch = db.batch();
+
+  req.body.forEach(e => batch.set(db.collection('courses').doc(e.courseCode), e));
+
+  batch.commit()
+    .then(() => res.status(200).send({ success: 'Courses successfully added.' }))
+    .catch(err => res.status(400).send({ error: err }));
+})
+
+// batch add enrolment
+app.put('/api/batch/enrolhrs', [
+  body('*.courseCode').trim().escape().exists(),
+  body('*.currEnrol').isInt().exists(),
+  body('*.labOrTutHrs').isInt().exists(),
+  body('*.prevEnrol').isInt().exists(),
+  body('*.prevHrs').isInt().exists()
+], (req, res) => {
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+
+  let batch = db.batch();
+
+  req.body.forEach(e => batch.set(db.collection('enrolhrs').doc(e.courseCode), e));
+
+  batch.commit()
+    .then(() => res.status(200).send({ success: 'Enrolment information successfully added.' }))
+    .catch(err => res.status(400).send({ error: err }));
+})
+
+// batch add instructors
+app.put('/api/batch/instructors', [
+  body('*.email').isEmail().exists(),
+  body('*.name').trim().escape().exists(),
+], (req, res) => {
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+
+  let batch = db.batch();
+
+  req.body.forEach(e => batch.set(db.collection('instructors').doc(e.email), e));
+
+  batch.commit()
+    .then(() => res.status(200).send({ success: 'Instructors successfully added.' }))
+    .catch(err => res.status(400).send({ error: err }));
+})
 
 function generateRandomPassword() //generate a random default password
 {

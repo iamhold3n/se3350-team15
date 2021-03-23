@@ -15,9 +15,14 @@ export class AppComponent {
   }
 
   markActive(a) {
-    let nav = ['nav-login','nav-course','nav-form','nav-allocate','nav-assign','nav-ranking', 'nav-admin'];
+    let nav = ['nav-login','nav-course','nav-form','nav-allocate','nav-assign','nav-ranking','nav-upload','nav-admin'];
     this.isAdmin();
-    for (let i = 0; i < nav.length; i++) {
+
+    let navsz;
+    if(this.admin) navsz = nav.length;
+    else navsz = nav.length - 1;
+    
+    for (let i = 0; i < navsz; i++) {
       let e = document.getElementById(nav[i]);
 
       if (a === i) e.className = 'active';

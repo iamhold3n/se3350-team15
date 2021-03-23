@@ -353,6 +353,7 @@ app.put('/api/batch/courses', [
   body('*.courseName').trim().escape().exists(),
   body('*.labOrTutHrs').isInt().exists(),
   body('*.lecHrs').isInt().exists(),
+  body('*.questions').isArray().exists(),
   body('*.sec').isInt().exists()
 ], (req, res) => {
   const errors = validationResult(req);

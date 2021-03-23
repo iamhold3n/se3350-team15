@@ -48,5 +48,19 @@ export class DataService {
 
   }
 
+  // send data from processed XLSX files
+  batchApplicants(a) {
+    return this.http.put(`${this.url}/batch/applicants/`, a);
+  }
+  batchCourses(c) {
+    return this.http.put(`${this.url}/batch/courses/`, c);
+  }
+  batchEnrolment(e) {
+    return this.http.put(`${this.url}/batch/enrolhrs/`, e);
+  }
+  batchInstructors(i) {
+    return this.http.put(`${this.url}/batch/instructors/`, i);
+  }
+
   
 }

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FileUploadService } from 'src/app/services/file-upload.service';
-import { FileUpload } from 'src/app/models/file-upload.model';
+import { DataService } from '../data.service';
 import * as XLSX from 'xlsx';
 
 @Component({
@@ -9,15 +8,23 @@ import * as XLSX from 'xlsx';
   styleUrls: ['./file-upload.component.css']
 })
 export class FileUploadComponent implements OnInit {
-  selectedFiles?: FileList;
-  currentFileUpload?: FileUpload;
-  percentage = 0;
-
   uploadFile;
+  uploadType = 0;
 
-  constructor(private uploadService: FileUploadService) { }
+  constructor(private data: DataService) { }
 
   ngOnInit(): void {
+  }
+
+  toggleType(type) {
+    this.uploadType = type;
+  }
+
+  upload() {
+    if (this.uploadType == 0) this.uploadApplicants();
+    else if (this.uploadType == 1) this.uploadCourses();
+    else if (this.uploadType == 2) this.uploadEnrolment();
+    else this.uploadInstructors();
   }
 
   onFileChange(ev) {
@@ -35,16 +42,6 @@ export class FileUploadComponent implements OnInit {
       }, {});
 
       this.uploadFile = jsonData['Sheet1'];
-      console.log(this.uploadFile);
-
-      //this.uploadApplicants();
-      //this.uploadCourses();
-      //this.uploadEnrolment();
-      //this.uploadInstructors();
-
-      // TODO: 
-      //    make radio buttons to choose which file the user is uploading
-      //    add API to send to server
     }
     reader.readAsBinaryString(file);
   }
@@ -75,8 +72,12 @@ export class FileUploadComponent implements OnInit {
     })
 
     if (applicants.length == 0) alert('Wrong file.');
-
-    console.log(applicants);
+    else {
+      console.log(applicants);
+      this.data.batchApplicants(applicants).subscribe(
+        res => alert('Applicants successfully added.'),
+        err => console.log(err));
+    }
   }
 
   newApplicant(e) {
@@ -116,16 +117,21 @@ export class FileUploadComponent implements OnInit {
         courses.push({
           courseCode: e['Course Code'],
           courseName: e['Course Name'],
-          labOrTutHrs: e['Lab/Tutorial hours'],
+          labOrTutHrs: e['Lab/Tutorial hours'] | 0, // XLSX conversion sees zeroes as undefined, doing this so it doesn't fail with sample data
           lecHrs: e['Lec hours'],
+          questions: [],
           sec: e['No. of Sections']
         })
       }
     })
 
     if (courses.length == 0) alert('Wrong file.');
-
-    console.log(courses);
+    else {
+      console.log(courses);
+      this.data.batchCourses(courses).subscribe(
+        res => alert('Courses successfully added.'),
+        err => console.log(err));
+    }
   }
 
   uploadEnrolment() {
@@ -143,9 +149,13 @@ export class FileUploadComponent implements OnInit {
       }
     })
 
-    if (enrolment.length == 0) alert('Wrongin file.');
-
-    console.log(enrolment);
+    if (enrolment.length == 0) alert('Wrong file.');
+    else {
+      console.log(enrolment);
+      this.data.batchEnrolment(enrolment).subscribe(
+        res => alert('Enrolment information successfully added.'),
+        err => console.log(err));
+    }
   }
 
   uploadInstructors() {
@@ -161,30 +171,11 @@ export class FileUploadComponent implements OnInit {
     })
 
     if (instructors.length == 0) alert('Wrong file.');
-
-    console.log(instructors);
-  }
-
-  /*selectFile(event: any): void {
-    this.selectedFiles = event.target.files;
-  }
-
-  upload(): void {
-    if (this.selectedFiles) {
-      const file: File | null = this.selectedFiles.item(0);
-      this.selectedFiles = undefined;
-
-      if (file) {
-        this.currentFileUpload = new FileUpload(file);
-        this.uploadService.pushFileToStorage(this.currentFileUpload).subscribe(
-          percentage => {
-            this.percentage = Math.round(percentage ? percentage : 0);
-          },
-          error => {
-            console.log(error);
-          }
-        );
-      }
+    else {
+      console.log(instructors);
+      this.data.batchInstructors(instructors).subscribe(
+        res => alert('Instructors successfully added.'),
+        err => console.log(err));
     }
-  }*/
+  }
 }

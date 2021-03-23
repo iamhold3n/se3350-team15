@@ -147,7 +147,7 @@ function questionAnswers(cArr) {
 // UPLOAD DATA
 // ===========
 courses.forEach(x => {
-    db.collection("courses").add({
+    db.collection("courses").doc(x.courseCode).set({
         courseCode: x.courseCode,
         courseName: x.courseName,
         labOrTutHrs: x.labOrTutHrs,
@@ -162,7 +162,7 @@ courses.forEach(x => {
 })
 
 instructors.forEach(x => {
-    db.collection("instructors").add({
+    db.collection("instructors").doc(x.email).set({
         name: x.name,
         email: x.email
     }).then(x => {
@@ -173,7 +173,7 @@ instructors.forEach(x => {
 })
 
 enrolhrs.forEach(x => {
-    db.collection("enrolhrs").add({
+    db.collection("enrolhrs").doc(x.courseCode).set({
         courseCode: x.courseCode,
         labOrTutHrs: x.labOrTutHrs,
         prevEnrol: x.prevEnrol,
@@ -187,7 +187,7 @@ enrolhrs.forEach(x => {
 })
 
 applicants.forEach(x => {
-    db.collection("applicants").add({
+    db.collection("applicants").doc(x.email).set({
         course: x.course,
         name: x.name,
         email: x.email,
@@ -203,7 +203,7 @@ applicants.forEach(x => {
 })
 
 allocation.forEach(x => {
-    db.collection("allocation").add({
+    db.collection("allocation").doc(x.course).set({
         instructor: x.instructor,
         course: x.course,
         labSections: x.labSections,

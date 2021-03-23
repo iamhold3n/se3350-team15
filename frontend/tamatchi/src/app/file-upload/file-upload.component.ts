@@ -32,16 +32,21 @@ export class FileUploadComponent implements OnInit {
     let jsonData = null;
     const reader = new FileReader();
     const file = ev.target.files[0];
+    let csv = null;
+
     reader.onload = (event) => {
       const data = reader.result;
       workBook = XLSX.read(data, { type: 'binary' });
       jsonData = workBook.SheetNames.reduce((initial, name) => {
         const sheet = workBook.Sheets[name];
         initial[name] = XLSX.utils.sheet_to_json(sheet); // XLSX.utils.sheet_to_csv(sheet); <-- consider using if field names change
+        csv = XLSX.utils.sheet_to_csv(sheet).split('\n');
         return initial;
       }, {});
 
       this.uploadFile = jsonData['Sheet1'];
+
+      console.log(csv);
     }
     reader.readAsBinaryString(file);
   }

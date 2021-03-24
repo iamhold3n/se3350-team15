@@ -84,5 +84,17 @@ export class AuthService {
     })
     
   }
-
+  getUserObject()
+  {
+    return new Promise((resolve, reject) =>
+    {
+      this.af.currentUser.then(user =>
+        {
+          resolve(user);
+        }).catch((e) =>
+        {
+          reject(e);
+        });
+    });
+  }
 }

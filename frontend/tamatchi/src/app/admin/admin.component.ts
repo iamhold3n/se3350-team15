@@ -40,7 +40,6 @@ export class AdminComponent implements OnInit {
 
   sendPasswordResetEmail(email) //send a password reset email
   {
-    console.log(email);
     var fAuth = firebase.auth();
     fAuth.sendPasswordResetEmail(email);
   }
@@ -63,6 +62,11 @@ export class AdminComponent implements OnInit {
 
   getStatus(user, claim, checkbox)
   {
+    if(user['claims'] == undefined)
+    {
+      checkbox.checked = data; //checkbox doesn't properly update if you don't force it to update sometimes
+      return false;
+    }
     var data = user['claims'][claim];
     if (data == undefined)
     {

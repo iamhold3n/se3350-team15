@@ -18,6 +18,8 @@ export class FileUploadComponent implements OnInit {
   enrolhrsFile = ['courseCode','labOrTutHrs','prevEnrol','prevHrs','currEnrol'];
   instructorsFile = ['name','email'];
 
+  typeNav = ['applicants','courses','enrolment','instructors'];
+
   constructor(private data: DataService) { }
 
   ngOnInit(): void {
@@ -31,6 +33,22 @@ export class FileUploadComponent implements OnInit {
   toggleType(type, active) {
     this.activeFile = active;
     this.uploadType = type;
+
+    for (let i = 0; i < this.typeNav.length; i++) {
+      let e = document.getElementById(this.typeNav[i]);
+
+      if (type === i) e.className = 'active';
+      else e.className = '';
+    }
+  }
+
+  addEmpty() {
+    this.activeFile.push('EMPTY');
+  }
+
+  isEmpty(f) {
+    if (f == 'EMPTY') return true;
+    else return false;
   }
 
   upload() {

@@ -1,29 +1,39 @@
 <div class="container" style="width:600px">
   <div>
-    <h3>UPLOAD</h3>
+    <h2>UPLOAD</h2>
   </div>
 
   <div>
-    File Type:
-    <input type="radio" name="type" value="applicants" id="applicants" checked="checked" (click)="toggleType(0, applicantsFile)">
-    <label for="applicants">Applicants</label>
-    <input type="radio" name="type" value="courses" id="courses" (click)="toggleType(1, coursesFile)">
-    <label for="applicants">Courses</label>
-    <input type="radio" name="type" value="enrol" id="enrol" (click)="toggleType(2, enrolhrsFile)">
-    <label for="applicants">Enrolment</label>
-    <input type="radio" name="type" value="instructors" id="instructors" (click)="toggleType(3, instructorsFile)">
-    <label for="applicants">Instructors</label>
+    <p>
+      Choose the spreadsheet type you wish to upload and re-arrange the fields in the correct order.
+      If there are any columns with values that should be ignored, simply click 'ADD EMPTY' at the bottom and move the 'EMPTY' field to the position it should ignore.
+    </p>
+    <p>
+      If there was an empty field added by mistake, either refresh the page or move it to the end of the list.
+    </p>
+  </div>
 
-    <div cdkDropList (cdkDropListDropped)="drop($event)">
-      Field Order:
-      <div class="list" cdkDrag *ngFor='let field of activeFile'>
-          {{field}}
-      </div>
+  <div>
+    <input type="file" accept=".xls, .xlsx" (change)="onFileChange($event)">
+    <button (click)="upload()">UPLOAD</button>
+
+    <h3>SPREADSHEET TYPE</h3>
+    <div id="stype">
+      <span id="applicants" (click)="toggleType(0, applicantsFile)">APPLICANTS</span>
+      <span id="courses" (click)="toggleType(1, coursesFile)">COURSES</span>
+      <span id="enrolment" (click)="toggleType(2, enrolhrsFile)">ENROLMENT</span>
+      <span id="instructors" (click)="toggleType(3, instructorsFile)">INSTRUCTORS</span>
     </div>
 
-    <input type="file" (change)="onFileChange($event)">
-    
-    <button (click)="upload()">UPLOAD</button>
+    <div cdkDropList (cdkDropListDropped)="drop($event)">
+      <h3>FIELD ORDER</h3>
+      <div cdkDrag *ngFor='let field of activeFile'>
+        <div *ngIf="isEmpty(field); then thenBlock else elseBlock"></div>
+        <ng-template #thenBlock><span class="list empty">{{field}}</span></ng-template>
+        <ng-template #elseBlock><span class="list">{{field}}</span></ng-template>
+      </div>
+      <button (click)="addEmpty()">ADD EMPTY</button>
+    </div>
   </div>
 </div>
   

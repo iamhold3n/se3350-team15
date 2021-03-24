@@ -1,13 +1,17 @@
 /* CSS for the list of TAs */
 .list{
-    margin-left: 20px;
-    border: 1px solid;
+    margin: 5px;
+    border: 5px solid transparent;
+    border-radius: 5px;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 50px;
     width: 50%;
-    background-color: white;
+    background-color: #dddddd;
+    color: black;
+    font-size: 14px;
+    font-weight: 900;
 }
 
 /* Animate items as they're being sorted */
@@ -18,4 +22,40 @@
 /* Animate an item that has been dropped */
 .cdk-drag-animating {
     transition: transform 300ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+h2 {
+    text-align: center;
+}
+
+input {
+    border: 0px;
+}
+
+.empty {
+    background-color: transparent;
+    color: #807F83;
+}
+
+#stype {
+    background-color: #dddddd;
+    border: 5px solid transparent;
+    border-radius: 5px;
+    display: flex;
+    margin: 5px;
+}
+
+span {
+    background-color: transparent;
+    border: 5px solid transparent;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 900;
+    margin: 5px;
+}
+
+.active {
+    background-color: black;
+    color: white;
 }

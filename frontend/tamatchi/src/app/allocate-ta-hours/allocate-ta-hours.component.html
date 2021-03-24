@@ -6,7 +6,6 @@
     <!--Header/title rows-->
     <tr> 
         <th>Course</th>
-        <!--<th>Instructor</th>-->
         <th> <p>Enrolment {{current_year-1}}</p> </th>
         <th> <p>TA Hours for {{current_year-1}}</p> </th>
         <th> <p>Enrolment {{current_year}}</p> </th>
@@ -18,18 +17,16 @@
     <!--Content rows -->
     <tr *ngFor="let c of enroll_record_list">
         <th> {{c.course}} </th>
-        <!--<th> {{c.instructor}} </th>-->
         <th> {{c.prevEnrol}} </th>
         <th> {{c.prevHrs}} </th>
         <th> {{c.currEnrol}} </th>
         <th> {{c.estHrs}} </th> <!-- Formula : (Prev TA hrs)*(Current Enrollment)/(Prev enrollment) --> <!-- c.prevHrs * c.currEnrol / c.prevEnrol -->
-        <th> <input [(ngModel)]="c.currHrs" placeholder = 0/> </th> <!--Two-way binding for the "manually allocated TA hour" values-->
+        <th> <input [(ngModel)]="c.currHrs" type="number" placeholder = 0/> </th> <!--Two-way binding for the "manually allocated TA hour" values-->
     </tr>
     <!--End of content rows -->
 
     <!--Row for Submit button -->
     <tr>
-        <th></th>
         <th></th>
         <th></th>
         <th></th>

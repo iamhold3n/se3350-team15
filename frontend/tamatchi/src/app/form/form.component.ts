@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DataService } from '../data.service';
 
 @Component({
   selector: 'app-form',
@@ -7,13 +8,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FormComponent implements OnInit {
 
-  constructor() { }
+  constructor(private data: DataService) { }
 
-  public courseInstructor: string;
-  public listCourses: string;
-  public questions: string;
+  public profName: string;
+  public profEmail: string;
+  public allProfs: any;
 
   ngOnInit(): void {
+    this.data.getInstructors().subscribe(res => {
+      this.allProfs = res;
+    })
   }
 
 }

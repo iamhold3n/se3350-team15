@@ -1,28 +1,20 @@
-<h3>For Course Instructors</h3>
+<h3>For Adding Course Instructors</h3>
 
 
-<h5>Please enter your name:</h5>
-<input type="text" [(ngModel)]="courseInstructor" placeholder="Enter Name..." />
+<h5>Instructor Name:</h5>
+<input type="text" [(ngModel)]="profName" placeholder="Enter Name..." />
 <br>
-
-<h5>Please select the course you would like TAs for:</h5>
-
-<select name="Course" [(ngModel)]="listCourses">
-
-    <option selected="selected" value="one">Course 1</option>
-    <option value="two">Course 2</option>
-    <option value="three">Course 3</option>
-</select>
-<br> 
-
-<h5>How many TAs would you like?</h5>
-
-<div class="minAndMax">
-
-<input type="number" placeholder="Min.">
-<input type="number" placeholder="Max.">
-
-</div>
+<h5>Instructor Email:</h5>
+<input type="text" [(ngModel)]="profEmail" placeholder="Enter Email..." />
 
 
 <button>Submit form</button>
+
+<h3>List of Instructors</h3>
+
+<ul *ngFor="let prof of allProfs">
+    <li>
+        Instructor Name: {{prof.name}} <br>
+        Instructor Email: {{prof.email}}
+    </li>
+</ul>

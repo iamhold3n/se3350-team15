@@ -244,6 +244,19 @@ app.get('/api/allocation', (req, res) => {
   })
 })
 
+//grab all instructors
+app.get('/api/instructors', (req, res) => {
+  db.collection('instructors').get().then(all => {
+    let allProfs = [];
+    all.forEach(c => {
+      allProfs.push(c.data());
+    })
+
+    if (allCourses.length > 0) res.status(200).send(allProfs);
+    else res.status(404).send();
+  })
+})
+
 // ===========================
 // DATA MODIFICATION FUNCTIONS
 // ===========================

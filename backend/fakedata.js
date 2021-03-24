@@ -69,11 +69,10 @@ for (let i = 0; i < applicantsNum; i++) {
 
 let allocation = [];
 for (let i = 0; i < allocationNum; i++) {
-    let hours = Math.floor(Math.random() * 20) + 15;
     allocation.push({
         course: courses[i].courseCode,
         currEnrol: enrolhrs[i].currEnrol,
-        currHrs: hours,
+        currHrs: (Math.floor(enrolhrs[i].currEnrol / enrolhrs[i].prevEnrol * enrolhrs[i].prevHrs)),
         estHrs: (Math.floor(enrolhrs[i].currEnrol / enrolhrs[i].prevEnrol * enrolhrs[i].prevHrs)),
         labOrTutHrs: courses[i].labOrTutHrs,
         labSections: Math.floor(Math.random() * 4),

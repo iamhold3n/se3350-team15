@@ -370,7 +370,9 @@ app.put('/api/batch/courses', [
       res.status(200).send({ success: 'Courses successfully added.' });
       req.body.forEach(e => checkAllocation(e.courseCode));
     })
-    .catch(err => res.status(400).send({ error: err }));
+    .catch(err => { if(!res.headerSent) res.status(400).send({ error: err }) });
+
+    
 })
 
 // batch add enrolment
@@ -393,7 +395,7 @@ app.put('/api/batch/enrolhrs', [
       res.status(200).send({ success: 'Enrolment information successfully added.' });
       req.body.forEach(e => checkAllocation(e.courseCode));
     })
-    .catch(err => res.status(400).send({ error: err }));
+    .catch(err => { if(!res.headerSent) res.status(400).send({ error: err }) });
 })
 
 // batch add instructors
@@ -413,28 +415,31 @@ app.put('/api/batch/instructors', [
     .catch(err => res.status(400).send({ error: err }));
 })
 
-/*function checkAllocation(docID) { // called when new courses are added to see if sufficient information is available to add to allocation database
+function checkAllocation(docID) { // called when new courses are added to see if sufficient information is available to add to allocation database
   db.collection('enrolhrs').doc(docID).get()
     .then(e => {
-      console.log('Course found in enrolment.');
-      db.collection('courses').doc(docID).get()
-      .then(c => {
-        console.log('Course found in courses.');
-        db.collection('allocation').doc(docID).set({
-          assignList: [],
-          course: docID,
-          currEnrol: e.currEnrol,
-          currHrs: (Math.floor(e.currEnrol / e.prevEnrol * e.prevHrs)),
-          estHrs: (Math.floor(e.currEnrol / e.prevEnrol * e.prevHrs)),
-          labOrTutHrs: c.labOrTutHrs,
-          labSections: 0, // present in allocation spreadsheet but not present in any input spreadsheet... 
-          prevEnrol: e.prevEnrol,
-          prevHrs: e.prevEnrol,
-          tutSections: 0 // present in allocation spreadsheet but not present in any input spreadsheet...
-        }).then(console.log('Course added to allocation.')).catch(console.log('Error adding to allocation.'));
-      }).catch(console.log('Error in courses.')); // course not present in courses database yet
-    }).catch(console.log('Error in enrolment.')); // course not present in enrolhrs database yet
-}*/
+      if (e.exists) {
+        db.collection('courses').doc(docID).get()
+        .then(c => {
+          if (c.exists) {
+            db.collection('allocation').doc(docID).set({
+              assignList: [],
+              course: docID,
+              currEnrol: e.data().currEnrol,
+              currHrs: (Math.floor(e.data().currEnrol / e.data().prevEnrol * e.data().prevHrs)),
+              estHrs: (Math.floor(e.data().currEnrol / e.data().prevEnrol * e.data().prevHrs)),
+              labOrTutHrs: c.data().labOrTutHrs,
+              labSections: 0, // present in allocation spreadsheet but not present in any input spreadsheet... 
+              prevEnrol: e.data().prevEnrol,
+              prevHrs: e.data().prevEnrol,
+              tutSections: 0 // present in allocation spreadsheet but not present in any input spreadsheet...
+            }).then(console.log('Course added to allocation.'))
+              .catch(err => console.log(err));
+          }
+        }).catch(err => console.log(err));
+      }
+    }).catch(err => console.log(err));
+}
 
 function generateRandomPassword() //generate a random default password
 {

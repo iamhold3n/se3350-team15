@@ -252,7 +252,7 @@ app.get('/api/instructors', (req, res) => {
       allProfs.push(c.data());
     })
 
-    if (allCourses.length > 0) res.status(200).send(allProfs);
+    if (allProfs.length > 0) res.status(200).send(allProfs);
     else res.status(404).send();
   })
 })

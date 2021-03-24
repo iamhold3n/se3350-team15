@@ -5,14 +5,22 @@
 
   <div>
     File Type:
-    <input type="radio" name="type" value="applicants" id="applicants" checked="checked" (click)="toggleType(0)">
+    <input type="radio" name="type" value="applicants" id="applicants" checked="checked" (click)="toggleType(0, applicantsFile)">
     <label for="applicants">Applicants</label>
-    <input type="radio" name="type" value="courses" id="courses" (click)="toggleType(1)">
+    <input type="radio" name="type" value="courses" id="courses" (click)="toggleType(1, coursesFile)">
     <label for="applicants">Courses</label>
-    <input type="radio" name="type" value="enrol" id="enrol" (click)="toggleType(2)">
+    <input type="radio" name="type" value="enrol" id="enrol" (click)="toggleType(2, enrolhrsFile)">
     <label for="applicants">Enrolment</label>
-    <input type="radio" name="type" value="instructors" id="instructors" (click)="toggleType(3)">
+    <input type="radio" name="type" value="instructors" id="instructors" (click)="toggleType(3, instructorsFile)">
     <label for="applicants">Instructors</label>
+
+    <div cdkDropList (cdkDropListDropped)="drop($event)">
+      Field Order:
+      <div class="list" cdkDrag *ngFor='let field of activeFile'>
+          {{field}}
+      </div>
+    </div>
+
     <input type="file" (change)="onFileChange($event)">
     
     <button (click)="upload()">UPLOAD</button>

@@ -302,11 +302,11 @@ app.post('/api/allocation/tas', [
 
 // add a course
 app.put('/api/courses', [
-  body('courseCode').trim().escape().exists(),
+  body('courseCode').isLength({ min: 5, max: 9 }).trim().escape().exists(),
   body('courseName').trim().escape().exists(),
-  body('labOrTutHrs').isInt().exists(),
-  body('lecHrs').isInt().exists(),
-  body('sec').isInt().exists()
+  body('labOrTutHrs').isLength({ min: 1, max: 2 }).isInt().exists(),
+  body('lecHrs').isLength({ min: 1, max: 2 }).isInt().exists(),
+  body('sec').isLength({ min: 1, max: 2 }).isInt().exists()
 ], (req, res) => {
   const errors = validationResult(req);
   if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
@@ -329,11 +329,11 @@ app.put('/api/courses', [
 app.put('/api/batch/applicants', [
   body('*.course').isArray().exists(),
   body('*.email').isEmail().exists(),
-  body('*.hrs').isInt().exists(),
+  body('*.hrs').isLength({ min: 1, max: 2 }).isInt().exists(),
   body('*.name').trim().escape().exists(),
   body('*.questions').isArray().exists(),
   body('*.ranks').isArray().exists(),
-  body('*.status').isInt().exists()
+  body('*.status').isLength(1).isInt().exists()
 ], (req, res) => {
   const errors = validationResult(req);
   if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
@@ -349,12 +349,12 @@ app.put('/api/batch/applicants', [
 
 // batch add courses
 app.put('/api/batch/courses', [
-  body('*.courseCode').trim().escape().exists(),
+  body('*.courseCode').isLength({ min: 5, max: 9 }).trim().escape().exists(),
   body('*.courseName').trim().escape().exists(),
-  body('*.labOrTutHrs').isInt().exists(),
-  body('*.lecHrs').isInt().exists(),
+  body('*.labOrTutHrs').isLength({ min: 1, max: 2 }).isInt().exists(),
+  body('*.lecHrs').isLength({ min: 1, max: 2 }).isInt().exists(),
   body('*.questions').isArray().exists(),
-  body('*.sec').isInt().exists()
+  body('*.sec').isLength({ min: 1, max: 2 }).isInt().exists()
 ], (req, res) => {
   const errors = validationResult(req);
   if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
@@ -370,11 +370,11 @@ app.put('/api/batch/courses', [
 
 // batch add enrolment
 app.put('/api/batch/enrolhrs', [
-  body('*.courseCode').trim().escape().exists(),
-  body('*.currEnrol').isInt().exists(),
-  body('*.labOrTutHrs').isInt().exists(),
-  body('*.prevEnrol').isInt().exists(),
-  body('*.prevHrs').isInt().exists()
+  body('*.courseCode').isLength({ min: 5, max: 9 }).trim().escape().exists(),
+  body('*.currEnrol').isLength({ min: 2, max: 3 }).isInt().exists(),
+  body('*.labOrTutHrs').isLength({ min: 1, max: 2 }).isInt().exists(),
+  body('*.prevEnrol').isLength({ min: 2, max: 3 }).isInt().exists(),
+  body('*.prevHrs').isLength({ min: 1, max: 2 }).isInt().exists()
 ], (req, res) => {
   const errors = validationResult(req);
   if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });

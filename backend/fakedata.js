@@ -59,7 +59,7 @@ for (let i = 0; i < applicantsNum; i++) {
     applicants.push({
         course: getCourses(c),
         email: faker.internet.email(fname, lname, 'uwo.ca'),
-        hrs: getHrs(c.length),
+        hrs: (Math.floor(Math.random() * 2) + 1)*5,
         name: fname + ' ' + lname,
         questions: questionAnswers(c),
         ranks: getRanks(c.length),
@@ -109,13 +109,6 @@ function getCourses(c) {
     c.forEach(x => cArr.push(courses[x].courseCode));
 
     return cArr;
-}
-
-function getHrs(sz) {
-    let h = [];
-    for (let i = 0; i < sz; i++) h.push((Math.floor(Math.random() * 2) + 1)*5);
-
-    return h;
 }
 
 function getRanks(sz) { // making it simple and doing it 1 to max in order
@@ -204,6 +197,7 @@ applicants.forEach(x => {
 
 allocation.forEach(x => {
     db.collection("allocation").doc(x.course).set({
+        assignList: [],
         instructor: x.instructor,
         course: x.course,
         labSections: x.labSections,

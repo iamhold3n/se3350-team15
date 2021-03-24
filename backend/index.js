@@ -59,12 +59,12 @@ async function verifyUser(token, perms) //Function for verifying that a token me
         }
         for (var perm in perms)
           {
-            if(!perms[perm] == claims[perm])
+            if(perms[perm] == claims[perm])
             {
-              resolve(false); //if any of them don't match, false
+              resolve(true); //if any of them match, resolve true, they have permission
             }
           }
-          resolve(true); //if they all match, true
+          resolve(false); //if none match, resolve false.
       }).catch((err) =>
       {
         resolve(false); //if the token isn't even properly formatted, fail authentication.
@@ -197,51 +197,81 @@ catch(err)
 // ========================
 // grab questions for a specific course
 app.get('/api/questions/:course', (req, res) => {
-  db.collection('courses').where('courseCode', '==', req.params.course).get().then(q => {
-    if (q.empty || q.size > 1) res.status(404).send(); // expecting only one or none to be found, error out if more than 1
-    else q.forEach(d => res.status(200).send(d.data()));
-  })
+  verifyUser(req.header('authorization'), {'professor': true}).then((val) =>
+  {
+    if(val)
+    {
+      db.collection('courses').where('courseCode', '==', req.params.course).get().then(q => {
+        if (q.empty || q.size > 1) res.status(404).send(); // expecting only one or none to be found, error out if more than 1
+        else q.forEach(d => res.status(200).send(d.data()));
+      })
+    }
+  });
+   
 });
 
 // grab list of all courses
 app.get('/api/courses/', (req, res) => {
-  db.collection('courses').get().then(all => {
-    let allCourses = [];
-    all.forEach(c => {
-      allCourses.push(c.data());
-    })
-
-    if (allCourses.length > 0) res.status(200).send(allCourses);
-    else res.status(404).send();
-  })
+  verifyUser(req.header('authorization'), {'professor': true, 'admin': true}).then((val) =>
+  {
+    if(val)
+    {
+      db.collection('courses').get().then(all => {
+        let allCourses = [];
+        all.forEach(c => {
+          allCourses.push(c.data());
+        })
+    
+        if (allCourses.length > 0) res.status(200).send(allCourses);
+        else res.status(404).send();
+      })
+    }
+    
+  });
+  
 
 })
 
 //grab ALL TAs that are in the system
 app.get('/api/applicants/',(req,res)=>{
-  db.collection('applicants').get().then(all => {
-    let allApplicants = [];
-    all.forEach(c => {
-      allApplicants.push(c.data());
-    })
-
-    if (allApplicants.length > 0) res.status(200).send(allApplicants);
-    else res.status(404).send();
-  })
+  verifyUser(req.header('authorization'), {'professor': true, 'admin': true, 'chair': true}).then((val) =>
+  {
+    if(val)
+    {
+      db.collection('applicants').get().then(all => {
+        let allApplicants = [];
+        all.forEach(c => {
+          allApplicants.push(c.data());
+        })
+    
+        if (allApplicants.length > 0) res.status(200).send(allApplicants);
+        else res.status(404).send();
+      })
+    }
+    
+  });
+ 
 })
 
 // grab allocation for all courses
 // will be used to allocate hours & TAs to courses
 app.get('/api/allocation', (req, res) => {
-  db.collection('allocation').get().then(all => {
-    let allCourses = [];
-    all.forEach(c => {
-      allCourses.push(c.data());
-    })
-
-    if (allCourses.length > 0) res.status(200).send(allCourses);
-    else res.status(404).send();
-  })
+  verifyUser(req.header('authorization'), {'professor': true, 'admin': true, 'chair': true}).then((val) =>
+  {
+    if(val)
+    {
+      db.collection('allocation').get().then(all => {
+        let allCourses = [];
+        all.forEach(c => {
+          allCourses.push(c.data());
+        })
+    
+        if (allCourses.length > 0) res.status(200).send(allCourses);
+        else res.status(404).send();
+      })
+    }
+  });
+ 
 })
 
 // ===========================
@@ -256,22 +286,28 @@ app.put('/api/courses/',
     body('lecHrs').trim().escape(),
     body('sec').trim().escape()
     ], (req, res) => {
-
-    db.collection('courses').add({
-      courseCode: req.body.courseCode,
-      courseName: req.body.courseName,
-      lecHrs: req.body.lecHrs,
-      labOrTutHrs: req.body.labOrTutHrs,
-      questions: req.body.questions,
-      sec: req.body.sec
-    }).then(() => {
-      res.status(200).send({ success: 'Courses successfully added.' });
-
-    }).catch(err => {
-      res.status(403).send({ error: err});
-
-
-    })
+      verifyUser(req.header('authorization'), {'professor': true, 'admin': true, 'chair': true}).then((val) =>
+      {
+        if(val)
+        {
+          db.collection('courses').add({
+            courseCode: req.body.courseCode,
+            courseName: req.body.courseName,
+            lecHrs: req.body.lecHrs,
+            labOrTutHrs: req.body.labOrTutHrs,
+            questions: req.body.questions,
+            sec: req.body.sec
+          }).then(() => {
+            res.status(200).send({ success: 'Courses successfully added.' });
+      
+          }).catch(err => {
+            res.status(403).send({ error: err});
+      
+      
+          })
+        }
+      });
+    
 })
 
 // change course questions
@@ -281,13 +317,20 @@ app.post('/api/questions/:course', [
   body('questions').isArray(),
   body('questions.*').trim().escape(),
   ], (req, res) => {
-    db.collection('courses').where('courseCode', '==', req.params.course).get().then(q => {
-      if (q.empty || q.size > 1) res.status(404).send();
-      else q.forEach(d => {
-        db.collection('courses').doc(d.id).update({ questions : req.body.questions });
-        res.status(200).send({ success: 'Questions successfully modified.'});
-      })
-    })
+    verifyUser(req.header('authorization'), {'professor': true}).then((val) =>
+    {
+      if(val)
+      {
+        db.collection('courses').where('courseCode', '==', req.params.course).get().then(q => {
+          if (q.empty || q.size > 1) res.status(404).send();
+          else q.forEach(d => {
+            db.collection('courses').doc(d.id).update({ questions : req.body.questions });
+            res.status(200).send({ success: 'Questions successfully modified.'});
+          })
+        })
+      }
+    });
+   
 })
 
 // change allocated hours
@@ -296,13 +339,20 @@ app.post('/api/allocation/hrs', [
   body('*.course').trim().escape(),
   body('*.currHrs').trim().escape()
 ], (req, res) => {
-  req.body.forEach(e => {
-    db.collection('allocation').where('course', '==', e.course).get().then(x => {
-        x.forEach(d => db.collection('allocation').doc(d.id).update({ currHrs : parseInt(e.currHrs) }) )
-    })
-  })
-
-  res.status(200).send({ success: 'Allocated hours successfully modified.' });
+  verifyUser(req.header('authorization'), {'chair': true}).then((val) =>
+  {
+    if(val)
+    {
+      req.body.forEach(e => {
+        db.collection('allocation').where('course', '==', e.course).get().then(x => {
+            x.forEach(d => db.collection('allocation').doc(d.id).update({ currHrs : parseInt(e.currHrs) }) )
+        })
+      })
+    
+      res.status(200).send({ success: 'Allocated hours successfully modified.' });
+    }
+  });
+  
 })
 
 // change assigned TAs
@@ -311,13 +361,20 @@ app.post('/api/allocation/tas', [
   body('*.course').trim().escape(),
   body('*.assignList').isArray(),
 ], (req, res) => {
-  req.body.forEach(e => {
-    db.collection('allocation').where('course', '==', e.course).get().then(x => {
-        x.forEach(d => db.collection('allocation').doc(d.id).update({ assignList : e.assignList }) )
-    })
-  })
-
-  res.status(200).send({ success: 'Assigned TAs successfully modified.' });
+  verifyUser(req.header('authorization'), {'chair': true}).then((val) =>
+  {
+    if(val)
+    {
+      req.body.forEach(e => {
+        db.collection('allocation').where('course', '==', e.course).get().then(x => {
+            x.forEach(d => db.collection('allocation').doc(d.id).update({ assignList : e.assignList }) )
+        })
+      })
+    
+      res.status(200).send({ success: 'Assigned TAs successfully modified.' });
+    }
+  });
+  
 });
 
 // add a course

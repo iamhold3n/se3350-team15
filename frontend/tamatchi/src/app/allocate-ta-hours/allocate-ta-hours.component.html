@@ -6,7 +6,6 @@
     <!--Header/title rows-->
     <tr> 
         <th>Course</th>
-        <th>Instructor</th>
         <th> <p>Enrolment {{current_year-1}}</p> </th>
         <th> <p>TA Hours for {{current_year-1}}</p> </th>
         <th> <p>Enrolment {{current_year}}</p> </th>
@@ -18,7 +17,6 @@
     <!--Content rows -->
     <tr *ngFor="let c of enroll_record_list">
         <th> {{c.course}} </th>
-        <th> {{c.instructor}} </th>
         <th> {{c.prevEnrol}} </th>
         <th> {{c.prevHrs}} </th>
         <th> {{c.currEnrol}} </th>
@@ -29,7 +27,6 @@
 
     <!--Row for Submit button -->
     <tr>
-        <th></th>
         <th></th>
         <th></th>
         <th></th>

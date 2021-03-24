@@ -21,6 +21,10 @@ export class DataService {
     return this.http.get(`${this.url}/courses/`);
   }
 
+  getInstructor(email) {
+    return this.http.get(`${this.url}/instructors/${email}`);
+  }
+
   getApplicants(){
     return this.http.get(`${this.url}/applicants/`);
   }

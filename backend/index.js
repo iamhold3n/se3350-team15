@@ -195,9 +195,18 @@ catch(err)
 // ========================
 // DATA RETRIEVAL FUNCTIONS
 // ========================
+
 // grab questions for a specific course
 app.get('/api/questions/:course', (req, res) => {
   db.collection('courses').where('courseCode', '==', req.params.course).get().then(q => {
+    if (q.empty || q.size > 1) res.status(404).send(); // expecting only one or none to be found, error out if more than 1
+    else q.forEach(d => res.status(200).send(d.data()));
+  })
+});
+
+// grab an instructor from an email
+app.get('/api/instructors/:email', (req, res) => {
+  db.collection('instructors').where('email', '==', req.params.email).get().then(q => {
     if (q.empty || q.size > 1) res.status(404).send(); // expecting only one or none to be found, error out if more than 1
     else q.forEach(d => res.status(200).send(d.data()));
   })

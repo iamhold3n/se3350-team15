@@ -5,7 +5,6 @@ import {Course} from '../course';
 import { DataService } from '../data.service';
 
 import {AuthService} from '../auth.service';
-import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-assign-ta',
@@ -48,7 +47,7 @@ export class AssignTaComponent implements OnInit {
    * Checks if user has admin permissions (faculty admin or undergrad chair)
    * and updates this component as necessary to reflect that
    */
-  isAdmin()
+  checkPerm()
   {
      
     this.auth.getClaims().then((claims) =>
@@ -58,7 +57,7 @@ export class AssignTaComponent implements OnInit {
       this.instructor = claims["professor"];
 
     });
-  }//end of isAdmin
+  }//end of checkPerm
 
   /**
    * Get relevant course data from back-end
@@ -107,12 +106,12 @@ export class AssignTaComponent implements OnInit {
           email:ta.email,
           name:ta.name,
           priority:ta.status,
-          taHours:5,
+          taHours:ta.hrs,
           ranked_courses:this.loadRankings(ta),
         }
       });
 
-      //console.log(this.candidate_list);
+      console.log(this.candidate_list);
 
       this.getCourses();
 
@@ -177,7 +176,7 @@ export class AssignTaComponent implements OnInit {
 
       //check if the user is currently logged in
       //to determine if certain buttons and such will be visible
-      this.isAdmin();
+      this.checkPerm();
 
       //update this component to view the course
       this.viewed_course = this.course_list[index];

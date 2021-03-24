@@ -1,9 +1,15 @@
 <h2>Rank the TAs you would like in your course</h2>
 
+<!-- '#courses' assigns the name 'courses' to this select element -->
+<select #courses (change)="courseView(courses.value)" id="courses">
+    <option value="-1">{{empty_course}}</option>
+    <option *ngFor="let c of course_list, index as a" value="{{a}}">{{c}}</option>
+</select>
+
 <!-- Draggable list to rank TAs -->
 <div cdkDropList (cdkDropListDropped)="drop($event)">
-    <div class="list" cdkDrag *ngFor='let ta of talist'>
-        {{ta}}
+    <div class="list" cdkDrag *ngFor='let ta of viewed_tas'>
+        {{ta.email}}
     </div>
 </div>
 <br>

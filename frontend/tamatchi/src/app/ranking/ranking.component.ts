@@ -19,22 +19,31 @@ export class RankingComponent implements OnInit {
   //course that is currently being viewed
   viewed_course: string;
 
-  //list of TAs belonging to currently logged professors (based on courseList)
-  taList: Candidate[];
-  //list of TAs belonging to the current course view
-  viewed_tas: Candidate[];
+  //list of unranked TAs belonging to currently logged professors (based on courseList)
+  unranked_tas: string[][];
+  //list of ranked TAs belonging to currently logged professors (based on courseList)
+  ranked_tas: string[][];
+  //list of ranked TAs belonging to the current course view
+  ranked_view: string[];
+  //list of unranked TAs belonging to the current course view
+  unranked_view: string[];
 
   constructor(private data: DataService, private auth : AuthService) { 
   }
 
   ngOnInit(): void {
 
+    //initialize empty list of TAs
+    this.ranked_tas = [];
+    this.unranked_tas = [];
+
     //initialize the empty course
     this.empty_course="---";
     //initialize the current course to be empty
     this.viewed_course = this.empty_course;
     //initialize the viewed TAs to match empty course view
-    this.viewed_tas=[];
+    this.ranked_view=[];
+    this.unranked_view=[];
 
     //check user permissions
     //before pulling all their data from the backend
@@ -70,18 +79,27 @@ export class RankingComponent implements OnInit {
     this.auth.getUserObject().then((user) =>
     {
 
-      this.data.getInstructor(user["email"]).subscribe(res => {
+      if(user === null){
 
-        //list of courses that will be available for ranking
-        //reflects whichever professor is currently logged in
-        //TODO: determine which prof is logged in
-        this.course_list = res["course"];
+      }
+      else{
+        this.data.getInstructor(user["email"]).subscribe(res => {
 
-        //list of ta names to be ranked 
-        //assume courselist has already been initialized
-        this.getApplicants();
+          //list of courses that will be available for ranking
+          //reflects whichever professor is currently logged in
+          //TODO: determine which prof is logged in
+          this.course_list = res["course"];
+  
+          for(let a=0; a<this.course_list.length; a++){
+            //list of ta names to be ranked 
+            //assume courselist has already been initialized
+            this.getRankedApplicants(a);
+          }
 
-      });
+          this.getUnrankedApplicants();
+  
+        });
+      }
 
     });
 
@@ -92,60 +110,46 @@ export class RankingComponent implements OnInit {
    * Assumes courseList has already been populated
    * filters Applicants based on courseList
    */
-  getApplicants(){
+  getRankedApplicants(index){
 
-    let temp;
+    //get the list of ranked applicants from back-end
+    this.data.getRankedApplicants(this.course_list[index]).subscribe(res => {
 
-    //get the list of courses from back-end
-    this.data.getApplicants().subscribe(res => {
-
-      temp = this.filterApplicants(res, this.course_list);
 
       //adjsut the data to be compatible with this component
-      this.taList = temp.map( ta => {
-        return {
-          email:ta.email,
-          name:ta.name,
-          priority:ta.status,
-          taHours:ta.hrs,
-          course: ta.course,
-        }
-      });
+      this.ranked_tas[index] = res["ranked_applicants"];
 
       //console.log(this.taList);
 
-    });//end of processing course list from back-end
+    });//end of processing ranked applicant list from back-end
 
-  }//end of getApplicants
+  }//end of getRankedApplicants
 
   /**
-   * Filter applicants from a given list
-   * Given a list of course codes to accept
-   * return a new list
-   * @param tas 
-   * @param courses
+   * Assume the ranked applicants have already been retrieved
    */
-  filterApplicants(tas,courses){
+  getUnrankedApplicants(){
 
-    let newList = [];
+    let temp;
 
-    //loop through all the fetched TAs
-    for (let l of tas){
+    //get the list of unranked applicants from back-end
+    this.data.getApplicants().subscribe(res => {
 
-      //check each of the accepted course codes
-      for(let c of courses){
 
-        //if it matches even one course code, include it
-        if(l.course.includes(c)){
-          newList.push(l);
-          break; //once a match is found, move on to next TA
-        }
+      //adjsut the data to be compatible with this component
+      temp = res;
+      let c = this.course_list;
+
+      //adjsut the data to be compatible with this component
+      for(let a=0; a<c.length; a++){
+        this.unranked_tas[a] = temp
+        .filter(ta => { return ta.course.includes(c[a]) && !this.ranked_tas[a].includes(ta.email) })
+        .map( ta => { return ta.email });
       }
 
-    }
+      //console.log(this.taList);
 
-    return newList;
-
+    });//end of processing unranked applicant list from back-end
   }
 
   /**
@@ -158,7 +162,8 @@ export class RankingComponent implements OnInit {
 
     if(index == -1){
       this.viewed_course = this.empty_course;
-      this.viewed_tas = [];
+      this.ranked_view = [];
+      this.unranked_view = [];
     }
     else{
 
@@ -169,20 +174,25 @@ export class RankingComponent implements OnInit {
       //update this component to view the course
       this.viewed_course = this.course_list[index];
 
-      //update the list of viewed tas
-      this.viewed_tas = this.filterApplicants(this.taList,[this.viewed_course]);
+      //update the list of tas
+      this.ranked_view = this.ranked_tas[index];
+      this.unranked_view = this.unranked_tas[index];
     }
 
   }//end of courseView
 
   //This method will reorder the array when items are dragged around
   drop(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.taList, event.previousIndex, event.currentIndex);
+    moveItemInArray(this.ranked_view, event.previousIndex, event.currentIndex);
   }
 
   //This method will save the ranking changes and send the updated list to the database
   //TODO: Save changes to rankings
   confirmRankings() {
-    alert("Changes Saved *not really");
+
+    this.data.updateCourseRanking(this.viewed_course,this.ranked_view).subscribe(res => {
+      alert("Changes Saved");
+    });
+
   }
 }

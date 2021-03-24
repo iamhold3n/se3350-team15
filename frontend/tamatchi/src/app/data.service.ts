@@ -29,6 +29,10 @@ export class DataService {
     return this.http.get(`${this.url}/applicants/`);
   }
 
+  getRankedApplicants(course){
+    return this.http.get(`${this.url}/ranking/${course}`);
+  }
+
   /**
    * Use this to get data for:
    * -Allocating TA hours to courses
@@ -37,6 +41,10 @@ export class DataService {
    */
   getAllocation() {
     return this.http.get(`${this.url}/allocation/`);
+  }
+
+  updateCourseRanking(course,ranking) {
+    return this.http.post(`${this.url}/ranking/${course}/`,ranking)
   }
 
   updateAllocationHrs(hrs) {

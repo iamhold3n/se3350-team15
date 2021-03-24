@@ -239,6 +239,16 @@ app.get('/api/applicants/',(req,res)=>{
   })
 })
 
+//grab TA rankings for a course
+app.get('/api/ranking/:course',(req,res)=>{
+  db.collection('courses').where('courseCode', '==', req.params.course).get().then(q => {
+    if (q.empty || q.size > 1) res.status(404).send();
+    else q.forEach(d => {
+      res.status(200).send({"ranked_applicants":d.data().ranked_applicants});
+    })
+  })
+})
+
 // grab allocation for all courses
 // will be used to allocate hours & TAs to courses
 app.get('/api/allocation', (req, res) => {
@@ -256,6 +266,7 @@ app.get('/api/allocation', (req, res) => {
 // ===========================
 // DATA MODIFICATION FUNCTIONS
 // ===========================
+
 // change course questions
 app.post('/api/questions/:course', [
   body('courseCode').trim().escape().exists(),
@@ -271,6 +282,20 @@ app.post('/api/questions/:course', [
     else q.forEach(d => {
       db.collection('courses').doc(d.id).update({ questions : req.body.questions });
       res.status(200).send({ success: 'Questions successfully modified.'});
+    })
+  })
+})
+
+// change ranked TAs of a course 
+app.post('/api/ranking/:course',(req, res) => {
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+  
+  db.collection('courses').where('courseCode', '==', req.params.course).get().then(q => {
+    if (q.empty || q.size > 1) res.status(404).send();
+    else q.forEach(d => {
+      db.collection('courses').doc(d.id).update({ ranked_applicants : req.body});
+      res.status(200).send({ success: 'TA-Ranking successfully modified.'});
     })
   })
 })

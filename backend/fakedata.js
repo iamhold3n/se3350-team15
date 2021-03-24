@@ -75,7 +75,6 @@ for (let i = 0; i < allocationNum; i++) {
         currEnrol: enrolhrs[i].currEnrol,
         currHrs: hours,
         estHrs: (Math.floor(enrolhrs[i].currEnrol / enrolhrs[i].prevEnrol * enrolhrs[i].prevHrs)),
-        instructor: instructors[Math.floor(Math.random() * (instructorsNum - 1))].name,
         labOrTutHrs: courses[i].labOrTutHrs,
         labSections: Math.floor(Math.random() * 4),
         prevEnrol: enrolhrs[i].prevEnrol,
@@ -146,6 +145,7 @@ courses.forEach(x => {
         labOrTutHrs: x.labOrTutHrs,
         lecHrs: x.lecHrs,
         questions: x.questions,
+        ranked_applicants: [],
         sec: x.sec
     }).then(x => {
         console.log("Added course")
@@ -157,7 +157,8 @@ courses.forEach(x => {
 instructors.forEach(x => {
     db.collection("instructors").doc(x.email).set({
         name: x.name,
-        email: x.email
+        email: x.email,
+        course: []
     }).then(x => {
         console.log("Added instructor")
     }).catch(e => {
@@ -198,7 +199,6 @@ applicants.forEach(x => {
 allocation.forEach(x => {
     db.collection("allocation").doc(x.course).set({
         assignList: [],
-        instructor: x.instructor,
         course: x.course,
         labSections: x.labSections,
         labOrTutHrs: x.labOrTutHrs,

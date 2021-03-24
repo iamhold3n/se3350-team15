@@ -197,10 +197,9 @@ catch(err)
 // ========================
 // grab questions for a specific course
 app.get('/api/questions/:course', (req, res) => {
-  db.collection('courses').where('courseCode', '==', req.params.course).get().then(q => {
-    if (q.empty || q.size > 1) res.status(404).send(); // expecting only one or none to be found, error out if more than 1
-    else q.forEach(d => res.status(200).send(d.data()));
-  })
+  db.collection('courses').doc(req.params.course).get()
+    .then(d => res.status(200).send(d.data()))
+    .catch(err => res.status(404).send({ error: 'Course not found' }));
 });
 
 // grab list of all courses
@@ -256,14 +255,13 @@ app.post('/api/questions/:course', [
 ], (req, res) => {
   const errors = validationResult(req);
   if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
-  
-  db.collection('courses').where('courseCode', '==', req.params.course).get().then(q => {
-    if (q.empty || q.size > 1) res.status(404).send();
-    else q.forEach(d => {
+
+  db.collection('courses').doc(req.params.course).get()
+    .then(d => {
       db.collection('courses').doc(d.id).update({ questions : req.body.questions });
-      res.status(200).send({ success: 'Questions successfully modified.'});
+      res.status(200).send({ success: 'Questions successfully modified.'})
     })
-  })
+    .catch(err => res.status(404).send({ error: 'Course not found' }));
 })
 
 // change allocated hours
@@ -274,13 +272,13 @@ app.post('/api/allocation/hrs', [
   const errors = validationResult(req);
   if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  req.body.forEach(e => {
-    db.collection('allocation').where('course', '==', e.course).get().then(x => {
-        x.forEach(d => db.collection('allocation').doc(d.id).update({ currHrs : e.currHrs }))
-    })
-  })
+  let batch = db.batch();
 
-  res.status(200).send({ success: 'Allocated hours successfully modified.' });
+  req.body.forEach(e => batch.update(db.collection('allocation').doc(e.course), { currHrs : e.currHrs }));
+
+  batch.commit()
+    .then(() => res.status(200).send({ success: 'Allocated hours successfully modified.' }))
+    .catch(err => res.status(400).send({ error: err }));
 })
 
 // change assigned TAs
@@ -291,13 +289,13 @@ app.post('/api/allocation/tas', [
   const errors = validationResult(req);
   if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  req.body.forEach(e => {
-    db.collection('allocation').where('course', '==', e.course).get().then(x => {
-        x.forEach(d => db.collection('allocation').doc(d.id).update({ assignList : e.assignList }) )
-    })
-  })
+  let batch = db.batch();
 
-  res.status(200).send({ success: 'Assigned TAs successfully modified.' });
+  req.body.forEach(e => batch.update(db.collection('allocation').doc(e.course), { assignList: e.assignList }));
+
+  batch.commit()
+    .then(() => res.status(200).send({ success: 'Assigned TAs successfully modified.' }))
+    .catch(err => res.status(400).send({ error: err }));
 });
 
 // add a course
@@ -311,7 +309,7 @@ app.put('/api/courses', [
   const errors = validationResult(req);
   if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  db.collection('courses').add({
+  db.collection('courses').doc(req.params.courseCode).set({
     courseCode: req.body.courseCode,
     courseName: req.body.courseName,
     labOrTutHrs: req.body.labOrTutHrs,

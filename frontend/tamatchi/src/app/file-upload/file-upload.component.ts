@@ -13,7 +13,7 @@ export class FileUploadComponent implements OnInit {
   uploadType = 0;
 
   activeFile;
-  applicantsFile = ['course','name','email','status','hrs','rank','questions'];
+  applicantsFile = ['course','name','email','status','hrs','ranks','questions'];
   coursesFile = ['courseCode','courseName','lecHrs','labOrTutHrs','sec'];
   enrolhrsFile = ['courseCode','labOrTutHrs','prevEnrol','prevHrs','currEnrol'];
   instructorsFile = ['name','email'];

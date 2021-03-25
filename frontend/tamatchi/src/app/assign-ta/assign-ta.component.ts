@@ -111,7 +111,7 @@ export class AssignTaComponent implements OnInit {
         }
       });
 
-      console.log(this.candidate_list);
+      //console.log(this.candidate_list);
 
       this.getCourses();
 

@@ -20,13 +20,13 @@ export class RankingComponent implements OnInit {
   viewed_course: string;
 
   //list of unranked TAs belonging to currently logged professors (based on courseList)
-  unranked_tas: string[][];
+  unranked_tas: Candidate[][];
   //list of ranked TAs belonging to currently logged professors (based on courseList)
-  ranked_tas: string[][];
+  ranked_tas: Candidate[][];
   //list of ranked TAs belonging to the current course view
-  ranked_view: string[];
+  ranked_view: Candidate[];
   //list of unranked TAs belonging to the current course view
-  unranked_view: string[];
+  unranked_view: Candidate[];
 
   constructor(private data: DataService, private auth : AuthService) { 
   }
@@ -91,12 +91,13 @@ export class RankingComponent implements OnInit {
           this.course_list = res["course"];
   
           for(let a=0; a<this.course_list.length; a++){
-            //list of ta names to be ranked 
+            //list of ta names to be or already ranked 
             //assume courselist has already been initialized
             this.getRankedApplicants(a);
+            this.getUnrankedApplicants(a);
           }
 
-          this.getUnrankedApplicants();
+          
   
         });
       }
@@ -108,7 +109,7 @@ export class RankingComponent implements OnInit {
   /**
    * Fetch Applicant data from back-end
    * Assumes courseList has already been populated
-   * filters Applicants based on courseList
+   * Gets both ranked and unranked applicants
    */
   getRankedApplicants(index){
 
@@ -124,31 +125,22 @@ export class RankingComponent implements OnInit {
   }//end of getRankedApplicants
 
   /**
-   * Assume the ranked applicants have already been retrieved
+   * Fetch Applicant data from back-end
+   * Assumes courseList has already been populated
+   * Gets both ranked and unranked applicants
    */
-  getUnrankedApplicants(){
+  getUnrankedApplicants(index){
 
-    let temp;
-
-    //get the list of unranked applicants from back-end
-    this.data.getApplicants().subscribe(res => {
+    //get the list of ranked applicants from back-end
+    this.data.getUnrankedApplicants(this.course_list[index]).subscribe(res => {
 
 
       //adjsut the data to be compatible with this component
-      temp = res;
-      let c = this.course_list;
+      this.unranked_tas[index] = res["unranked_applicants"];
 
-      //adjsut the data to be compatible with this component
-      for(let a=0; a<c.length; a++){
-        this.unranked_tas[a] = temp
-        .filter(ta => { return ta.course.includes(c[a]) && !this.ranked_tas[a].includes(ta.email) })
-        .map( ta => { return ta.email });
-      }
+    });//end of processing ranked applicant list from back-end
 
-      //console.log(this.taList);
-
-    });//end of processing unranked applicant list from back-end
-  }
+  }//end of getRankedApplicants
 
   /**
    * Changes which course is currently being viewed in the editor

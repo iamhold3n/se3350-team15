@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from './auth.service';
+import { DataService } from './data.service';
 
 @Component({
   selector: 'app-root',
@@ -7,16 +8,26 @@ import { AuthService } from './auth.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+
+  account_email:string
+
   admin: boolean
-  constructor(private auth: AuthService) {}
+
+  chair: boolean
+
+  instructor: boolean
+  unranked_count: number
+
+  constructor(private auth: AuthService, private data: DataService) {}
 
   ngOnInit(): void {
-    this.isAdmin();
-  }
+    this.unranked_count=null;
+    this.getPerm();
+  }//end of ngOnInit
 
   markActive(a) {
     let nav = ['nav-login','nav-course','nav-form','nav-allocate','nav-assign','nav-ranking','nav-upload','nav-admin'];
-    this.isAdmin();
+    this.getPerm();
 
     let navsz;
     if(this.admin) navsz = nav.length;
@@ -30,23 +41,89 @@ export class AppComponent {
 
       if (i === 0) e.className += ' left';
     }
-  }
+  }//end of markActive
 
-  isAdmin()
+  //customize the page to match the user's permissions
+  getPerm()
   {
-    
+      //retrieving user claims
       this.auth.getClaims().then((claims) =>
       {
-      //for debugging
 
-        if (claims["admin"] == true)
-        {
-          this.admin = true;
+        //processing user claims
+        if(claims !== null){
+
+          //retrieving user object
+          this.auth.getUserObject().then((user) =>
+          {
+            if(user!==null){
+
+              //processing user object
+              this.applyPerm(user, claims);
+
+            }
+
+          });
+        
         }
-        else
-        {
-          this.admin = false;
-        } 
+
       });
+
+  }//end of getPerm
+
+  /**
+   * Once the claims nad userObject have all been retrieved
+   * Update the webpage to reflect this
+   * @param user 
+   * @param claims 
+   */
+  applyPerm(user, claims){
+
+    this.account_email = user["email"];
+
+    this.admin = claims["admin"];
+
+    this.chair = claims["chair"];
+          
+    //if instructor is logged in
+    if(claims["professor"]){
+
+      this.instructor = true;
+
+      //then display notifications for unranked TAs 
+      //only do this once upon logging in
+      if(this.unranked_count===null){
+        this.checkUnrankedNotif(user);
+      }
+      
+    }
+    //if proffessor is logged out
+    else{
+      //reset the notification system for next professor login
+      this.unranked_count=null;
+    }
+
   }
-}
+
+  /**
+   * if instructor is logged in, then display notifications for unranked TAs (if necessary)
+   */
+  checkUnrankedNotif(user){
+
+        this.data.getInstructor(user["email"]).subscribe(res => {
+  
+          for(let a=0; a<res["course"].length; a++){
+            this.data.getUnrankedApplicants(res["course"][a]).subscribe(unranked_list => {
+              
+              this.unranked_count+= unranked_list["unranked_applicants"].length;
+              console.log(this.unranked_count);
+            })
+          }
+  
+        });
+      
+
+    
+  }//end of checkUnranked
+
+}//end of exports

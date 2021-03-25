@@ -241,13 +241,75 @@ app.get('/api/applicants/',(req,res)=>{
 
 //grab TA rankings for a course
 app.get('/api/ranking/:course',(req,res)=>{
+
   db.collection('courses').where('courseCode', '==', req.params.course).get().then(q => {
     if (q.empty || q.size > 1) res.status(404).send();
-    else q.forEach(d => {
-      res.status(200).send({"ranked_applicants":d.data().ranked_applicants});
+    else q.forEach(course => {
+
+      let result =[];
+      let ranked_list = course.data().ranked_applicants;
+      let count = 0;
+
+      //if list is empty
+      if(ranked_list.length ==0){
+          //return the empty list of ranked TAs for this course
+          res.status(200).send( {"ranked_applicants":result} );        
+      }
+
+      //if not empty, then get each of the ranked applicants IN ORDER
+      ranked_list.forEach( (email, index) => {
+        db.collection('applicants').where('email', '==', email).get().then(ta => {
+          if (ta.empty || ta.size > 1) res.status(404).send(); // expecting only one or none TA to be found, error out if more than 1
+          else{
+            //add the ranked applicant IN ORDER
+            ta.forEach(e => { 
+              result[index] = ( e.data() );
+              count ++;
+            });
+
+            //once the last TA has been pushed
+            if(count == ranked_list.length){
+              //return the ordered list of ranked TAs for this course
+              res.status(200).send( {"ranked_applicants":result} );
+            }
+
+          } 
+          
+        }) //end of querying for ranked TA
+      }) //end of pushing ranked TAs loop
+
+    })
+  }) //end of querying for the course
+})
+
+//grab unranked TAs for a course
+app.get('/api/unranked/:course',(req,res)=>{
+  db.collection('courses').where('courseCode', '==', req.params.course).get().then(q => {
+    if (q.empty || q.size > 1) res.status(404).send(); // expecting only one or none course to be found, error out if more than 1
+    else q.forEach(course => {
+
+      //get all TAs that applied to this course
+      db.collection('applicants').where('course', 'array-contains', req.params.course).get().then(all => {
+        
+        let result = [];
+        all.forEach(c => {
+          result.push(c.data());
+        })
+
+        //filter out TAs that have already been ranked for this course
+        result = result.filter( ta => {return !course.data().ranked_applicants.includes(ta.email)} )
+
+        //return the list of unranked TAs for this course
+        res.status(200).send( {"unranked_applicants":result} );
+      })
+
     })
   })
 })
+
+function getUnranked(course){
+
+}
 
 // grab allocation for all courses
 // will be used to allocate hours & TAs to courses
@@ -293,10 +355,16 @@ app.post('/api/ranking/:course',(req, res) => {
   
   db.collection('courses').where('courseCode', '==', req.params.course).get().then(q => {
     if (q.empty || q.size > 1) res.status(404).send();
-    else q.forEach(d => {
-      db.collection('courses').doc(d.id).update({ ranked_applicants : req.body});
-      res.status(200).send({ success: 'TA-Ranking successfully modified.'});
-    })
+    else{
+
+      //process the req body contents to be stored in database
+      let list = req.body.map( ta => {return ta.email} );
+
+      q.forEach(course => {
+        db.collection('courses').doc(course.id).update({ ranked_applicants : list });
+        res.status(200).send({ success: 'TA-Ranking successfully modified.'});
+      })
+    }
   })
 })
 

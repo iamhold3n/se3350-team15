@@ -27,7 +27,7 @@
                     <!--Rank number-->
                     <div class="number" >{{a+1}}</div>
                     <!--Ranked TA details-->
-                    <div class="list" >{{ta}}</div>
+                    <div class="list" >{{ta.email}}</div>
                 </div>
             </div>
         </td>
@@ -38,7 +38,7 @@
             <div cdkDropList *ngIf="unranked_view.length > 0">
                 <div id="unranked" class="list" cdkDrag *ngFor='let ta of unranked_view, index as a'>
                     <!--Unranked TA details-->
-                    {{ta}}
+                    {{ta.email}}
                 </div>
             </div>
         </td>

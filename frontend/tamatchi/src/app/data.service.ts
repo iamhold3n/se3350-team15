@@ -33,6 +33,10 @@ export class DataService {
     return this.http.get(`${this.url}/ranking/${course}`);
   }
 
+  getUnrankedApplicants(course){
+    return this.http.get(`${this.url}/unranked/${course}`);
+  }
+
   /**
    * Use this to get data for:
    * -Allocating TA hours to courses

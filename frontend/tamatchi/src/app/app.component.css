@@ -52,3 +52,15 @@ hr {
     display: flex;
     justify-content: center;
 }
+
+.notification {
+    background-color: red;
+    border: 2px solid transparent;
+    color: white;
+    cursor: pointer;
+    display: inline-block;
+    font-weight: 900;
+    font-size: 15px;
+    margin: 0;
+    padding: 4px;
+}

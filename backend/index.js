@@ -408,7 +408,10 @@ app.put('/api/batch/instructors', [
 
   let batch = db.batch();
 
-  req.body.forEach(e => batch.set(db.collection('instructors').doc(e.email), e));
+  req.body.forEach(e => {
+    batch.set(db.collection('instructors').doc(e.email), e);
+    batch.update(db.collection('courses').doc(e.email), { course: [] })
+  });
 
   batch.commit()
     .then(() => res.status(200).send({ success: 'Instructors successfully added.' }))

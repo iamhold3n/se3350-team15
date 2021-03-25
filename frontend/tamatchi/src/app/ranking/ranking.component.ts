@@ -1,4 +1,4 @@
-import { moveItemInArray, CdkDragDrop } from '@angular/cdk/drag-drop';
+import { moveItemInArray, CdkDragDrop, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
 import { Candidate } from '../candidate';
 import { DataService } from '../data.service';
@@ -119,8 +119,6 @@ export class RankingComponent implements OnInit {
       //adjsut the data to be compatible with this component
       this.ranked_tas[index] = res["ranked_applicants"];
 
-      //console.log(this.taList);
-
     });//end of processing ranked applicant list from back-end
 
   }//end of getRankedApplicants
@@ -181,9 +179,19 @@ export class RankingComponent implements OnInit {
 
   }//end of courseView
 
-  //This method will reorder the array when items are dragged around
+  //This method will reorder the appropriate array when items are dragged around
   drop(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.ranked_view, event.previousIndex, event.currentIndex);
+
+    //if reordering items in the ranked array
+    if(event.container == event.previousContainer){
+      moveItemInArray(this.ranked_view, event.previousIndex, event.currentIndex);
+    }
+    //if moving items from unranked to ranked array
+    else{
+
+      transferArrayItem(this.unranked_view, this.ranked_view, event.previousIndex, event.currentIndex);
+    }
+
   }
 
   //This method will save the ranking changes and send the updated list to the database

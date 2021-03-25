@@ -6,8 +6,27 @@
     justify-content: center;
     align-items: center;
     height: 50px;
-    width: 50%;
+    width: fit-content;
     background-color: white;
+}
+
+.number{
+    float:left; /*Ensures divs can be placed horizontally adjacent to this*/
+    margin-left: 20px;
+    border: 1px solid;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    width: 50px;
+    background-color: grey; 
+    font: red;
+}
+
+.cdk-drop-list {
+    height: 500px;
+    overflow-y: scroll;
+    border: 1px solid;
 }
 
 /* Animate items as they're being sorted */

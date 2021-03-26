@@ -116,7 +116,6 @@ export class AppComponent {
             this.data.getUnrankedApplicants(res["course"][a]).subscribe(unranked_list => {
               
               this.unranked_count+= unranked_list["unranked_applicants"].length;
-              console.log(this.unranked_count);
             })
           }
   

@@ -28,6 +28,9 @@ export class RankingComponent implements OnInit {
   //list of unranked TAs belonging to the current course view
   unranked_view: Candidate[];
 
+  //detects if logged in
+  loggedIn: boolean;
+
   constructor(private data: DataService, private auth : AuthService) { 
   }
 
@@ -47,6 +50,7 @@ export class RankingComponent implements OnInit {
 
     //check user permissions
     //before pulling all their data from the backend
+    this.loggedIn = false;
     this.checkPerm();
 
   }
@@ -62,6 +66,7 @@ export class RankingComponent implements OnInit {
     {
   
       if(claims["professor"]){
+        this.loggedIn = true;
         this.getUser();
       }
  

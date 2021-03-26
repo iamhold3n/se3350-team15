@@ -1,15 +1,19 @@
 <h2>TA Ranking</h2>
 
+<!--Message if not logged in-->
+<span *ngIf = "!loggedIn">Please log in as a professor to view rankings</span>
+
 <!-- '#courses' assigns the name 'courses' to this select element -->
-<select #courses (change)="courseView(courses.value)" id="courses">
+<label for="courses" *ngIf = "loggedIn">Select a Course</label>
+<select *ngIf = "loggedIn" #courses (change)="courseView(courses.value)" id="courses">
     <option value="-1">{{empty_course}}</option>
     <option *ngFor="let c of course_list, index as a" value="{{a}}">{{c}}</option>
 </select>
 
 <!--TWO main columns will hold the list of ranked and unranked TAs-->
-<table>
+<table *ngIf = "loggedIn">
     <tr>
-        <th>
+        <th *ngIf="ranked_view.length > 0">
             RANKED TAS
         </th>
         <th *ngIf="unranked_view.length > 0">
@@ -17,7 +21,7 @@
         </th>
     </tr>
     <tr cdkDropListGroup>
-        <td>
+        <td *ngIf="ranked_view.length > 0">
             <!-- Draggable list to rank TAs -->
             <!-- Accepts incoming list items -->
             <!-- Appears always -->
@@ -31,7 +35,7 @@
                 </div>
             </div>
         </td>
-        <td>
+        <td *ngIf="unranked_view.length > 0">
             <!-- Draggable list for unranked TAs -->
             <!-- Does not accept incoming list items -->
             <!-- Only appears if there is at least one list item -->
@@ -43,8 +47,9 @@
             </div>
         </td>
     </tr>
+
+    <br>
+    <button *ngIf="ranked_view.length > 0 || unranked_view.length > 0" (click)="confirmRankings()" class="confirm">Confirm Changes</button>
 </table>
 
 
-<br>
-<button (click)="confirmRankings()" class="confirm">Confirm Changes</button>

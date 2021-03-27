@@ -11,9 +11,14 @@ select{
     margin: 5px;
 }
 .list{
-    width: 600px;
-    height: 600px;
-    overflow: scroll;
+    margin-left: 20px;
+    border: 1px solid;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    width: fit-content;
+    background-color: white;
 }
 table {
     font-family: arial, sans-serif;

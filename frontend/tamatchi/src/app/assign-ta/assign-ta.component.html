@@ -1,137 +1,51 @@
-
-
-<label for="courses">Choose a course:</label>
+<h2>TA Assignment</h2>
 
 <!-- '#courses' assigns the name 'courses' to this select element -->
+<label for="courses">Select a Course</label>
 <select #courses (change)="courseView(courses.value)" id="courses">
-    <option value="-1">{{empty_course.courseCode}}</option>
-    <option *ngFor="let c of course_list, index as a" value="{{a}}">{{c.courseCode}}</option>
+    <option value="-1">{{empty_course}}</option>
+    <option *ngFor="let c of course_list, index as a" value="{{a}}">{{c}}</option>
 </select>
 
-<!--Button to run the auto-assign algorithm for ALL courses-->
-<!--Only show if user is logged in as admin-->
-<button (click)="autoAssignAll()" *ngIf="admin">Auto-Assign All Courses</button>
+<!--TWO main columns will hold the list of assigned and unassigned TAs-->
+<table>
+    <tr>
+        <th>
+            Assigned TAS
+        </th>
+        <th>
+            Unassigned TAS
+        </th>        
+    </tr>
+    <tr cdkDropListGroup>
+        <td>
+            <!-- Draggable list for assigned TAs -->
+            <!-- Accepts incoming list items -->
+            <!-- Appears always -->
+            <div cdkDropList (cdkDropListDropped)="drop($event)">
+                <div id="assigned" cdkDrag *ngFor='let ta of viewed_assigned, index as a'>
 
-<h2>Now Viewing Course: {{viewed_course.courseCode}}</h2>
-<h4>Total TA Hours: {{viewed_course.taHours}}<h4>
-
-<!--Empty Course View Message-->
-<div *ngIf = "viewed_course == empty_course" >PLEASE SELECT A COURSE TO VIEW</div>
-
-<!--Assignment editor-->
-<!--Only show it if an actual course has been selected from the dropdown-->
-<div *ngIf = "viewed_course != empty_course" >
-
-    <!--Save Button-->
-    <!--Only show if user is logged in as admin-->
-    <button (click)="saveChanges()" *ngIf="admin">Save Changes to all Courses</button>
-
-    <!--Submit Feedback Button-->
-    <!--Only show if user is logged in as instructor-->
-    <button (click)="saveChanges()" *ngIf="instructor">Submit Feedback (Not Working Yet)</button>
-
-    <!--Main editor area is a 2x2 table-->
-    <table>
-        <tr>
-            <!--Header for assigned TAs-->
-            <th>
-                <h2>Assigned TAs</h2>
-
-                <!--Clear Button-->
-                <!--Only show if user is logged in as admin-->
-                <button (click)="clearTa()" *ngIf="admin">Remove All</button>
-
-            </th>
-            <!--Header for potential Candidates-->
-            <th>
-                <h2>Candidates</h2>
-
-                <!--Auto-Assign Button-->
-                <!--Only show if user is logged in as admin-->
-                <button (click)="autoAssign(viewed_course)" *ngIf="admin">Auto Assign</button>
-
-            </th>
-        </tr>
-
-        <tr>
-            <!--Section displaying assigned TAs-->
-            <td>
-
-                <!--div containing everything in this td for style purposes-->
-                <div class="list">
-                    <!--Div for each assigned TA-->
-                    <div *ngFor="let a of viewed_course.assignList; let i=index" class="candidate">
-
-                        <!--Split the Candidate info into two horizontally adjacent columns-->
-                        <table>
-                            <tr>
-                                <td>
-                                    <p>ID: {{a.email}}</p>
-                                    <p>Name: {{a.name}}</p>
-                                    <p>Priority: {{a.priority}}</p>
-                                    <p>TA Hours: {{a.taHours}}</p>
-                                </td>
-                                <td>
-                                    <p>Ranked Course Preferences: </p>
-                                    <div *ngFor="let r of a.ranked_courses" >{{r}}</div>
-                                </td>
-                            <tr>
-                        </table>
-                        
-                        <!--Button to remove TA-->
-                        <!--Only show it if user is logged in as admin-->
-                        <button (click)="removeTa(i)" *ngIf="admin" >Remove</button>
-
-                        <!--Only show this part if user is logged in as instructor-->
-                        <div *ngIf="instructor">
-                        <!--radio button to show approval/rejection-->
-                        <!--Make sure they have the same "name" attribute-->
-                        <input type="radio" id="accept-{{i}}" name="confirm">
-                        <label for="accept-{{i}}">Accept </label>
-                        </div>
-                        <!--Only show this part if user is logged in as instructor-->
-                        <div *ngIf="instructor">
-                        <input type="radio" id="reject-{{i}}" name="confirm">
-                        <label for="reject-{{i}}">Reject</label>
-                        </div>
-
-                    </div>
+                    <!--assigned TA details-->
+                    <div class="list" >{{ta.email}}</div>
                 </div>
+            </div>
+        </td>
+        <td>
+            <!-- Draggable list for unassigned TAs -->
+            <!-- Accepts incoming list items -->
+            <!-- Appears always -->
+            <div cdkDropList (cdkDropListDropped)="drop($event)">
+                <div id="unassigned" cdkDrag *ngFor='let ta of viewed_unassigned, index as a'>
 
-            </td>
-            <!--Section listing all potential Candidates-->
-            <td class = "list">
-
-                <!--div containing everything in this td for style purposes-->
-                <div class="list">
-                    <!--Div for each candidate-->
-                    <!-- ' | callback:isApplicant() ' filters the list for only candidates that applied for the viewed course -->
-                    <div *ngFor="let c of candidate_list | callback:isApplicant(viewed_course)" class="candidate">
-
-                        <!--Split the Candidate info into two horizontally adjacent columns-->
-                        <table>
-                            <tr>
-                                <td>
-                                    <p>ID: {{c.email}}</p>
-                                    <p>Name: {{c.name}}</p>
-                                    <p>Priority: {{c.priority}}</p>
-                                </td>
-                                <td>
-                                    <p>Ranked Courses: </p>
-                                    <div *ngFor="let r of c.ranked_courses" >{{r}}</div>
-                                </td>
-                            <tr>
-                        </table>
-
-                        <!--Button to add TA-->
-                        <!--Only show it if user is logged in as admin-->
-                        <button (click)="assignTa(c)" *ngIf="admin" >Assign</button>
-                    </div>
+                    <!--assigned TA details-->
+                    <div class="list" >{{ta.email}}</div>
                 </div>
+            </div>
+        </td>
+    </tr>
 
-            </td>
-        </tr>
-    </table>
+    <br>
+    <button *ngIf="viewed_assigned.length > 0" (click)="saveChanges()" class="confirm">Confirm Changes</button>
+</table>
 
 
-</div>

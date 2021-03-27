@@ -418,6 +418,32 @@ app.put('/api/batch/instructors', [
     .catch(err => res.status(400).send({ error: err }));
 })
 
+// assign an instructor to a course, unassign previous
+app.post('/api/instructors/:course/:instructor', [
+  body('*.email').isEmail().exists(),
+], (req, res) => {
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+
+  let batch = db.batch();
+
+  req.body.forEach(e => {
+    if (e.email == req.params.instructor) {
+      batch.update(db.collection('instructors').doc(e.email), {
+        course: admin.firestore.FieldValue.arrayUnion(req.params.course)
+      })
+    } else {
+      batch.update(db.collection('instructors').doc(e.email), {
+        course: admin.firestore.FieldValue.arrayRemove(req.params.course)
+      })
+    }
+  })
+
+  batch.commit()
+    .then(() => res.status(200).send({ success: 'Instructor successfully assigned to course.' }))
+    .catch(err => res.status(400).send({ error: err }));
+})
+
 function checkAllocation(docID) { // called when new courses are added to see if sufficient information is available to add to allocation database
   db.collection('enrolhrs').doc(docID).get()
     .then(e => {

@@ -12,8 +12,10 @@
 
 <span *ngIf="!courseLoaded(viewed_course)" >Loading...</span>
 
+<button *ngIf="viewed_course != empty_course" (click)="saveChanges()" class="confirm">Save Changes to ALL Courses</button>
+
 <!--TWO main columns will hold the list of assigned and unassigned TAs-->
-<table *ngIf="loggedIn">
+<table *ngIf="loggedIn && viewed_course != empty_course">
     <tr>
         <th>
             <div>Assigned TAS</div>
@@ -77,10 +79,8 @@
 
                     <!--EXPANDED VIEW-->
                     <div *ngIf="expanded_ta[1][viewedIndex()][a]" >
-                        <div class="list" >Prospective Hours: {{ta.hrs}}</div>
-                    
                         <div class="list" >Status Code: {{ta.status}}</div>
-                        <div class="list" >Received Hours: {{ta.hrs}}</div>
+                        <div class="list" >Prospective Hours: {{ta.hrs}}</div>
                         <div >
                             Ranked Courses:
                             <div class="list" *ngFor="let crs of ta.course, index as n">
@@ -97,6 +97,18 @@
             </div>
         </td>
         <td>
+            <button (click)="autoAssign(viewed_course,prof_rank_first)">Auto-Assign TAs for {{viewed_course}}</button>
+            <button (click)="autoAssignAll()">Auto-Assign TAs for ALL COURSES</button>
+
+            <!--Radio buttons to toggle which ranking takes priority-->
+            <!--Assume page initializes with prof ranking taking priority-->
+            <span>Which ranking should take priority?</span>
+            <input type="radio" id="prof-first" name="rank-priority" checked (change)="prof_rank_first=true">
+            <label for="prof-first">Professor's Rankings</label><br>
+
+            <input type="radio" id="ta-first" name="rank-priority" (change)="prof_rank_first=false">
+            <label for="ta-first">TA's Rankings</label><br>
+
             <button (click)="clearAssign(viewed_course)">Clear Assigned TAs for {{viewed_course}}</button>
             <button (click)="clearAll()">Clear Assigned TAs for ALL COURSES</button>
         </td>
@@ -128,7 +140,7 @@
     </tr>
 
     <br>
-    <button *ngIf="viewed_course != empty_course" (click)="saveChanges()" class="confirm">Confirm Changes</button>
+
 </table>
 
 

@@ -7,6 +7,7 @@ import { DataService } from '../data.service';
 
 import {AuthService} from '../auth.service';
 import { templateJitUrl } from '@angular/compiler';
+import { taggedTemplate } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-assign-ta',
@@ -52,6 +53,8 @@ export class AssignTaComponent implements OnInit {
   //professor user will have "professor" level permissions on this page
   professor: boolean;
 
+  prof_rank_first: boolean;
+
   constructor(private data: DataService, private auth : AuthService) { 
   }
 
@@ -72,6 +75,8 @@ export class AssignTaComponent implements OnInit {
     //initialize the viewed TAs to match empty course view
     this.viewed_assigned=[];
     this.viewed_unassigned=[];
+
+    this.prof_rank_first = true;
 
     //check user permissions
     this.loggedIn = false;
@@ -366,26 +371,128 @@ export class AssignTaComponent implements OnInit {
 
   /**
    * Runs the TA-Matching Algorithm for a single specified course
-   * only considers appllicants of a specific priority code at a time
+   * only considers appllicants of each specific priority code one at a time
    * uses a flag to determine whether priority goes to TA-rankings or Professor-rankings when comparing applicants
+   * Will remove existing assigned TAs first
    * @param crs 
    */
-  autoAssign(crs){
+  autoAssign(crs, prof_rank_first){
 
-    let hrs = this.courseHrs(crs);
+    //clear existing assigned TAs first
+    this.clearAssign(crs);
 
-    //assume that each TA is assigned at minimum 5 hours
-    while(hrs >= 5){
+    let hrs = this.courseHrs(crs); //total hrs avaialble in this course
+    let counter =0; //track index when traversing array of tas
+    let index = this.course_list.indexOf(crs); //index corresponding the course for refernece purposes
+    let temp; //temp array to hold TAs for sorting
+    
+    //loop for priority codes 1,2,3
+    for(let p=1; p<4; p++){
 
-    }
+      //reset temp array before sorting next set of TAs
+      temp = [];
+
+      
+      //loop until all TAs (with the right priority code) 
+      //have been extracted into temp array
+      for(let a=0; a< this.all_unassigned[index].length; a++){
+        
+        //only consider the TA if they match the relevant priority code
+        if( this.all_unassigned[index][a]["status"] == p ){
+
+          //extract the Ta-ranking value
+          this.all_unassigned[index][a]["ta_rank"] = this.all_unassigned[index][a]["course"].indexOf(crs)+1;
+
+          transferArrayItem(this.all_unassigned[index], temp, a, 0);
+          a--; //compensate for the array shrinking
+
+        }
+
+      }//end of TA extraction loop
+
+      //sort the TAs in the temp array
+      //lower weights will result in that ranking(ta or prof) having a higher priority
+      let ta_weight = 2;
+      let prof_weight;
+      if(prof_rank_first){
+        prof_weight = 1
+      }
+      else{
+        prof_weight = 3;
+      }
+      
+      temp.sort( (a,b) => { 
+
+        let ta_rank = [ ta_weight*a["ta_rank"], ta_weight*b["ta_rank"] ];
+        let prof_rank = [ prof_weight*a["prof_rank"], prof_weight*b["prof_rank"] ];
+
+        //adjust values for unranked TAs
+        if(prof_rank[0]==0){
+          prof_rank[0]=99999;
+        }
+        if(prof_rank[1]==0){
+          prof_rank[1]=99999;
+        }
+
+        return (prof_rank[0]+ta_rank[0]) - (prof_rank[1]+ta_rank[1]) ; 
+      });
+
+      /**
+       * Assign the sorted TAs
+       * Until no more hrs or TAs are left
+       * Assume that each TA is assigned at minimum 5 hours
+       */
+      //reset counter before traversing array again
+      counter = 0;
+      while(hrs >= 5 && counter<temp.length){
+
+        //console.log("\n"+counter+": "+temp[counter]["email"]);
+        
+
+        //if enough hrs are available
+        if(hrs >= temp[counter]["hrs"]){
+
+          //console.log(hrs+" >= "+temp[counter]["hrs"]);
+
+          //deduct the appropriate amount of hrs from the course total
+          hrs -= temp[counter]["hrs"];
+                  
+          //assign the TA to the course
+          transferArrayItem(temp, this.all_assigned[index], counter, this.all_assigned[index].length);
+
+          //compensate for array shrinking
+          counter--;
+        }
+
+        //go to next TA in the list
+        counter++;
+
+      }//end of TA assignment loop
+
+      //unassigned TAs go back to the unassigned array
+      for(let b=0; b<temp.length; b++){
+
+        transferArrayItem(temp, this.all_unassigned[index], 0, this.all_unassigned[index].length);
+        b--;//compensate for the array shrinking
+
+      }//end of TA rejection loop
+
+
+    }//end of priority code loop
+
+
+    //refresh the TAs displayed in the editor
+    this.courseView(this.course_list.indexOf(this.viewed_course));
 
   }//end of autoAssign
 
-    /**
+  /**
    * Runs the TA-Matching Algorithm for every course 
    */
   autoAssignAll(){
-
+    this.course_list.forEach(crs => {
+      this.autoAssign(crs,this.prof_rank_first);
+    });
   }
 
   /**
@@ -394,11 +501,13 @@ export class AssignTaComponent implements OnInit {
    */
   clearAssign(crs){
     let index = this.course_list.indexOf(crs);
-    let count = this.all_assigned[index].length;
 
-    for( let a=0; a<count; a++){
+    for( let a=0; a<this.all_assigned[index].length; a++){
       transferArrayItem(this.all_assigned[index], this.all_unassigned[index], 0, 0);
+      a--;//compensate for the array shrinking
     }
+
+    //refresh the TAs displayed in the editor
     this.courseView(index);
 
   }

@@ -110,7 +110,7 @@ export class AppComponent {
    */
   checkUnrankedNotif(user){
 
-        this.data.getInstructor(user["email"]).subscribe(res => {
+        this.data.getProfessor(user["email"]).subscribe(res => {
   
           for(let a=0; a<res["course"].length; a++){
             this.data.getUnrankedApplicants(res["course"][a]).subscribe(unranked_list => {

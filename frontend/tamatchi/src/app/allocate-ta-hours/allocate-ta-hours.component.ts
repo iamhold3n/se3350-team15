@@ -36,6 +36,7 @@ export class AllocateTaHoursComponent implements OnInit {
    * 
    */
   saveChanges(){
+    console.log(this.enroll_record_list);
     this.data.updateAllocationHrs(this.enroll_record_list).subscribe(res => {
       alert('Allocated hours successfully updated for all courses.');
     });

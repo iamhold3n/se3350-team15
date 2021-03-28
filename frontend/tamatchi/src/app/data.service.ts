@@ -21,7 +21,7 @@ export class DataService {
     return this.http.get(`${this.url}/courses/`);
   }
 
-  getInstructor(email) {
+  getProfessor(email) {
     return this.http.get(`${this.url}/instructors/${email}`);
   }
 

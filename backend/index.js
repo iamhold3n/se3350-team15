@@ -102,7 +102,6 @@ app.post('/api/users', (req, res) => {  //adjust user permissions
       }
       else {
         const userClaims = req.body;
-        console.log(userClaims);
         //expect request to contain:
         //userID: string
         //perms : {}
@@ -163,9 +162,11 @@ app.put('/api/users', (req, res) => //account creation
         //password: string
         admin.auth().createUser({
           email: acc["email"],
-          password: generateRandomPassword()
+          password: generateRandomPassword(),
         }).then(
           (resolve) => {
+            //initialize the user claims array with default settings
+            admin.auth().setCustomUserClaims(resolve["uid"], {"admin":false, "professor": false, "chair":false}).then(() => { });
             res.send(true);
           },
           (rej) => {res.send(rej["message"]);}
@@ -385,7 +386,8 @@ app.post('/api/allocation/hrs', [
   res.status(200).send({ success: 'Allocated hours successfully modified.' });
 })
 
-// change assigned TAs
+// change assigned TAs for a specific course
+// course and tas are specified in the body
 app.post('/api/allocation/tas', [
   body('*.course').trim().escape().exists(),
   body('*.assignList').isArray().exists()

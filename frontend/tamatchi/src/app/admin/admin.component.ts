@@ -63,6 +63,9 @@ export class AdminComponent implements OnInit {
 
   getStatus(user, claim, checkbox)
   {
+    //console.log(user["email"]);
+    //console.log(user['claims']);
+    
     var data = user['claims'][claim];
     if (data == undefined)
     {

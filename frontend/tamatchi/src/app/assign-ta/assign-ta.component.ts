@@ -21,6 +21,8 @@ export class AssignTaComponent implements OnInit {
   empty_course: string; 
   //course that is currently being viewed
   viewed_course: string;
+  //array of TA hours allocated to each course
+  hrs_list: number[];
 
 
   //list of ranked TAs belonging to currently logged professors (based on courseList)
@@ -32,8 +34,23 @@ export class AssignTaComponent implements OnInit {
   //list of ranked TAs belonging to the current course view
   viewed_assigned: Candidate[];
 
+  //flags to indicate if TA in the editor should display detailed view
+  expanded_ta: boolean[][][];
+
+  //stores the emails of the assigned TAs as received from back-end
+  //until they can be converted into proper objects
+  all_assigned_temp: string[][];
+
+  //array of flags to indicate loading applicants from back-end
+  finish_loading: boolean[];
+
   //detects if logged in
   loggedIn: boolean;
+
+  //admin or chair user will have "admin" level permissions on this page
+  admin: boolean;
+  //professor user will have "professor" level permissions on this page
+  professor: boolean;
 
   constructor(private data: DataService, private auth : AuthService) { 
   }
@@ -44,6 +61,9 @@ export class AssignTaComponent implements OnInit {
     this.all_unassigned = [];
     this.all_assigned = [];
 
+    //one array for assigned
+    //one array for unassigned
+    this.expanded_ta = [[],[]];
 
     //initialize the empty course
     this.empty_course="---";
@@ -52,8 +72,6 @@ export class AssignTaComponent implements OnInit {
     //initialize the viewed TAs to match empty course view
     this.viewed_assigned=[];
     this.viewed_unassigned=[];
-
-    this.getUser();
 
     //check user permissions
     this.loggedIn = false;
@@ -71,6 +89,26 @@ export class AssignTaComponent implements OnInit {
     this.auth.getClaims().then((claims) =>
     {
 
+      //make sure the user authentication returned valid
+      //if it did, then set perms
+      if(claims != null){
+
+        this.loggedIn=true;
+
+        this.admin = claims["admin"] || claims["chair"];
+
+        //if user is professor, get the professor's course list before retrieving TA data
+        if(claims["professor"]){
+          this.professor = true;
+          //console.log(this.professor);
+          this.getProfessor();
+        }
+        //otherwise, just get TA data for all courses
+        else{
+          this.getCourseAllocations();
+        }
+
+      }
 
  
     });
@@ -78,13 +116,35 @@ export class AssignTaComponent implements OnInit {
   }//end of checkPerm
 
   /**
-   * Assumes the logged in user is an instructor
+   * If logged in user is an professor
    * Fetches the appropriate credentials
    * So that the webpage can reflect the user
+   * Before fetching the TA allocation data 
    */
-  getUser(){
+  getProfessor(){
 
-    this.getCourseAllocations();
+    //fetch UserObject of logged in professor
+    this.auth.getUserObject().then((user) =>
+    {
+
+      if(user === null){
+
+      }
+      else{
+        //fetch the database object corresponding to the logged in professor
+        this.data.getProfessor(user["email"]).subscribe(res => {
+
+          //list of courses that will be available for ranking
+          //reflects whichever professor is currently logged in
+          this.course_list = res["course"];
+  
+          this.getCourseAllocations();
+
+        });
+      }
+
+    });
+
 
   }//end of getUser
 
@@ -96,20 +156,19 @@ export class AssignTaComponent implements OnInit {
 
       arr = res;
       
-      //initialize and popualte the course array
-      this.course_list = arr.map(crs => {return crs.course});
+      if(!this.professor){
+
+        //initialize and popualte the course array
+        this.course_list = arr.map(crs => {return crs.course});
+        //and the TA hrs array
+        this.hrs_list = arr.map(crs => {return crs.currHrs});
+        this.finish_loading = arr.map(crs => {return false});
+      }
 
       ////initialize the arrays holding all assigned tas
       //assigned tas will be stored as email strings for now
       //until their full objects can be retrieved from backend
-      this.all_assigned = arr.map(crs => {return crs.assignList});  
-      
-      //initialize the arrays holding all unassigned tas
-      this.course_list.forEach( (e,index)=>{
-
-        this.all_unassigned[index] = [];
-
-      });
+      this.all_assigned_temp = arr.map(crs => {return crs.assignList});  
 
       this.getApplicants();
 
@@ -123,46 +182,102 @@ export class AssignTaComponent implements OnInit {
    */
   getApplicants(){
 
-    let arr;
-    let temp;
+    //get the list of applicants from back-end
 
-    //get the list of ranked applicants from back-end
-    this.data.getApplicants().subscribe(res => {
+    let finish_flag_1=false;
+    let finish_flag_2=false;
 
+    this.course_list.forEach( (crs, index) => {
 
+      this.all_assigned[index] = [];
+      this.expanded_ta[0][index] = [];
+      this.expanded_ta[1][index] = [];
 
-      arr = res;
+      this.data.getRankedApplicants(crs).subscribe( res => {
 
-      arr.forEach(ta =>{
+        this.processApplicants(res, index, true)
 
-        this.course_list.forEach( (crs, index) => {
+        finish_flag_1=true;
+        this.finish_loading[index] = finish_flag_1 && finish_flag_2;
+      });
+      this.all_unassigned[index] = [];
+      this.data.getUnrankedApplicants(crs).subscribe( res => {
 
-          //convert the emails of assigned tas for thsi course into their object represnetations
-          temp = this.all_assigned[index];
+        this.processApplicants(res, index, false) 
 
-          //filter out any applicants that didnt apply for this course
-          if(ta.course.includes(crs) ){
-
-            //determine if the ta has already been assigned to this course
-            if(temp.includes(ta.email) ){
-              this.all_assigned[index].push(ta);
-            }
-            else{
-              this.all_unassigned[index].push(ta);
-            }
-
-          }
-
-        });
-
+        finish_flag_2=true;
+        this.finish_loading[index] = finish_flag_1 && finish_flag_2;
       });
 
-      console.log(this.all_assigned);
-      console.log(this.all_unassigned);
+    });
 
-    });//end of processing applicant list from back-end
+      //console.log(this.all_assigned);
+      //console.log(this.all_unassigned);
+
 
   }//end of getApplicants
+
+  /**
+   * Sorts applicants into either the appropriate array
+   * unassigned array or assigned array
+   * @param res : The response object from back-end
+   * @param index : index of the course that these TAs belong to
+   * @param ranked : true if 'res' is returning ranked TAs
+   */
+  processApplicants(res, index, ranked){
+
+    let temp;
+    let arr;
+
+    if(ranked){
+      arr = res["ranked_applicants"];
+    }
+    else{
+      arr = res["unranked_applicants"];
+    }
+
+    let getRank = function(index){
+      if(ranked){return index+1}//ranked TAs get their rank from their element order in 'arr' (rank is always >= 1)
+      return 0;//unranked TAs ALL have rank of 0
+    }
+
+    //convert the emails of assigned tas for thsi course into their object represnetations
+    arr.forEach((ta,r) => {
+
+      //determine if the ta has already been assigned to this course
+      if(this.all_assigned_temp[index].includes(ta.email) ){
+        ta.prof_rank = getRank(r); 
+        this.all_assigned[index].push(ta);
+        this.expanded_ta[0][index].push(false);
+
+      }
+      else{
+        ta.prof_rank = getRank(r); 
+        this.all_unassigned[index].push(ta);
+        this.expanded_ta[1][index].push(false);
+
+      }
+
+      //console.log(this.expanded_ta);
+
+    });
+
+  }//end of processApplicants
+
+  toggle_expand(isAssigned, crs_index, ta_index){
+
+    let index =1;
+    if(isAssigned){
+      index = 0;
+    }
+
+    this.expanded_ta[index][crs_index][ta_index] = !this.expanded_ta[index][crs_index][ta_index];
+  }
+
+  //returns index of the currently viewed course
+  viewedIndex(){
+    return this.course_list.indexOf(this.viewed_course);
+  }
 
   /**
    * Changes which course is currently being viewed in the editor
@@ -179,10 +294,6 @@ export class AssignTaComponent implements OnInit {
     }
     else{
 
-      //check if the user is currently logged in
-      //to determine if certain buttons and such will be visible
-      this.checkPerm();
-
       //update this component to view the course
       this.viewed_course = this.course_list[index];
 
@@ -193,28 +304,112 @@ export class AssignTaComponent implements OnInit {
 
   }//end of courseView
 
-  //This method will reorder the appropriate array when items are dragged around
-  drop(event: CdkDragDrop<string[]>) {
-
-    //if reordering items in the ranked array
-    if(event.container == event.previousContainer){
-      //moveItemInArray(this.viewed_tas, event.previousIndex, event.currentIndex);
+  //returns the TA hours of a specific course code string
+  courseLoaded(course){
+    if(course == this.empty_course){
+      return true;
     }
-    //if moving items from unranked to ranked array
-    else{
+    
+    return this.finish_loading[this.course_list.indexOf(course)];
+  }
 
-      //transferArrayItem(this.unranked_view, this.viewed_tas, event.previousIndex, event.currentIndex);
+  //returns the TA hours of a specific course code string
+  courseHrs(course){
+    if(course == this.empty_course){
+      return 0;
+    }
+    return this.hrs_list[this.course_list.indexOf(course)];
+  }
+
+  //This method will reorder the appropriate array when items are dragged around
+  drop(event: CdkDragDrop<string[]>, dest_assignList: boolean) {
+
+    //if reordering items in the same array
+    if(event.container == event.previousContainer){
+      moveItemInArray(this.viewed_assigned, event.previousIndex, event.currentIndex);
+    }
+    //if moving items between arrays
+    else{
+  
+      //determine which array is the source and which is the destintion
+      if(dest_assignList){
+        transferArrayItem(this.viewed_unassigned, this.viewed_assigned, event.previousIndex, event.currentIndex);
+        
+      }
+      else{
+        transferArrayItem(this.viewed_assigned, this.viewed_unassigned, event.previousIndex, event.currentIndex);
+        
+      }
+
     }
 
   }
 
-  //This method will save the ranking changes and send the updated list to the database
-  //TODO: Save changes to rankings
+  //This method will save the changes and send the updated list to the database
   saveChanges() {
 
-    this.data.updateAllocationTas(this.viewed_assigned).subscribe(res => {
+    let body=[];
+
+    //construct a valid body for the POST request
+    this.course_list.forEach( (crs,index) => {
+      body[index] = {
+        "course": crs,
+        "assignList": this.all_assigned[index].map( ta => {return ta.email} ),
+      };
+    });
+
+    this.data.updateAllocationTas(body).subscribe(res => {
       alert("Changes Saved");
     });
 
   }
+
+  /**
+   * Runs the TA-Matching Algorithm for a single specified course
+   * only considers appllicants of a specific priority code at a time
+   * uses a flag to determine whether priority goes to TA-rankings or Professor-rankings when comparing applicants
+   * @param crs 
+   */
+  autoAssign(crs){
+
+    let hrs = this.courseHrs(crs);
+
+    //assume that each TA is assigned at minimum 5 hours
+    while(hrs >= 5){
+
+    }
+
+  }//end of autoAssign
+
+    /**
+   * Runs the TA-Matching Algorithm for every course 
+   */
+  autoAssignAll(){
+
+  }
+
+  /**
+   * Unassigns all TAs currently assigned to a specific course
+   * @param crs 
+   */
+  clearAssign(crs){
+    let index = this.course_list.indexOf(crs);
+    let count = this.all_assigned[index].length;
+
+    for( let a=0; a<count; a++){
+      transferArrayItem(this.all_assigned[index], this.all_unassigned[index], 0, 0);
+    }
+    this.courseView(index);
+
+  }
+
+  /**
+   * Unassigns ALL TAs currently assigned to ALL courses
+   */
+  clearAll(){
+    this.course_list.forEach(crs => {
+      this.clearAssign(crs);
+    });
+  }
+
 }//end of class

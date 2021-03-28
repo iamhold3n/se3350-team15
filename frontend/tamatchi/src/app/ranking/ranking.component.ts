@@ -88,11 +88,10 @@ export class RankingComponent implements OnInit {
 
       }
       else{
-        this.data.getInstructor(user["email"]).subscribe(res => {
+        this.data.getProfessor(user["email"]).subscribe(res => {
 
           //list of courses that will be available for ranking
           //reflects whichever professor is currently logged in
-          //TODO: determine which prof is logged in
           this.course_list = res["course"];
   
           for(let a=0; a<this.course_list.length; a++){

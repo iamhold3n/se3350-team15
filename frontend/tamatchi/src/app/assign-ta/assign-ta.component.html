@@ -1,51 +1,134 @@
 <h2>TA Assignment</h2>
 
+<!--Message if not logged in-->
+<span *ngIf = "!loggedIn">Please log in to view TA assignments</span>
+
 <!-- '#courses' assigns the name 'courses' to this select element -->
-<label for="courses">Select a Course</label>
-<select #courses (change)="courseView(courses.value)" id="courses">
+<label *ngIf="loggedIn" for="courses">Select a Course</label>
+<select *ngIf="loggedIn" #courses (change)="courseView(courses.value)" id="courses">
     <option value="-1">{{empty_course}}</option>
     <option *ngFor="let c of course_list, index as a" value="{{a}}">{{c}}</option>
 </select>
 
+<span *ngIf="!courseLoaded(viewed_course)" >Loading...</span>
+
 <!--TWO main columns will hold the list of assigned and unassigned TAs-->
-<table>
+<table *ngIf="loggedIn">
     <tr>
         <th>
-            Assigned TAS
+            <div>Assigned TAS</div>
+
+            <div>{{courseHrs(viewed_course)}} total TA Hours</div>
+
         </th>
         <th>
-            Unassigned TAS
+            <div>Unassigned TAS</div>
+        </th>
+        <th>
+            Matching Tools
         </th>        
     </tr>
-    <tr cdkDropListGroup>
+    <!-- For admin-level users-->
+    <tr *ngIf = "admin" cdkDropListGroup>
         <td>
             <!-- Draggable list for assigned TAs -->
             <!-- Accepts incoming list items -->
-            <!-- Appears always -->
-            <div cdkDropList (cdkDropListDropped)="drop($event)">
+            
+            <div cdkDropList (cdkDropListDropped)="drop($event,true)">
                 <div id="assigned" cdkDrag *ngFor='let ta of viewed_assigned, index as a'>
 
+                    <!--Proffessor's ranking number-->
+                    <div class="number" >{{ta.prof_rank}}</div>
                     <!--assigned TA details-->
                     <div class="list" >{{ta.email}}</div>
+
+                    <button (click)= "toggle_expand(true, viewedIndex(),a)">DETAILS</button>
+                    <!--EXPANDED VIEW-->
+                    <div *ngIf="expanded_ta[0][viewedIndex()][a]" >
+                        <div class="list" >Status Code: {{ta.status}}</div>
+                        <div class="list" >Received Hours: {{ta.hrs}}</div>
+                        <div >
+                            Ranked Courses:
+                            <div class="list" *ngFor="let crs of ta.course, index as n">
+                                <!--TA's ranking number-->
+                                <div class="number" >{{n+1}}</div>
+                                {{crs}}
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                    <!--END OF EXPANDED VIEW-->
+
                 </div>
             </div>
         </td>
         <td>
             <!-- Draggable list for unassigned TAs -->
             <!-- Accepts incoming list items -->
-            <!-- Appears always -->
-            <div cdkDropList (cdkDropListDropped)="drop($event)">
+            <div cdkDropList (cdkDropListDropped)="drop($event,false)">
                 <div id="unassigned" cdkDrag *ngFor='let ta of viewed_unassigned, index as a'>
 
+                    <!--Proffessor's ranking number-->
+                    <div class="number" >{{ta.prof_rank}}</div>
                     <!--assigned TA details-->
                     <div class="list" >{{ta.email}}</div>
+
+                    <button (click)= "toggle_expand(false, viewedIndex(),a)">DETAILS</button>
+
+                    <!--EXPANDED VIEW-->
+                    <div *ngIf="expanded_ta[1][viewedIndex()][a]" >
+                        <div class="list" >Prospective Hours: {{ta.hrs}}</div>
+                    
+                        <div class="list" >Status Code: {{ta.status}}</div>
+                        <div class="list" >Received Hours: {{ta.hrs}}</div>
+                        <div >
+                            Ranked Courses:
+                            <div class="list" *ngFor="let crs of ta.course, index as n">
+                                <!--TA's ranking number-->
+                                <div class="number" >{{n+1}}</div>
+                                {{crs}}
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                    <!--END OF EXPANDED VIEW-->
+
                 </div>
             </div>
+        </td>
+        <td>
+            <button (click)="clearAssign(viewed_course)">Clear Assigned TAs for {{viewed_course}}</button>
+            <button (click)="clearAll()">Clear Assigned TAs for ALL COURSES</button>
+        </td>
+    </tr>
+
+    <!-- For professor-level users-->
+    <tr *ngIf = "professor">
+        <td>
+            <div id="assigned" *ngFor='let ta of viewed_assigned, index as a'>
+
+                <!--Proffessor's ranking number-->
+                <div class="number" >{{ta.prof_rank}}</div>
+                <!--assigned TA details-->
+                <div class="list" >{{ta.email}}</div>
+            </div>
+            
+        </td>
+        <td>
+
+            <div id="unassigned" *ngFor='let ta of viewed_unassigned, index as a'>
+
+                <!--Proffessor's ranking number-->
+                <div class="number" >{{ta.prof_rank}}</div>
+                <!--assigned TA details-->
+                <div class="list" >{{ta.email}}</div>
+            </div>
+
         </td>
     </tr>
 
     <br>
-    <button *ngIf="viewed_assigned.length > 0" (click)="saveChanges()" class="confirm">Confirm Changes</button>
+    <button *ngIf="viewed_course != empty_course" (click)="saveChanges()" class="confirm">Confirm Changes</button>
 </table>
 
 

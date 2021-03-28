@@ -338,35 +338,43 @@ export class AssignTaComponent implements OnInit {
   
       //determine which array is the source and which is the destintion
       if(dest_assignList){
+
+        //TODO
+        //Assign the TA
         transferArrayItem(this.viewed_unassigned, this.viewed_assigned, event.previousIndex, event.currentIndex);
-        
       }
       else{
+
+        //TODO
+        //Unassign the TA
         transferArrayItem(this.viewed_assigned, this.viewed_unassigned, event.previousIndex, event.currentIndex);
-        
+  
       }
 
     }
 
   }
 
-  //This method will save the changes and send the updated list to the database
-  saveChanges() {
+  /**
+   * Checks if the Ta has already been assigned to a course
+   * assumes this ta is coming from the un_assigned list
+   */
+  isAssigned(ta){
 
-    let body=[];
+    let index;
+    let result=false;
 
-    //construct a valid body for the POST request
-    this.course_list.forEach( (crs,index) => {
-      body[index] = {
-        "course": crs,
-        "assignList": this.all_assigned[index].map( ta => {return ta.email} ),
-      };
+    ta["course"].forEach(crs => {
+
+      index = this.course_list.indexOf(crs);
+
+      if(this.all_assigned[index].find( e => {return e.email == ta.email}) !== undefined ){
+        
+        result = true;
+      }
     });
 
-    this.data.updateAllocationTas(body).subscribe(res => {
-      alert("Changes Saved");
-    });
-
+    return result;
   }
 
   /**
@@ -376,7 +384,7 @@ export class AssignTaComponent implements OnInit {
    * Will remove existing assigned TAs first
    * @param crs 
    */
-  autoAssign(crs, prof_rank_first){
+  autoAssign(crs){
 
     //clear existing assigned TAs first
     this.clearAssign(crs);
@@ -411,31 +419,7 @@ export class AssignTaComponent implements OnInit {
       }//end of TA extraction loop
 
       //sort the TAs in the temp array
-      //lower weights will result in that ranking(ta or prof) having a higher priority
-      let ta_weight = 2;
-      let prof_weight;
-      if(prof_rank_first){
-        prof_weight = 1
-      }
-      else{
-        prof_weight = 3;
-      }
-      
-      temp.sort( (a,b) => { 
-
-        let ta_rank = [ ta_weight*a["ta_rank"], ta_weight*b["ta_rank"] ];
-        let prof_rank = [ prof_weight*a["prof_rank"], prof_weight*b["prof_rank"] ];
-
-        //adjust values for unranked TAs
-        if(prof_rank[0]==0){
-          prof_rank[0]=99999;
-        }
-        if(prof_rank[1]==0){
-          prof_rank[1]=99999;
-        }
-
-        return (prof_rank[0]+ta_rank[0]) - (prof_rank[1]+ta_rank[1]) ; 
-      });
+      temp.sort( this.getSortTA() );
 
       /**
        * Assign the sorted TAs
@@ -450,13 +434,15 @@ export class AssignTaComponent implements OnInit {
         
 
         //if enough hrs are available
-        if(hrs >= temp[counter]["hrs"]){
+        //and TA is not already assigned to a different course
+        if(hrs >= temp[counter]["hrs"] && !this.isAssigned(temp[counter])){
 
           //console.log(hrs+" >= "+temp[counter]["hrs"]);
 
           //deduct the appropriate amount of hrs from the course total
           hrs -= temp[counter]["hrs"];
                   
+          //TODO
           //assign the TA to the course
           transferArrayItem(temp, this.all_assigned[index], counter, this.all_assigned[index].length);
 
@@ -477,23 +463,65 @@ export class AssignTaComponent implements OnInit {
 
       }//end of TA rejection loop
 
+      //sort the unassigned TA array to keep future auto-assigns consistent
+      this.all_unassigned[index].sort(this.getSortTA() );
 
     }//end of priority code loop
 
 
     //refresh the TAs displayed in the editor
-    this.courseView(this.course_list.indexOf(this.viewed_course));
+    this.courseView(this.viewedIndex());
 
   }//end of autoAssign
+
+  /**
+   * Callback function for "array.sort()"
+   * Sorts TAs based on priority code and ranking values
+   * Important part of the TA-Matching algorithm
+   */
+  getSortTA(){
+
+    let flag = this.prof_rank_first;
+
+    function sortTA(a,b){ 
+
+      //lower weights will result in that ranking(ta or prof) having a higher priority
+      let ta_weight = 2;
+      let prof_weight;
+      if(flag){
+        prof_weight = 1
+      }
+      else{
+        prof_weight = 3;
+      }
+  
+      let ta_rank = [ ta_weight*a["ta_rank"], ta_weight*b["ta_rank"] ];
+      let prof_rank = [ prof_weight*a["prof_rank"], prof_weight*b["prof_rank"] ];
+  
+      //adjust values for unranked TAs
+      if(prof_rank[0]==0){
+        prof_rank[0]=99999;
+      }
+      if(prof_rank[1]==0){
+        prof_rank[1]=99999;
+      }
+  
+      return (prof_rank[0]+ta_rank[0]) - (prof_rank[1]+ta_rank[1]) ; 
+    }//end of sortTA
+
+    return sortTA;
+
+  }//end of getSortTA
+
 
   /**
    * Runs the TA-Matching Algorithm for every course 
    */
   autoAssignAll(){
     this.course_list.forEach(crs => {
-      this.autoAssign(crs,this.prof_rank_first);
+      this.autoAssign(crs);
     });
-  }
+  }//end of autoAssignAll
 
   /**
    * Unassigns all TAs currently assigned to a specific course
@@ -503,12 +531,18 @@ export class AssignTaComponent implements OnInit {
     let index = this.course_list.indexOf(crs);
 
     for( let a=0; a<this.all_assigned[index].length; a++){
+
+      //TODO
+      //Unassign TA from the course
       transferArrayItem(this.all_assigned[index], this.all_unassigned[index], 0, 0);
       a--;//compensate for the array shrinking
     }
 
+    //sort the unassigned TA array to keep future auto-assigns consistent
+    this.all_unassigned[index].sort(this.getSortTA() );
+
     //refresh the TAs displayed in the editor
-    this.courseView(index);
+    this.courseView(this.viewedIndex());
 
   }
 
@@ -519,6 +553,25 @@ export class AssignTaComponent implements OnInit {
     this.course_list.forEach(crs => {
       this.clearAssign(crs);
     });
+  }
+
+  //This method will save the changes and send the updated list to the database
+  saveChanges() {
+
+    let body=[];
+
+    //construct a valid body for the POST request
+    this.course_list.forEach( (crs,index) => {
+      body[index] = {
+        "course": crs,
+        "assignList": this.all_assigned[index].map( ta => {return ta.email} ),
+      };
+    });
+
+    this.data.updateAllocationTas(body).subscribe(res => {
+      alert("Changes Saved");
+    });
+
   }
 
 }//end of class

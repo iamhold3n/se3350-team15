@@ -78,6 +78,9 @@ export class AssignTaComponent implements OnInit {
 
     this.prof_rank_first = true;
 
+    this.finish_loading=[];
+    this.hrs_list = [];
+
     //check user permissions
     this.loggedIn = false;
     this.checkPerm();
@@ -169,11 +172,16 @@ export class AssignTaComponent implements OnInit {
         this.hrs_list = arr.map(crs => {return crs.currHrs});
         this.finish_loading = arr.map(crs => {return false});
       }
+      else{
+        arr = arr.filter(e=> {return this.course_list.includes(e.course)});
+      }
 
       ////initialize the arrays holding all assigned tas
       //assigned tas will be stored as email strings for now
       //until their full objects can be retrieved from backend
-      this.all_assigned_temp = arr.map(crs => {return crs.assignList});  
+      this.all_assigned_temp = arr.map(crs => {return crs.assignList}); 
+      
+      console.log(this.all_assigned_temp );
 
       this.getApplicants();
 
@@ -339,13 +347,17 @@ export class AssignTaComponent implements OnInit {
       //determine which array is the source and which is the destintion
       if(dest_assignList){
 
-        //TODO
-        //Assign the TA
-        transferArrayItem(this.viewed_unassigned, this.viewed_assigned, event.previousIndex, event.currentIndex);
+        let flag = this.checkHrs(this.viewed_unassigned[event.previousIndex]);
+
+        //Assign the TA (if not assigned already)
+        if(flag && !this.isAssigned(this.viewed_unassigned[event.previousIndex])){
+          transferArrayItem(this.viewed_unassigned, this.viewed_assigned, event.previousIndex, event.currentIndex);
+        }
+        
       }
       else{
 
-        //TODO
+        
         //Unassign the TA
         transferArrayItem(this.viewed_assigned, this.viewed_unassigned, event.previousIndex, event.currentIndex);
   
@@ -354,6 +366,22 @@ export class AssignTaComponent implements OnInit {
     }
 
   }
+
+  totalViewedHrs(){
+
+    if(this.viewed_course==this.empty_course){
+      return 0;
+    }
+
+    return this.all_assigned[this.viewedIndex()].map( ta => {return ta["hrs"]} ).reduce( (prev,curr)=>{return prev+curr} );
+  }
+
+  checkHrs( ta ){
+    let total = this.totalViewedHrs();
+  
+    return ta.hrs >= total;
+
+  };
 
   /**
    * Checks if the Ta has already been assigned to a course
@@ -442,7 +470,7 @@ export class AssignTaComponent implements OnInit {
           //deduct the appropriate amount of hrs from the course total
           hrs -= temp[counter]["hrs"];
                   
-          //TODO
+          
           //assign the TA to the course
           transferArrayItem(temp, this.all_assigned[index], counter, this.all_assigned[index].length);
 
@@ -532,7 +560,7 @@ export class AssignTaComponent implements OnInit {
 
     for( let a=0; a<this.all_assigned[index].length; a++){
 
-      //TODO
+      
       //Unassign TA from the course
       transferArrayItem(this.all_assigned[index], this.all_unassigned[index], 0, 0);
       a--;//compensate for the array shrinking

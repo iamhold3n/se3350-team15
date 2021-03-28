@@ -21,6 +21,7 @@
             <div>Assigned TAS</div>
 
             <div>{{courseHrs(viewed_course)}} total TA Hours</div>
+            <div>{{totalViewedHrs()}} Hours filled</div>
 
         </th>
         <th>
@@ -69,31 +70,31 @@
             <!-- Accepts incoming list items -->
             <div cdkDropList (cdkDropListDropped)="drop($event,false)">
                 <div id="unassigned" cdkDrag *ngFor='let ta of viewed_unassigned, index as a'>
-                    <div *ngIf="!isAssigned(ta)">
                     
-                        <!--Proffessor's ranking number-->
-                        <div class="number" >{{ta.prof_rank}}</div>
-                        <!--assigned TA details-->
-                        <div class="list" >{{ta.email}}</div>
+                    <!--Proffessor's ranking number-->
+                    <div class="number" >{{ta.prof_rank}}</div>
+                    <!--assigned TA details-->
+                    <div class="list" >{{ta.email}}</div>
+                    <div *ngIf="isAssigned(ta)">ALREADY ASSIGNED TO DIFFERENT COURSE</div>
 
-                        <button (click)= "toggle_expand(false, viewedIndex(),a)">DETAILS</button>
+                    <button (click)= "toggle_expand(false, viewedIndex(),a)">DETAILS</button>
 
-                        <!--EXPANDED VIEW-->
-                        <div *ngIf="expanded_ta[1][viewedIndex()][a]" >
-                            <div class="list" >Status Code: {{ta.status}}</div>
-                            <div class="list" >Prospective Hours: {{ta.hrs}}</div>
-                            <div >
-                                Ranked Courses:
-                                <div class="list" *ngFor="let crs of ta.course, index as n">
-                                    <!--TA's ranking number-->
-                                    <div class="number" >{{n+1}}</div>
-                                    {{crs}}
-                                </div>
+                    <!--EXPANDED VIEW-->
+                    <div *ngIf="expanded_ta[1][viewedIndex()][a]" >
+                        <div class="list" >Status Code: {{ta.status}}</div>
+                        <div class="list" >Prospective Hours: {{ta.hrs}}</div>
+                        <div >
+                            Ranked Courses:
+                            <div class="list" *ngFor="let crs of ta.course, index as n">
+                                <!--TA's ranking number-->
+                                <div class="number" >{{n+1}}</div>
+                                {{crs}}
                             </div>
-                            <br>
                         </div>
-                        <!--END OF EXPANDED VIEW-->
+                        <br>
                     </div>
+                    <!--END OF EXPANDED VIEW-->
+                    
 
                 </div>
             </div>

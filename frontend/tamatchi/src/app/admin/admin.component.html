@@ -7,19 +7,21 @@
 <div style="border-radius: 2px; border-color: black; border-style: solid; float: left;">
     <ul>
         <li *ngFor="let user of userList">
-            Email: {{user["email"]}}
-            <br>
-            Professor: <input #prof type="checkbox" checked="{{getStatus(user, 'professor', prof)}}">
-            <br>
-            Admin: <input #admin type="checkbox" checked="{{getStatus(user, 'admin', admin)}}">
-            <br>
-            Chair: <input #chair type="checkbox" checked="{{getStatus(user, 'chair', chair)}}">
-            <br>
-            Disabled: <input #disabled type="checkbox" checked="{{getStatus(user, 'disabled', disabled)}}">
-            <br>
-            <button (click) = "setClaims(user['uid'], admin.checked, prof.checked, chair.checked)">Update User</button>
-            <button (click) = "sendPasswordResetEmail(user['email'])">Send Password Reset</button>
-            <br>
+            <div *ngIf="user['email'] != '' && user['email'] != undefined">
+                Email: {{user["email"]}}
+                <br>
+                Professor: <input #prof type="checkbox" checked="{{getStatus(user, 'professor', prof)}}">
+                <br>
+                Admin: <input #admin type="checkbox" checked="{{getStatus(user, 'admin', admin)}}">
+                <br>
+                Chair: <input #chair type="checkbox" checked="{{getStatus(user, 'chair', chair)}}">
+                <br>
+                Disabled: <input #disabled type="checkbox" checked="{{getStatus(user, 'disabled', disabled)}}">
+                <br>
+                <button (click) = "setClaims(user['uid'], admin.checked, prof.checked, chair.checked)">Update User</button>
+                <button (click) = "sendPasswordResetEmail(user['email'])">Send Password Reset</button>
+                <br>
+            </div>
         </li>
     </ul>
 </div>

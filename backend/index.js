@@ -356,7 +356,7 @@ app.put('/api/courses'), [
 }
 
 //add an instructor
-app.put('/api/instructors'), [
+app.put('/api/instructors', [
   body('email').isEmail().exists(),
   body('name').trim().escape(),
   
@@ -369,7 +369,7 @@ app.put('/api/instructors'), [
   }).catch(err => {
     res.status(400).send({ error: err });
   })
-}
+})
 
 
 function generateRandomPassword() //generate a random default password

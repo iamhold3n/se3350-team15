@@ -12,9 +12,9 @@ export class FormComponent implements OnInit {
 
   public email: string;
   public name: string;
-  public allProfs: any;
+  public allProfs;
 
-  buttonClicked() {
+  submit() {
     let instructor = {
       email: this.email,
       name: this.name,

@@ -1,13 +1,16 @@
-<h3>For Adding Course Instructors</h3>
+<h3>Add Course Instructors</h3>
+
+<div>
+
+    <hr />
+
+    <input type="text" [(ngModel)]="name" placeholder="Instructor Name" />
+    <input type="text" [(ngModel)]="email" placeholder="Instructor Email" />
 
 
-<h5>Instructor Name:</h5>
-<input type="text" [(ngModel)]="name" placeholder="Enter Name..." />
-<h5>Instructor Email:</h5>
-<input type="text" [(ngModel)]="email" placeholder="Enter Email..." />
+    <button (click)="submit()">Submit</button>
 
-
-<button (click)="buttonClicked()">Submit form</button>
+</div>
 
 <!-- <h3>List of Instructors</h3>
 
@@ -28,6 +31,6 @@
     <tr *ngFor="let prof of allProfs">
         <td>{{prof.name}}</td>
         <td>{{prof.email}}</td>
-    
+
     </tr>
 </table>

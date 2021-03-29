@@ -1,18 +1,22 @@
-<div id="popup">
-    <div *ngIf="courseSelected != undefined" id="popupContent">
-        <span id="courseCode">{{courseSelected.courseCode}}</span>
-        <span id="courseName">{{courseSelected.courseName}}</span>
-        <ul id='questions'>
-            <li *ngFor="let q of courseSelected.questions; index as i; trackBy: trackByFn">
-                <input type="text" [(ngModel)]="courseSelected.questions[i]" placeholder="Enter question" />
-                <span class="remove" (click)="removeQuestion(i)">X</span>
-            </li>
-        </ul>
-        <div id="buttons">
-            <button (click)='addQuestion()'>ADD</button>
-            <button (click)='saveQuestions()'>SAVE</button>
-            <button (click)='closeQuestions()'>CLOSE</button>
-        </div>
+<h3>COURSES</h3>
+<div id="courses">
+    <span *ngFor="let c of courseList; index as i" id="{{c}}" class="subnav" (click)="toggleCourse(i, c)">{{c}}</span>
+</div>
+<hr/>
+<div *ngIf="courseSelected != undefined; else elseBlock">
+    <span id="courseCode">{{courseSelected.courseCode}}</span>
+    <span id="courseName">{{courseSelected.courseName}}</span>
+    <ul id='questionList'>
+        <li *ngFor="let q of courseSelected.questions; index as i; trackBy: trackByFn">
+            <input type="text" [(ngModel)]="courseSelected.questions[i]" placeholder="Enter question" />
+            <span class="remove" (click)="removeQuestion(i)">X</span>
+        </li>
+    </ul>
+    <div id="buttons">
+        <button (click)='addQuestion()'>ADD</button>
+        <button (click)='saveQuestions()'>SAVE</button>
     </div>
 </div>
-<div id="darkened"></div>
+<ng-template #elseBlock>
+    Select a course from above to begin adding or changing questions.
+</ng-template>

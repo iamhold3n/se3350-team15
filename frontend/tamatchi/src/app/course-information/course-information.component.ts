@@ -1,5 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { CourseQuestionsComponent } from '../course-questions/course-questions.component';
+import { Component, OnInit } from '@angular/core';
 import { DataService } from '../data.service';
 
 @Component({
@@ -8,7 +7,6 @@ import { DataService } from '../data.service';
   styleUrls: ['./course-information.component.css']
 })
 export class CourseInformationComponent implements OnInit {
-  @ViewChild(CourseQuestionsComponent) private questions: CourseQuestionsComponent;
 
   constructor(private data: DataService) { }
 
@@ -66,10 +64,6 @@ export class CourseInformationComponent implements OnInit {
     this.data.getCourses().subscribe(res => {
       this.rows = res;
     })
-  }
-
-  showQuestions(c) {
-    this.questions.courseQuestions(c);
   }
 
 }

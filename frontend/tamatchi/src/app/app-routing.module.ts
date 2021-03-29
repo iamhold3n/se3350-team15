@@ -8,10 +8,12 @@ import { FormComponent } from './form/form.component';
 import { LoginComponent } from './login/login.component';
 import { RankingComponent } from './ranking/ranking.component';
 import { FileUploadComponent } from './file-upload/file-upload.component';
+import { CourseQuestionsComponent } from './course-questions/course-questions.component';
 
 const routes: Routes = [
   {path: 'login', component:LoginComponent},
   {path: 'course-information', component: CourseInformationComponent},
+  {path: 'course-questions', component: CourseQuestionsComponent},
   {path: 'form', component: FormComponent},
   {path: 'allocate-ta-hours', component:AllocateTaHoursComponent},
   {path: 'assign-ta', component:AssignTaComponent},

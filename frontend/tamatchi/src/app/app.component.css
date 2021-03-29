@@ -59,10 +59,10 @@ hr {
     color: white;
     cursor: pointer;
     display: inline-block;
-    font-weight: 900;
-    font-size: 12px;
+    font-weight: 600;
+    font-size: 8px;
     margin: 0;
-    padding: 4px;
+    padding: 1px;
 }
 
 .dropdown {

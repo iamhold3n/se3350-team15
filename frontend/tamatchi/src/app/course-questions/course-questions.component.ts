@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../data.service';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-course-questions',
@@ -7,23 +8,40 @@ import { DataService } from '../data.service';
   styleUrls: ['./course-questions.component.css']
 })
 export class CourseQuestionsComponent implements OnInit {
+  public courseList;
   public courseSelected;
 
-  constructor(private data: DataService) { }
+  constructor(private data: DataService, private auth : AuthService) { }
 
   ngOnInit(): void {
+    this.auth.getUserObject().then(user => {
+      if (user === null) console.log('what are you doing here...');
+      else {
+        this.data.getProfessor(user["email"]).subscribe(res => {
+          this.courseList = res["course"];
+          console.log(this.courseList);
+        })
+      }
+    })
   }
 
   public courseQuestions(course) {
     // query server for existing course questions
     this.data.getQuestions(course).subscribe(res => {
       this.courseSelected = res;
-
-      const darkened = document.getElementById('darkened');
-      const popup = document.getElementById('popup');
-      darkened.style.display = 'block';
-      popup.style.display = 'block';
     })
+  }
+
+  toggleCourse(index, active) {
+    // toggle which course is selected in course nav
+    this.courseQuestions(active);
+
+    for (let i = 0; i < this.courseList.length; i++) {
+      let e = document.getElementById(this.courseList[i]);
+
+      if (index === i) e.className = 'subnav active';
+      else e.className = 'subnav';
+    }
   }
 
   addQuestion() {
@@ -40,14 +58,6 @@ export class CourseQuestionsComponent implements OnInit {
       res => alert('Questions successfully updated.'),
       err => console.log(err));
     
-    this.closeQuestions();
-  }
-
-  closeQuestions() {
-    const darkened = document.getElementById('darkened');
-    const popup = document.getElementById('popup');
-    darkened.style.display = 'none';
-    popup.style.display = 'none';
   }
 
   trackByFn(index, item) { // prevent heavy DOM manipulation when editing questions

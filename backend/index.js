@@ -645,6 +645,7 @@ app.put('/api/instructors', [
   
 ], (req, res) => {
   db.collection('instructors').doc(req.body.email).set({
+    course: [],
     email: req.body.email,
     name: req.body.name
   }).then(() => {

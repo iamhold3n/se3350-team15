@@ -65,6 +65,11 @@ export class DataService {
   batchInstructors(i) {
     return this.http.put(`${this.url}/batch/instructors/`, i);
   }
+    
+  addInstructor(i){
+    return this.http.put(`${this.url}/instructors/`, i);
+
+  }
 
   
 }

@@ -1,19 +1,30 @@
-input{
-    margin: 10px;
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: auto;
+    height: auto;
+   
 }
 
-select {
-    margin: 10px;
-}
-textarea {
-    margin: 10px;
-}
 
-button {
-    margin: 10px;
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
 }
-
-.minAndMax input {
-    width: 70px;
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+input {
+    margin: 10px;
     height: 20px;
+    width: 159px;
+    display: inline;
+}
+button {
+    width: auto;
+    height: auto;
+    display: inline-block;
+    margin: 20px;
 }

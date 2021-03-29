@@ -2,19 +2,33 @@
 
 
 <h5>Instructor Name:</h5>
-<input type="text" [(ngModel)]="profName" placeholder="Enter Name..." />
+<input type="text" [(ngModel)]="name" placeholder="Enter Name..." />
 <br>
 <h5>Instructor Email:</h5>
-<input type="text" [(ngModel)]="profEmail" placeholder="Enter Email..." />
+<input type="text" [(ngModel)]="email" placeholder="Enter Email..." />
 
 
-<button>Submit form</button>
+<button (click)="buttonClicked()">Submit form</button>
 
-<h3>List of Instructors</h3>
+<!-- <h3>List of Instructors</h3>
 
 <ul *ngFor="let prof of allProfs">
     <li>
         Instructor Name: {{prof.name}} <br>
         Instructor Email: {{prof.email}}
     </li>
-</ul>
+</ul> -->
+
+<table class="table table-responsive table-striped">
+    <tr>
+        <th>Instructor Name</th>
+        <th>Instructor Email</th>
+
+
+    </tr>
+    <tr *ngFor="let prof of allProfs">
+        <td>{{prof.name}}</td>
+        <td>{{prof.email}}</td>
+    
+    </tr>
+</table>

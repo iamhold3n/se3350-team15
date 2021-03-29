@@ -10,9 +10,29 @@ export class FormComponent implements OnInit {
 
   constructor(private data: DataService) { }
 
-  public profName: string;
-  public profEmail: string;
+  public email: string;
+  public name: string;
   public allProfs: any;
+
+  buttonClicked() {
+    let instructor = {
+      email: this.email,
+      name: this.name,
+      
+    };
+
+    this.data.addInstructor(instructor).subscribe(
+      () => alert('Instructor successfully added.'),
+        err => console.log(err));
+
+      this.allProfs.push(instructor);
+      //if you want to clear input
+      this.email = null;
+      this.name = null;
+      
+    }
+
+
 
   ngOnInit(): void {
     this.data.getInstructors().subscribe(res => {

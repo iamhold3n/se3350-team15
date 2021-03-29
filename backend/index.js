@@ -355,6 +355,23 @@ app.put('/api/courses'), [
   })
 }
 
+//add an instructor
+app.put('/api/instructors'), [
+  body('email').isEmail().exists(),
+  body('name').trim().escape(),
+  
+], (req, res) => {
+  db.collection('instructors').doc(req.params.email).set({
+    email: req.body.email,
+    name: req.body.name
+  }).then(() => {
+    res.status(200).send({ success: 'Instructor successfully added.' });
+  }).catch(err => {
+    res.status(400).send({ error: err });
+  })
+}
+
+
 function generateRandomPassword() //generate a random default password
 {
   var allowedChars = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!@#%^&*";

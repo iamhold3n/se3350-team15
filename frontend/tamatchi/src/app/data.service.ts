@@ -52,8 +52,8 @@ export class DataService {
 
   }
 
-  addInstructor(c){
-    return this.http.put(`${this.url}/instructors/`, c);
+  addInstructor(i){
+    return this.http.put(`${this.url}/instructors/`, i);
 
   }
 

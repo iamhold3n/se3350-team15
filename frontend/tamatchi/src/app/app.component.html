@@ -2,14 +2,16 @@
     <img src="../assets/img/tamatchi.svg" width="75"><span id="ta">ta</span>matchi
 </div>
 
+
 <!-- Dashboard -->
 <div id="nav">
+    <div *ngIf = "admin || chair || instructor">Logged in as {{account_email}}</div>
     <span id="nav-login" class="left" routerLink='/login' (click)="markActive(0)">LOGIN</span>
     <span id="nav-course" routerLink='/course-information' (click)="markActive(1)">COURSE INFO</span>
     <span id="nav-form" routerLink='/form' (click)="markActive(2)">FORM</span>
     <span id="nav-allocate" routerLink='/allocate-ta-hours' (click)="markActive(3)">ALLOCATE</span>
     <span id="nav-assign" routerLink='/assign-ta' (click)="markActive(4)">ASSIGN</span>
-    <span id="nav-ranking" routerLink='/ranking' (click)="markActive(5)">RANKING</span>
+    <span id="nav-ranking" routerLink='/ranking' (click)="markActive(5)">RANKING <div class="notification" *ngIf="instructor && unranked_count>0" > {{unranked_count}} </div> </span>
     <span id="nav-upload" routerLink='/file-upload' (click)="markActive(6)">UPLOAD</span>
     <span id="nav-admin" routerLink='/admin' (click)="markActive(7)" *ngIf="admin">ADMIN</span>
 </div>

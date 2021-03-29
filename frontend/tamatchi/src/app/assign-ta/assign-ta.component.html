@@ -1,137 +1,149 @@
+<h2>TA Assignment</h2>
 
-
-<label for="courses">Choose a course:</label>
+<!--Message if not logged in-->
+<span *ngIf = "!loggedIn">Please log in to view TA assignments</span>
 
 <!-- '#courses' assigns the name 'courses' to this select element -->
-<select #courses (change)="courseView(courses.value)" id="courses">
-    <option value="-1">{{empty_course.courseCode}}</option>
-    <option *ngFor="let c of course_list, index as a" value="{{a}}">{{c.courseCode}}</option>
+<label *ngIf="loggedIn" for="courses">Select a Course</label>
+<select *ngIf="loggedIn" #courses (change)="courseView(courses.value)" id="courses">
+    <option value="-1">{{empty_course}}</option>
+    <option *ngFor="let c of course_list, index as a" value="{{a}}">{{c}}</option>
 </select>
 
-<!--Button to run the auto-assign algorithm for ALL courses-->
-<!--Only show if user is logged in as admin-->
-<button (click)="autoAssignAll()" *ngIf="admin">Auto-Assign All Courses</button>
+<span *ngIf="!courseLoaded(viewed_course)" >Loading...</span>
 
-<h2>Now Viewing Course: {{viewed_course.courseCode}}</h2>
-<h4>Total TA Hours: {{viewed_course.taHours}}<h4>
+<button *ngIf="viewed_course != empty_course" (click)="saveChanges()" class="confirm">Save Changes to ALL Courses</button>
 
-<!--Empty Course View Message-->
-<div *ngIf = "viewed_course == empty_course" >PLEASE SELECT A COURSE TO VIEW</div>
+<!--TWO main columns will hold the list of assigned and unassigned TAs-->
+<table *ngIf="loggedIn && viewed_course != empty_course">
+    <tr>
+        <th>
+            <div>Assigned TAS</div>
 
-<!--Assignment editor-->
-<!--Only show it if an actual course has been selected from the dropdown-->
-<div *ngIf = "viewed_course != empty_course" >
+            <div>{{courseHrs(viewed_course)}} total TA Hours</div>
+            <div>{{totalViewedHrs()}} Hours filled</div>
 
-    <!--Save Button-->
-    <!--Only show if user is logged in as admin-->
-    <button (click)="saveChanges()" *ngIf="admin">Save Changes to all Courses</button>
+        </th>
+        <th>
+            <div>Unassigned TAS</div>
+        </th>
+        <th>
+            Matching Tools
+        </th>        
+    </tr>
+    <!-- For admin-level users-->
+    <tr *ngIf = "admin" cdkDropListGroup>
+        <td>
+            <!-- Draggable list for assigned TAs -->
+            <!-- Accepts incoming list items -->
+            
+            <div cdkDropList (cdkDropListDropped)="drop($event,true)">
+                <div id="assigned" cdkDrag *ngFor='let ta of viewed_assigned, index as a'>
 
-    <!--Submit Feedback Button-->
-    <!--Only show if user is logged in as instructor-->
-    <button (click)="saveChanges()" *ngIf="instructor">Submit Feedback (Not Working Yet)</button>
+                    <!--Proffessor's ranking number-->
+                    <div class="number" >{{ta.prof_rank}}</div>
+                    <!--assigned TA details-->
+                    <div class="list" >{{ta.email}}</div>
 
-    <!--Main editor area is a 2x2 table-->
-    <table>
-        <tr>
-            <!--Header for assigned TAs-->
-            <th>
-                <h2>Assigned TAs</h2>
-
-                <!--Clear Button-->
-                <!--Only show if user is logged in as admin-->
-                <button (click)="clearTa()" *ngIf="admin">Remove All</button>
-
-            </th>
-            <!--Header for potential Candidates-->
-            <th>
-                <h2>Candidates</h2>
-
-                <!--Auto-Assign Button-->
-                <!--Only show if user is logged in as admin-->
-                <button (click)="autoAssign(viewed_course)" *ngIf="admin">Auto Assign</button>
-
-            </th>
-        </tr>
-
-        <tr>
-            <!--Section displaying assigned TAs-->
-            <td>
-
-                <!--div containing everything in this td for style purposes-->
-                <div class="list">
-                    <!--Div for each assigned TA-->
-                    <div *ngFor="let a of viewed_course.assignList; let i=index" class="candidate">
-
-                        <!--Split the Candidate info into two horizontally adjacent columns-->
-                        <table>
-                            <tr>
-                                <td>
-                                    <p>ID: {{a.email}}</p>
-                                    <p>Name: {{a.name}}</p>
-                                    <p>Priority: {{a.priority}}</p>
-                                    <p>TA Hours: {{a.taHours}}</p>
-                                </td>
-                                <td>
-                                    <p>Ranked Course Preferences: </p>
-                                    <div *ngFor="let r of a.ranked_courses" >{{r}}</div>
-                                </td>
-                            <tr>
-                        </table>
-                        
-                        <!--Button to remove TA-->
-                        <!--Only show it if user is logged in as admin-->
-                        <button (click)="removeTa(i)" *ngIf="admin" >Remove</button>
-
-                        <!--Only show this part if user is logged in as instructor-->
-                        <div *ngIf="instructor">
-                        <!--radio button to show approval/rejection-->
-                        <!--Make sure they have the same "name" attribute-->
-                        <input type="radio" id="accept-{{i}}" name="confirm">
-                        <label for="accept-{{i}}">Accept </label>
+                    <button (click)= "toggle_expand(true, viewedIndex(),a)">DETAILS</button>
+                    <!--EXPANDED VIEW-->
+                    <div *ngIf="expanded_ta[0][viewedIndex()][a]" >
+                        <div class="list" >Status Code: {{ta.status}}</div>
+                        <div class="list" >Received Hours: {{ta.hrs}}</div>
+                        <div >
+                            Ranked Courses:
+                            <div class="list" *ngFor="let crs of ta.course, index as n">
+                                <!--TA's ranking number-->
+                                <div class="number" >{{n+1}}</div>
+                                {{crs}}
+                            </div>
                         </div>
-                        <!--Only show this part if user is logged in as instructor-->
-                        <div *ngIf="instructor">
-                        <input type="radio" id="reject-{{i}}" name="confirm">
-                        <label for="reject-{{i}}">Reject</label>
+                        <br>
+                    </div>
+                    <!--END OF EXPANDED VIEW-->
+
+                </div>
+            </div>
+        </td>
+        <td>
+            <!-- Draggable list for unassigned TAs -->
+            <!-- Accepts incoming list items -->
+            <div cdkDropList (cdkDropListDropped)="drop($event,false)">
+                <div id="unassigned" cdkDrag *ngFor='let ta of viewed_unassigned, index as a'>
+                    
+                    <!--Proffessor's ranking number-->
+                    <div class="number" >{{ta.prof_rank}}</div>
+                    <!--assigned TA details-->
+                    <div class="list" >{{ta.email}}</div>
+                    <div *ngIf="isAssigned(ta)">ALREADY ASSIGNED TO DIFFERENT COURSE</div>
+
+                    <button (click)= "toggle_expand(false, viewedIndex(),a)">DETAILS</button>
+
+                    <!--EXPANDED VIEW-->
+                    <div *ngIf="expanded_ta[1][viewedIndex()][a]" >
+                        <div class="list" >Status Code: {{ta.status}}</div>
+                        <div class="list" >Prospective Hours: {{ta.hrs}}</div>
+                        <div >
+                            Ranked Courses:
+                            <div class="list" *ngFor="let crs of ta.course, index as n">
+                                <!--TA's ranking number-->
+                                <div class="number" >{{n+1}}</div>
+                                {{crs}}
+                            </div>
                         </div>
-
+                        <br>
                     </div>
+                    <!--END OF EXPANDED VIEW-->
+                    
+
                 </div>
+            </div>
+        </td>
+        <td>
+            <button (click)="autoAssign(viewed_course)">Auto-Assign TAs for {{viewed_course}}</button>
+            <button (click)="autoAssignAll()">Auto-Assign TAs for ALL COURSES</button>
 
-            </td>
-            <!--Section listing all potential Candidates-->
-            <td class = "list">
+            <!--Radio buttons to toggle which ranking takes priority-->
+            <!--Assume page initializes with prof ranking taking priority-->
+            <span>Which ranking should take priority?</span>
+            <input type="radio" id="prof-first" name="rank-priority" checked (change)="prof_rank_first=true">
+            <label for="prof-first">Professor's Rankings</label><br>
 
-                <!--div containing everything in this td for style purposes-->
-                <div class="list">
-                    <!--Div for each candidate-->
-                    <!-- ' | callback:isApplicant() ' filters the list for only candidates that applied for the viewed course -->
-                    <div *ngFor="let c of candidate_list | callback:isApplicant(viewed_course)" class="candidate">
+            <input type="radio" id="ta-first" name="rank-priority" (change)="prof_rank_first=false">
+            <label for="ta-first">TA's Rankings</label><br>
 
-                        <!--Split the Candidate info into two horizontally adjacent columns-->
-                        <table>
-                            <tr>
-                                <td>
-                                    <p>ID: {{c.email}}</p>
-                                    <p>Name: {{c.name}}</p>
-                                    <p>Priority: {{c.priority}}</p>
-                                </td>
-                                <td>
-                                    <p>Ranked Courses: </p>
-                                    <div *ngFor="let r of c.ranked_courses" >{{r}}</div>
-                                </td>
-                            <tr>
-                        </table>
+            <button (click)="clearAssign(viewed_course)">Clear Assigned TAs for {{viewed_course}}</button>
+            <button (click)="clearAll()">Clear Assigned TAs for ALL COURSES</button>
+        </td>
+    </tr>
 
-                        <!--Button to add TA-->
-                        <!--Only show it if user is logged in as admin-->
-                        <button (click)="assignTa(c)" *ngIf="admin" >Assign</button>
-                    </div>
-                </div>
+    <!-- For professor-level users-->
+    <tr *ngIf = "professor">
+        <td>
+            <div id="assigned" *ngFor='let ta of viewed_assigned, index as a'>
 
-            </td>
-        </tr>
-    </table>
+                <!--Proffessor's ranking number-->
+                <div class="number" >{{ta.prof_rank}}</div>
+                <!--assigned TA details-->
+                <div class="list" >{{ta.email}}</div>
+            </div>
+            
+        </td>
+        <td>
+
+            <div id="unassigned" *ngFor='let ta of viewed_unassigned, index as a'>
+
+                <!--Proffessor's ranking number-->
+                <div class="number" >{{ta.prof_rank}}</div>
+                <!--assigned TA details-->
+                <div class="list" >{{ta.email}}</div>
+            </div>
+
+        </td>
+    </tr>
+
+    <br>
+
+</table>
 
 
-</div>

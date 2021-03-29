@@ -21,12 +21,24 @@ export class DataService {
     return this.http.get(`${this.url}/courses/`);
   }
 
+  getProfessor(email) {
+    return this.http.get(`${this.url}/instructors/${email}`);
+  }
+
   getApplicants(){
     return this.http.get(`${this.url}/applicants/`);
   }
 
   getInstructors(){
     return this.http.get(`${this.url}/instructors/`);
+  }
+  
+  getRankedApplicants(course){
+    return this.http.get(`${this.url}/ranking/${course}`);
+  }
+
+  getUnrankedApplicants(course){
+    return this.http.get(`${this.url}/unranked/${course}`);
   }
 
   /**
@@ -37,6 +49,10 @@ export class DataService {
    */
   getAllocation() {
     return this.http.get(`${this.url}/allocation/`);
+  }
+
+  updateCourseRanking(course,ranking) {
+    return this.http.post(`${this.url}/ranking/${course}/`,ranking)
   }
 
   updateAllocationHrs(hrs) {

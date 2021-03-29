@@ -51,7 +51,7 @@ export class AuthService {
   {
     this.af.signOut();
     this.cookie.deleteAll();
-  }
+  }//end of logOut
 
   getLoggedIn()
   {
@@ -64,7 +64,7 @@ export class AuthService {
       this.logOut(); //just incase the cookie remains
       return false;
     }
-  }
+  }//end of getLoggedIn
 
   getClaims()
   {

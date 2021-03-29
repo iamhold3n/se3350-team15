@@ -102,7 +102,6 @@ app.post('/api/users', (req, res) => {  //adjust user permissions
       }
       else {
         const userClaims = req.body;
-        console.log(userClaims);
         //expect request to contain:
         //userID: string
         //perms : {}
@@ -163,9 +162,11 @@ app.put('/api/users', (req, res) => //account creation
         //password: string
         admin.auth().createUser({
           email: acc["email"],
-          password: generateRandomPassword()
+          password: generateRandomPassword(),
         }).then(
           (resolve) => {
+            //initialize the user claims array with default settings
+            admin.auth().setCustomUserClaims(resolve["uid"], {"admin":false, "professor": false, "chair":false}).then(() => { });
             res.send(true);
           },
           (rej) => {res.send(rej["message"]);}
@@ -208,6 +209,14 @@ app.get('/api/questions/:course', (req, res) => {
     }
   });
    
+});
+
+// grab an instructor from an email
+app.get('/api/instructors/:email', (req, res) => {
+  db.collection('instructors').where('email', '==', req.params.email).get().then(q => {
+    if (q.empty || q.size > 1) res.status(404).send(); // expecting only one or none to be found, error out if more than 1
+    else q.forEach(d => res.status(200).send(d.data()));
+  })
 });
 
 // grab list of all courses
@@ -253,6 +262,78 @@ app.get('/api/applicants/',(req,res)=>{
  
 })
 
+//grab TA rankings for a course
+app.get('/api/ranking/:course',(req,res)=>{
+
+  db.collection('courses').where('courseCode', '==', req.params.course).get().then(q => {
+    if (q.empty || q.size > 1) res.status(404).send();
+    else q.forEach(course => {
+
+      let result =[];
+      let ranked_list = course.data().ranked_applicants;
+      let count = 0;
+
+      //if list is empty
+      if(ranked_list.length ==0){
+          //return the empty list of ranked TAs for this course
+          res.status(200).send( {"ranked_applicants":result} );        
+      }
+
+      //if not empty, then get each of the ranked applicants IN ORDER
+      ranked_list.forEach( (email, index) => {
+        db.collection('applicants').where('email', '==', email).get().then(ta => {
+          if (ta.empty || ta.size > 1) res.status(404).send(); // expecting only one or none TA to be found, error out if more than 1
+          else{
+            //add the ranked applicant IN ORDER
+            ta.forEach(e => { 
+              result[index] = ( e.data() );
+              count ++;
+            });
+
+            //once the last TA has been pushed
+            if(count == ranked_list.length){
+              //return the ordered list of ranked TAs for this course
+              res.status(200).send( {"ranked_applicants":result} );
+            }
+
+          } 
+          
+        }) //end of querying for ranked TA
+      }) //end of pushing ranked TAs loop
+
+    })
+  }) //end of querying for the course
+})
+
+//grab unranked TAs for a course
+app.get('/api/unranked/:course',(req,res)=>{
+  db.collection('courses').where('courseCode', '==', req.params.course).get().then(q => {
+    if (q.empty || q.size > 1) res.status(404).send(); // expecting only one or none course to be found, error out if more than 1
+    else q.forEach(course => {
+
+      //get all TAs that applied to this course
+      db.collection('applicants').where('course', 'array-contains', req.params.course).get().then(all => {
+        
+        let result = [];
+        all.forEach(c => {
+          result.push(c.data());
+        })
+
+        //filter out TAs that have already been ranked for this course
+        result = result.filter( ta => {return !course.data().ranked_applicants.includes(ta.email)} )
+
+        //return the list of unranked TAs for this course
+        res.status(200).send( {"unranked_applicants":result} );
+      })
+
+    })
+  })
+})
+
+function getUnranked(course){
+
+}
+
 // grab allocation for all courses
 // will be used to allocate hours & TAs to courses
 app.get('/api/allocation', (req, res) => {
@@ -291,38 +372,6 @@ app.get('/api/instructors', (req, res) => {
 // DATA MODIFICATION FUNCTIONS
 // ===========================
 
-//add new course
-app.put('/api/courses/',
-    [body('courseCode').trim().escape(),
-    body('courseName').trim().escape(),
-    body('labOrTutHrs').trim().escape(),
-    body('lecHrs').trim().escape(),
-    body('sec').trim().escape()
-    ], (req, res) => {
-      verifyUser(req.header('authorization'), {'professor': true, 'admin': true, 'chair': true}).then((val) =>
-      {
-        if(val)
-        {
-          db.collection('courses').add({
-            courseCode: req.body.courseCode,
-            courseName: req.body.courseName,
-            lecHrs: req.body.lecHrs,
-            labOrTutHrs: req.body.labOrTutHrs,
-            questions: req.body.questions,
-            sec: req.body.sec
-          }).then(() => {
-            res.status(200).send({ success: 'Courses successfully added.' });
-      
-          }).catch(err => {
-            res.status(403).send({ error: err});
-      
-      
-          })
-        }
-      });
-    
-})
-
 // change course questions
 app.post('/api/questions/:course', [
   body('courseCode').trim().escape().exists(),
@@ -346,6 +395,26 @@ app.post('/api/questions/:course', [
     }
   });
    
+})
+
+// change ranked TAs of a course 
+app.post('/api/ranking/:course',(req, res) => {
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+  
+  db.collection('courses').where('courseCode', '==', req.params.course).get().then(q => {
+    if (q.empty || q.size > 1) res.status(404).send();
+    else{
+
+      //process the req body contents to be stored in database
+      let list = req.body.map( ta => {return ta.email} );
+
+      q.forEach(course => {
+        db.collection('courses').doc(course.id).update({ ranked_applicants : list });
+        res.status(200).send({ success: 'TA-Ranking successfully modified.'});
+      })
+    }
+  })
 })
 
 // change allocated hours
@@ -372,7 +441,8 @@ app.post('/api/allocation/hrs', [
   
 })
 
-// change assigned TAs
+// change assigned TAs for a specific course
+// course and tas are specified in the body
 app.post('/api/allocation/tas', [
   body('*.course').trim().escape().exists(),
   body('*.assignList').isArray().exists()

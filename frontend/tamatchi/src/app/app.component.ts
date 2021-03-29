@@ -23,11 +23,16 @@ export class AppComponent {
   ngOnInit(): void {
     this.unranked_count=null;
     this.getPerm();
+    this.markActive(0);
   }//end of ngOnInit
 
   markActive(a) {
-    let nav = ['nav-login','nav-course','nav-form','nav-allocate','nav-assign','nav-ranking','nav-upload','nav-admin'];
+    let nav;
     this.getPerm();
+
+    if (this.admin||this.chair) nav = ['nav-login','nav-info','nav-allocate','nav-assign','nav-upload','nav-admin'];
+    else if (this.instructor) nav = ['nav-login','nav-questions','nav-ranking'];
+    else nav = ['nav-login'];
 
     let navsz;
     if(this.admin) navsz = nav.length;

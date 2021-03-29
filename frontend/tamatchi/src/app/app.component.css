@@ -18,7 +18,7 @@ hr {
 }
 #nav {
     float: right;
-    margin-top: 25px;
+    margin-top: 15px;
     padding: 0px;
     white-space: nowrap;
 }
@@ -60,7 +60,25 @@ hr {
     cursor: pointer;
     display: inline-block;
     font-weight: 900;
-    font-size: 15px;
+    font-size: 12px;
     margin: 0;
     padding: 4px;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
 }

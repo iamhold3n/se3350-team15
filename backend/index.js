@@ -206,6 +206,10 @@ app.get('/api/questions/:course', (req, res) => {
         else q.forEach(d => res.status(200).send(d.data()));
       })
     }
+    else
+    {
+      res.status(401).send();
+    }
   });
    
 });
@@ -225,6 +229,10 @@ app.get('/api/courses/', (req, res) => {
         if (allCourses.length > 0) res.status(200).send(allCourses);
         else res.status(404).send();
       })
+    }
+    else
+    {
+      res.status(401).send();
     }
     
   });
@@ -248,6 +256,10 @@ app.get('/api/applicants/',(req,res)=>{
         else res.status(404).send();
       })
     }
+    else
+    {
+      res.status(401).send();
+    }
     
   });
  
@@ -269,6 +281,10 @@ app.get('/api/allocation', (req, res) => {
         if (allCourses.length > 0) res.status(200).send(allCourses);
         else res.status(404).send();
       })
+    }
+    else
+    {
+      res.status(401).send();
     }
   });
  
@@ -306,6 +322,10 @@ app.put('/api/courses/',
       
           })
         }
+        else
+    {
+      res.status(401).send();
+    }
       });
     
 })
@@ -329,6 +349,10 @@ app.post('/api/questions/:course', [
           })
         })
       }
+      else
+    {
+      res.status(401).send();
+    }
     });
    
 })
@@ -351,6 +375,10 @@ app.post('/api/allocation/hrs', [
     
       res.status(200).send({ success: 'Allocated hours successfully modified.' });
     }
+    else
+    {
+      res.status(401).send();
+    }
   });
   
 })
@@ -372,6 +400,10 @@ app.post('/api/allocation/tas', [
       })
     
       res.status(200).send({ success: 'Assigned TAs successfully modified.' });
+    }
+    else
+    {
+      res.status(401).send();
     }
   });
   

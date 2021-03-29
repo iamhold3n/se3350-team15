@@ -243,9 +243,49 @@ app.get('/api/allocation', (req, res) => {
   })
 })
 
+//grab all instructors
+app.get('/api/instructors', (req, res) => {
+  db.collection('instructors').get().then(all => {
+    let allProfs = [];
+    all.forEach(c => {
+      allProfs.push(c.data());
+    })
+
+    if (allProfs.length > 0) res.status(200).send(allProfs);
+    else res.status(404).send();
+  })
+})
+
 // ===========================
 // DATA MODIFICATION FUNCTIONS
 // ===========================
+
+//add new course
+app.put('/api/courses/',
+    [body('courseCode').trim().escape(),
+    body('courseName').trim().escape(),
+    body('labOrTutHrs').trim().escape(),
+    body('lecHrs').trim().escape(),
+    body('sec').trim().escape()
+    ], (req, res) => {
+
+    db.collection('courses').add({
+      courseCode: req.body.courseCode,
+      courseName: req.body.courseName,
+      lecHrs: req.body.lecHrs,
+      labOrTutHrs: req.body.labOrTutHrs,
+      questions: req.body.questions,
+      sec: req.body.sec
+    }).then(() => {
+      res.status(200).send({ success: 'Courses successfully added.' });
+
+    }).catch(err => {
+      res.status(403).send({ error: err});
+
+
+    })
+})
+
 // change course questions
 app.post('/api/questions/:course', [
   body('courseCode').trim().escape().exists(),

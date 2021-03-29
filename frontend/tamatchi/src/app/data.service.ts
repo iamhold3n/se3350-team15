@@ -25,6 +25,10 @@ export class DataService {
     return this.http.get(`${this.url}/applicants/`);
   }
 
+  getInstructors(){
+    return this.http.get(`${this.url}/instructors/`);
+  }
+
   /**
    * Use this to get data for:
    * -Allocating TA hours to courses

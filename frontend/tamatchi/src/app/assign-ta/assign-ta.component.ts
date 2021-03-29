@@ -180,8 +180,6 @@ export class AssignTaComponent implements OnInit {
       //assigned tas will be stored as email strings for now
       //until their full objects can be retrieved from backend
       this.all_assigned_temp = arr.map(crs => {return crs.assignList}); 
-      
-      console.log(this.all_assigned_temp );
 
       this.getApplicants();
 
@@ -369,7 +367,7 @@ export class AssignTaComponent implements OnInit {
 
   totalViewedHrs(){
 
-    if(this.viewed_course==this.empty_course){
+    if(this.viewed_course==this.empty_course || this.all_assigned[this.viewedIndex()].length ==0){
       return 0;
     }
 
@@ -436,9 +434,6 @@ export class AssignTaComponent implements OnInit {
         //only consider the TA if they match the relevant priority code
         if( this.all_unassigned[index][a]["status"] == p ){
 
-          //extract the Ta-ranking value
-          this.all_unassigned[index][a]["ta_rank"] = this.all_unassigned[index][a]["course"].indexOf(crs)+1;
-
           transferArrayItem(this.all_unassigned[index], temp, a, 0);
           a--; //compensate for the array shrinking
 
@@ -447,7 +442,7 @@ export class AssignTaComponent implements OnInit {
       }//end of TA extraction loop
 
       //sort the TAs in the temp array
-      temp.sort( this.getSortTA() );
+      temp.sort( this.getSortTA(crs) );
 
       /**
        * Assign the sorted TAs
@@ -491,9 +486,6 @@ export class AssignTaComponent implements OnInit {
 
       }//end of TA rejection loop
 
-      //sort the unassigned TA array to keep future auto-assigns consistent
-      this.all_unassigned[index].sort(this.getSortTA() );
-
     }//end of priority code loop
 
 
@@ -506,23 +498,31 @@ export class AssignTaComponent implements OnInit {
    * Callback function for "array.sort()"
    * Sorts TAs based on priority code and ranking values
    * Important part of the TA-Matching algorithm
+   * Assumes "ta-rank" field has already been initialized
    */
-  getSortTA(){
+  getSortTA(crs){
 
     let flag = this.prof_rank_first;
 
     function sortTA(a,b){ 
 
+      //extract the Ta-ranking values
+      a["ta_rank"] = a["course"].indexOf(crs)+1;
+      b["ta_rank"] = b["course"].indexOf(crs)+1;
+
       //lower weights will result in that ranking(ta or prof) having a higher priority
-      let ta_weight = 2;
+      let ta_weight;
       let prof_weight;
       if(flag){
-        prof_weight = 1
+        ta_weight =1;
+        prof_weight = 10;
       }
       else{
-        prof_weight = 3;
+        ta_weight =10;
+        prof_weight = 1;
       }
-  
+
+
       let ta_rank = [ ta_weight*a["ta_rank"], ta_weight*b["ta_rank"] ];
       let prof_rank = [ prof_weight*a["prof_rank"], prof_weight*b["prof_rank"] ];
   
@@ -533,6 +533,8 @@ export class AssignTaComponent implements OnInit {
       if(prof_rank[1]==0){
         prof_rank[1]=99999;
       }
+
+      //console.log( a["email"]+":"+(prof_rank[0]+ta_rank[0]) +" - "+ b["email"]+":"+(prof_rank[1]+ta_rank[1]) );
   
       return (prof_rank[0]+ta_rank[0]) - (prof_rank[1]+ta_rank[1]) ; 
     }//end of sortTA
@@ -565,9 +567,6 @@ export class AssignTaComponent implements OnInit {
       transferArrayItem(this.all_assigned[index], this.all_unassigned[index], 0, 0);
       a--;//compensate for the array shrinking
     }
-
-    //sort the unassigned TA array to keep future auto-assigns consistent
-    this.all_unassigned[index].sort(this.getSortTA() );
 
     //refresh the TAs displayed in the editor
     this.courseView(this.viewedIndex());

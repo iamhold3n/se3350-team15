@@ -13,15 +13,15 @@
 <!--TWO main columns will hold the list of ranked and unranked TAs-->
 <table *ngIf = "loggedIn">
     <tr>
-        <th *ngIf="ranked_view.length > 0">
+        <th>
             RANKED TAS
         </th>
-        <th *ngIf="unranked_view.length > 0">
+        <th>
             UNRANKED TAS
         </th>
     </tr>
     <tr cdkDropListGroup>
-        <td *ngIf="ranked_view.length > 0">
+        <td>
             <!-- Draggable list to rank TAs -->
             <!-- Accepts incoming list items -->
             <!-- Appears always -->

@@ -206,7 +206,7 @@ app.get('/api/questions/:course', (req, res) => {
       db.collection('courses').doc(req.params.course).get()
         .then(d => res.status(200).send(d.data()))
         .catch(err => res.status(404).send({ error: 'Course not found' }));
-    }
+    } else res.status(403).send();
   });
    
 });
@@ -234,7 +234,7 @@ app.get('/api/courses/', (req, res) => {
         if (allCourses.length > 0) res.status(200).send(allCourses);
         else res.status(404).send();
       })
-    }
+    } else res.status(403).send();
     
   });
   
@@ -256,7 +256,7 @@ app.get('/api/applicants/',(req,res)=>{
         if (allApplicants.length > 0) res.status(200).send(allApplicants);
         else res.status(404).send();
       })
-    }
+    } else res.status(403).send();
     
   });
  
@@ -350,7 +350,7 @@ app.get('/api/allocation', (req, res) => {
         if (allCourses.length > 0) res.status(200).send(allCourses);
         else res.status(404).send();
       })
-    }
+    } else res.status(403).send();
   });
  
 })
@@ -392,7 +392,7 @@ app.post('/api/questions/:course', [
           res.status(200).send({ success: 'Questions successfully modified.'})
         })
         .catch(err => res.status(404).send({ error: 'Course not found' }));
-    }
+    } else res.status(403).send();
   });
    
 })
@@ -436,7 +436,7 @@ app.post('/api/allocation/hrs', [
       batch.commit()
         .then(() => res.status(200).send({ success: 'Allocated hours successfully modified.' }))
         .catch(err => res.status(400).send({ error: err }));
-    }
+    } else res.status(403).send();
   });
   
 })
@@ -461,7 +461,7 @@ app.post('/api/allocation/tas', [
       batch.commit()
         .then(() => res.status(200).send({ success: 'Assigned TAs successfully modified.' }))
         .catch(err => res.status(400).send({ error: err }));
-    }
+    } else res.status(403).send();
   });
   
 });

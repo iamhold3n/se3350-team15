@@ -604,7 +604,7 @@ app.put('/api/batch/instructors', [
 
   req.body.forEach(e => {
     batch.set(db.collection('instructors').doc(e.email), e);
-    batch.update(db.collection('courses').doc(e.email), { course: [] })
+    batch.update(db.collection('instructors').doc(e.email), { course: [] })
   });
 
   batch.commit()
@@ -667,8 +667,7 @@ function checkAllocation(docID) { // called when new courses are added to see if
 //add an instructor
 app.put('/api/instructors', [
   body('email').isEmail().exists(),
-  body('name').trim().escape(),
-  
+  body('name').trim().escape().exists(),
 ], (req, res) => {
   db.collection('instructors').doc(req.body.email).set({
     course: [],

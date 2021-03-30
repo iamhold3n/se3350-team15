@@ -13,10 +13,10 @@ export class FileUploadComponent implements OnInit {
   uploadType = 0;
 
   activeFile;
-  applicantsFile = ['course','name','email','status','hrs','ranks','questions'];
-  coursesFile = ['courseCode','courseName','lecHrs','labOrTutHrs','sec'];
-  enrolhrsFile = ['courseCode','labOrTutHrs','prevEnrol','prevHrs','currEnrol'];
-  instructorsFile = ['name','email'];
+  applicantsFile = ['COURSE CODE','APPLICANT NAME','APPLICANT EMAIL','APPLICANT STATUS','5 OR 10 HOURS','COURSE RANK','QUESTIONS'];
+  coursesFile = ['COURSE CODE','COURSE NAME','LECTURE HOURS','LAB OR TUTORIAL HOURS','SECTIONS'];
+  enrolhrsFile = ['COURSE CODE','LAB OR TUTORIAL HOURS','PREVIOUS ENROLMENT','PREVIOUS HOURS','CURRENT ENROLMENT'];
+  instructorsFile = ['INSTRUCTOR NAME','INSTRUCTOR EMAIL'];
 
   typeNav = ['applicants','courses','enrolment','instructors'];
 
@@ -84,13 +84,13 @@ export class FileUploadComponent implements OnInit {
   uploadApplicants() {
     let applicants = [];
 
-    let courseIndex = this.applicantsFile.indexOf('course');
-    let nameIndex = this.applicantsFile.indexOf('name');
-    let emailIndex = this.applicantsFile.indexOf('email');
-    let statusIndex = this.applicantsFile.indexOf('status');
-    let hrsIndex = this.applicantsFile.indexOf('hrs');
-    let ranksIndex = this.applicantsFile.indexOf('rank');
-    let questionsIndex = this.applicantsFile.indexOf('questions');
+    let courseIndex = this.applicantsFile.indexOf('COURSE CODE');
+    let nameIndex = this.applicantsFile.indexOf('APPLICANT NAME');
+    let emailIndex = this.applicantsFile.indexOf('APPLICANT EMAIL');
+    let statusIndex = this.applicantsFile.indexOf('APPLICANT STATUS');
+    let hrsIndex = this.applicantsFile.indexOf('5 OR 10 HOURS');
+    let ranksIndex = this.applicantsFile.indexOf('COURSE RANK');
+    let questionsIndex = this.applicantsFile.indexOf('QUESTIONS');
 
     this.uploadFile.forEach(e => {
       e = e.split(',');
@@ -158,11 +158,11 @@ export class FileUploadComponent implements OnInit {
   uploadCourses() {
     let courses = [];
 
-    let courseIndex = this.coursesFile.indexOf('courseCode');
-    let nameIndex = this.coursesFile.indexOf('courseName');
-    let lecIndex = this.coursesFile.indexOf('lecHrs');
-    let labIndex = this.coursesFile.indexOf('labOrTutHrs');
-    let secIndex = this.coursesFile.indexOf('sec');
+    let courseIndex = this.coursesFile.indexOf('COURSE CODE');
+    let nameIndex = this.coursesFile.indexOf('COURSE NAME');
+    let lecIndex = this.coursesFile.indexOf('LECTURE HOURS');
+    let labIndex = this.coursesFile.indexOf('LAB OR TUTORIAL HOURS');
+    let secIndex = this.coursesFile.indexOf('SECTIONS');
 
     this.uploadFile.forEach(e => {
       e = e.split(',');
@@ -190,11 +190,11 @@ export class FileUploadComponent implements OnInit {
   uploadEnrolment() {
     let enrolment = [];
 
-    let courseIndex = this.enrolhrsFile.indexOf('courseCode');
-    let labIndex = this.enrolhrsFile.indexOf('labOrTutHrs');
-    let prevEnrolIndex = this.enrolhrsFile.indexOf('prevEnrol');
-    let prevHrsIndex = this.enrolhrsFile.indexOf('prevHrs');
-    let currEnrolIndex = this.enrolhrsFile.indexOf('currEnrol');
+    let courseIndex = this.enrolhrsFile.indexOf('COURSE CODE');
+    let labIndex = this.enrolhrsFile.indexOf('LAB OR TUTORIAL HOURS');
+    let prevEnrolIndex = this.enrolhrsFile.indexOf('PREVIOUS ENROLMENT');
+    let prevHrsIndex = this.enrolhrsFile.indexOf('PREVIOUS HOURS');
+    let currEnrolIndex = this.enrolhrsFile.indexOf('CURRENT ENROLMENT');
 
     this.uploadFile.forEach(e => {
       e = e.split(',');
@@ -220,9 +220,10 @@ export class FileUploadComponent implements OnInit {
 
   uploadInstructors() {
     let instructors = [];
+//  instructorsFile = ['INSTRUCTOR NAME','INSTRUCTOR EMAIL'];
 
-    let emailIndex = this.instructorsFile.indexOf('email');
-    let nameIndex = this.instructorsFile.indexOf('name');
+    let emailIndex = this.instructorsFile.indexOf('INSTRUCTOR EMAIL');
+    let nameIndex = this.instructorsFile.indexOf('INSTRUCTOR NAME');
 
     this.uploadFile.forEach(e => {
       e = e.split(',');

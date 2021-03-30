@@ -1,25 +1,25 @@
-<div style="border-radius: 2px; border-color: black; border-style: solid; float: left;">
-    Email Address: <input #email>
-    <button (click) = "register(email.value)">Create Account</button>
+<div>
+    <input #email placeholder="Email">
+    <button (click) = "register(email.value)">CREATE</button><br>
     A password set link will be sent to the provided email.
 </div>
 <br>
-<div style="border-radius: 2px; border-color: black; border-style: solid; float: left;">
+<div>
     <ul>
         <li *ngFor="let user of userList">
             <div *ngIf="user['email'] != '' && user['email'] != undefined">
-                Email: {{user["email"]}}
+                <b>Email: </b>{{user["email"]}}
                 <br>
-                Professor: <input #prof type="checkbox" checked="{{getStatus(user, 'professor', prof)}}">
+                <b>Professor: </b><input #prof type="checkbox" checked="{{getStatus(user, 'professor', prof)}}">
                 <br>
-                Admin: <input #admin type="checkbox" checked="{{getStatus(user, 'admin', admin)}}">
+                <b>Admin: </b><input #admin type="checkbox" checked="{{getStatus(user, 'admin', admin)}}">
                 <br>
-                Chair: <input #chair type="checkbox" checked="{{getStatus(user, 'chair', chair)}}">
+                <b>Chair: </b><input #chair type="checkbox" checked="{{getStatus(user, 'chair', chair)}}">
                 <br>
-                Disabled: <input #disabled type="checkbox" checked="{{getStatus(user, 'disabled', disabled)}}">
+                <b>Disabled: </b><input #disabled type="checkbox" checked="{{getStatus(user, 'disabled', disabled)}}">
                 <br>
-                <button (click) = "setClaims(user['uid'], admin.checked, prof.checked, chair.checked)">Update User</button>
-                <button (click) = "sendPasswordResetEmail(user['email'])">Send Password Reset</button>
+                <button (click) = "setClaims(user['uid'], admin.checked, prof.checked, chair.checked)">UPDATE</button>
+                <button (click) = "sendPasswordResetEmail(user['email'])">PASSWORD RESET</button>
                 <br>
             </div>
         </li>

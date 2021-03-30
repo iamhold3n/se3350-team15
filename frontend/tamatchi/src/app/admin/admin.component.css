@@ -1,0 +1,20 @@
+ul {
+    margin: auto;
+    background-color: white;
+    padding: 10px;
+    max-width: 1000px;
+}
+li {
+    display: inline-flex;
+    list-style-type: none;
+    padding: 5px;
+    vertical-align: middle;
+}
+li div {
+    background-color: #dddddd;
+    border: 5px solid transparent;
+    border-radius: 5px;
+}
+div {
+    text-align: center;
+}

@@ -12,6 +12,7 @@ import { CourseQuestionsComponent } from './course-questions/course-questions.co
 import { AssignInstructorComponent } from './assign-instructor/assign-instructor.component';
 
 const routes: Routes = [
+  {path: '', redirectTo: '/login', pathMatch: 'full' },
   {path: 'login', component:LoginComponent},
   {path: 'course-information', component: CourseInformationComponent},
   {path: 'course-questions', component: CourseQuestionsComponent},

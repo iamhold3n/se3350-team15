@@ -31,7 +31,7 @@
 
 
         </tr>
-        <tr *ngFor="let row of rows" (click)="showQuestions(row.courseCode)">
+        <tr *ngFor="let row of rows">
             <td>{{row.courseCode}}</td>
             <td>{{row.courseName}}</td>
             <td>{{row.lecHrs}}</td>

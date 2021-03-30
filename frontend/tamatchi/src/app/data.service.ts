@@ -59,6 +59,10 @@ export class DataService {
     return this.http.post(`${this.url}/allocation/tas/`, tas)
   }
 
+  updateAllocationFeedback(feedback) {
+    return this.http.post(`${this.url}/allocation/feedback/`, feedback)
+  }
+
   addCourse(c) {
     return this.http.put(`${this.url}/courses/`, c);
 

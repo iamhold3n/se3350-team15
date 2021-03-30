@@ -386,8 +386,8 @@ app.post('/api/allocation/hrs', [
   res.status(200).send({ success: 'Allocated hours successfully modified.' });
 })
 
-// change assigned TAs for a specific course
-// course and tas are specified in the body
+// change assigned TAs for specified courses
+// courses and tas are specified in the body
 app.post('/api/allocation/tas', [
   body('*.course').trim().escape().exists(),
   body('*.assignList').isArray().exists()
@@ -395,9 +395,36 @@ app.post('/api/allocation/tas', [
   const errors = validationResult(req);
   if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
+  let prof_accept_arr;
   req.body.forEach(e => {
     db.collection('allocation').where('course', '==', e.course).get().then(x => {
-        x.forEach(d => db.collection('allocation').doc(d.id).update({ assignList : e.assignList }) )
+        x.forEach(d => {
+
+          prof_accept_arr = [];
+          e.assignList.map( e => {prof_accept_arr.push("undecided")} );
+
+          db.collection('allocation').doc(d.id).update({ assignList : e.assignList, prof_accept: prof_accept_arr });
+      })
+    })
+  })
+
+  res.status(200).send({ success: 'Assigned TAs successfully modified.' });
+});
+
+//update professor's feedback for specified courses
+app.post('/api/allocation/feedback', [
+  body('*.course').trim().escape().exists(),
+  body('*.prof_accept').isArray().exists()
+], (req, res) => {
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+
+  req.body.forEach(e => {
+    db.collection('allocation').where('course', '==', e.course).get().then(x => {
+        x.forEach(d => {
+
+          db.collection('allocation').doc(d.id).update({ prof_accept: e.prof_accept });
+      })
     })
   })
 

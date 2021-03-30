@@ -34,25 +34,22 @@ export class AssignTaComponent implements OnInit {
   all_assigned: Candidate[][];
   //list of ranked TAs belonging to the current course view
   viewed_assigned: Candidate[];
-
-  //flags to indicate if TA in the editor should display detailed view
-  expanded_ta: boolean[][][];
-
   //stores the emails of the assigned TAs as received from back-end
   //until they can be converted into proper objects
   all_assigned_temp: string[][];
 
+  //flags to indicate if TA in the editor should display detailed view
+  expanded_ta: boolean[][][];
+  all_feedback: string[][];
+
   //array of flags to indicate loading applicants from back-end
   finish_loading: boolean[];
-
   //detects if logged in
   loggedIn: boolean;
-
   //admin or chair user will have "admin" level permissions on this page
   admin: boolean;
   //professor user will have "professor" level permissions on this page
   professor: boolean;
-
   prof_rank_first: boolean;
 
   constructor(private data: DataService, private auth : AuthService) { 
@@ -180,6 +177,9 @@ export class AssignTaComponent implements OnInit {
       //assigned tas will be stored as email strings for now
       //until their full objects can be retrieved from backend
       this.all_assigned_temp = arr.map(crs => {return crs.assignList}); 
+      this.all_feedback = arr.map(crs => {return crs.prof_accept});
+
+      console.log(this.all_feedback);
 
       this.getApplicants();
 
@@ -525,7 +525,7 @@ export class AssignTaComponent implements OnInit {
 
       let ta_rank = [ ta_weight*a["ta_rank"], ta_weight*b["ta_rank"] ];
       let prof_rank = [ prof_weight*a["prof_rank"], prof_weight*b["prof_rank"] ];
-  
+
       //adjust values for unranked TAs
       if(prof_rank[0]==0){
         prof_rank[0]=99999;
@@ -534,7 +534,7 @@ export class AssignTaComponent implements OnInit {
         prof_rank[1]=99999;
       }
 
-      //console.log( a["email"]+":"+(prof_rank[0]+ta_rank[0]) +" - "+ b["email"]+":"+(prof_rank[1]+ta_rank[1]) );
+      console.log( a["email"]+":"+(prof_rank[0]+ta_rank[0]) +" - "+ b["email"]+":"+(prof_rank[1]+ta_rank[1]) );
   
       return (prof_rank[0]+ta_rank[0]) - (prof_rank[1]+ta_rank[1]) ; 
     }//end of sortTA
@@ -582,22 +582,46 @@ export class AssignTaComponent implements OnInit {
     });
   }
 
+  displayFeedback(index,a){
+    switch(this.all_feedback[index][a]){
+      case "accept":
+        return 0;
+      default:
+        return 1;
+    }
+  }
+
   //This method will save the changes and send the updated list to the database
   saveChanges() {
 
-    let body=[];
+    let ta_body=[];
+    let feedback_body = [];
 
     //construct a valid body for the POST request
     this.course_list.forEach( (crs,index) => {
-      body[index] = {
+
+      ta_body[index] = {
         "course": crs,
         "assignList": this.all_assigned[index].map( ta => {return ta.email} ),
       };
+
+      feedback_body[index] = {
+        "course": crs,
+        "prof_accept": this.all_feedback[index],
+      };
+
     });
 
-    this.data.updateAllocationTas(body).subscribe(res => {
-      alert("Changes Saved");
+    console.log(JSON.stringify(feedback_body) );
+
+    this.data.updateAllocationTas(ta_body).subscribe(res => {
+      alert("TA Assignments Saved");
     });
+
+    this.data.updateAllocationFeedback(feedback_body).subscribe(res => {
+      alert("Feedback Saved");
+    });
+
 
   }
 

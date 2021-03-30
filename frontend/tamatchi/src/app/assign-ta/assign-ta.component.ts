@@ -252,7 +252,7 @@ export class AssignTaComponent implements OnInit {
       return 0;//unranked TAs ALL have rank of 0
     }
 
-    //convert the emails of assigned tas for thsi course into their object represnetations
+    //convert the emails of tas for thsi course into their object represnetations
     arr.forEach((ta,r) => {
 
       //determine if the ta has already been assigned to this course
@@ -269,7 +269,7 @@ export class AssignTaComponent implements OnInit {
 
       }
 
-      //console.log(this.expanded_ta);
+      console.log(ta);
 
     });
 
@@ -589,6 +589,28 @@ export class AssignTaComponent implements OnInit {
       default:
         return 1;
     }
+  }
+
+  insertTA(){
+
+    let ta = {
+      ranked_courses:[],
+      taHours: 0,
+      priority:0,
+
+      email: "test@uwo.ca",
+      name: "Test McTesterton",
+      prof_rank: 12,
+      questions: ["", "", "", "", "", "", "", ""],
+      ranks: [1, 2, 3, 4],
+    };
+    ta["course"] = ["SE1202", "ECE1210", "ECE3155", "SE1057"];
+    ta["hrs"] = 10;
+
+    ta["course"].forEach(crs =>{
+      this.all_unassigned[this.course_list.indexOf(crs)].push(ta);
+    });
+
   }
 
   //This method will save the changes and send the updated list to the database

@@ -100,6 +100,8 @@
             </div>
         </td>
         <td>
+
+            <!--Auto-Assign Buttons-->
             <button (click)="autoAssign(viewed_course)">Auto-Assign TAs for {{viewed_course}}</button>
             <button (click)="autoAssignAll()">Auto-Assign TAs for ALL COURSES</button>
 
@@ -112,8 +114,13 @@
             <input type="radio" id="ta-first" name="rank-priority" (change)="prof_rank_first=false">
             <label for="ta-first">TA's Rankings</label><br>
 
+            <!--Clear assignment buttons-->
             <button (click)="clearAssign(viewed_course)">Clear Assigned TAs for {{viewed_course}}</button>
             <button (click)="clearAll()">Clear Assigned TAs for ALL COURSES</button>
+
+            <!--Insert NEW TA buttons-->
+            <button (click)="insertTA()">Insert TA</button>
+
         </td>
     </tr>
 
@@ -126,6 +133,14 @@
                 <div class="number" >{{ta.prof_rank}}</div>
                 <!--assigned TA details-->
                 <div class="list" >{{ta.email}}</div>
+
+                <!--Buttons for professoers to accept/reject the assignemnt-->
+                <div *ngIf="all_feedback[viewedIndex()][a] != 'reject' && all_feedback[viewedIndex()][a] != 'accept' ">Please Accept or Reject this assignment</div>
+                <label for = "accept" *ngIf="all_feedback[viewedIndex()][a] == 'reject' ">You have rejected this assignment</label>
+                <button id="accept" *ngIf="all_feedback[viewedIndex()][a] != 'accept' " (click)= "all_feedback[viewedIndex()][a] = 'accept'">ACCEPT</button>
+                <label for = "reject" *ngIf="all_feedback[viewedIndex()][a] == 'accept' ">You have accepted this assignment</label>
+                <button id="reject" *ngIf="all_feedback[viewedIndex()][a] != 'reject' " (click)= "all_feedback[viewedIndex()][a] = 'reject'">REJECT</button>
+
             </div>
             
         </td>

@@ -64,6 +64,10 @@ export class DataService {
     return this.http.post(`${this.url}/allocation/tas/`, tas, {headers : {'authorization' : this.cookie.get("token")}})
   }
 
+  updateAllocationFeedback(feedback) {
+    return this.http.post(`${this.url}/allocation/feedback/`, feedback)
+  }
+
   addCourse(c) {
     return this.http.put(`${this.url}/courses/`, c, {headers : {'authorization' : this.cookie.get("token")}});
 

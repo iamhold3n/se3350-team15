@@ -441,8 +441,8 @@ app.post('/api/allocation/hrs', [
   
 })
 
-// change assigned TAs for a specific course
-// course and tas are specified in the body
+// change assigned TAs for specified courses
+// courses and tas are specified in the body
 app.post('/api/allocation/tas', [
   body('*.course').trim().escape().exists(),
   body('*.assignList').isArray().exists()
@@ -455,15 +455,42 @@ app.post('/api/allocation/tas', [
     if(val)
     {
       let batch = db.batch();
+      let prof_accept_arr;
 
-      req.body.forEach(e => batch.update(db.collection('allocation').doc(e.course), { assignList: e.assignList }));
+      req.body.forEach(e => { 
+        prof_accept_arr = []
+        e.assignList.map(() => { prof_accept_arr.push('undecided') });
+
+        batch.update(db.collection('allocation').doc(e.course), { 
+          assignList: e.assignList,
+          prof_accept: prof_accept_arr
+        });
+      })
 
       batch.commit()
         .then(() => res.status(200).send({ success: 'Assigned TAs successfully modified.' }))
         .catch(err => res.status(400).send({ error: err }));
     } else res.status(403).send();
   });
-  
+
+});
+
+//update professor's feedback for specified courses
+app.post('/api/allocation/feedback', [
+  body('*.course').trim().escape().exists(),
+  body('*.prof_accept').isArray().exists()
+], (req, res) => {
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+
+  req.body.forEach(e => {
+    db.collection('allocation').where('course', '==', e.course).get().then(x => {
+        x.forEach(d => {
+
+          db.collection('allocation').doc(d.id).update({ prof_accept: e.prof_accept });
+      })
+    })
+  })
 });
 
 // add a course
@@ -490,32 +517,6 @@ app.put('/api/courses', [
   }).catch(err => {
     res.status(400).send({ error: err });
   })
-})
-
-// add enrolment information
-app.put('/api/enrolhrs', [
-  body('courseCode').isLength({ min: 5, max: 9 }).trim().escape().exists(),
-  body('currEnrol').isLength({ min: 2, max: 3 }).isInt().exists(),
-  body('labOrTutHrs').isLength({ min: 1, max: 2 }).isInt().exists(),
-  body('prevEnrol').isLength({ min: 2, max: 3 }).isInt().exists(),
-  body('prevHrs').isLength({ min: 1, max: 2 }).isInt().exists()
-], (req, res) => {
-  const errors = validationResult(req);
-  if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
-
-  verifyUser(req.header('authorization'), {'chair': true}).then((val) =>
-  {
-    if(val)
-    {
-      db.collection('enrolhrs').doc(req.params.courseCode).set({
-        courseCode: req.body.courseCode,
-        currEnrol: req.body.currEnrol,
-        labOrTutHrs: req.body.labOrTutHrs,
-        prevEnrol: req.body.prevEnrol,
-        prevHrs: req.body.prevEnrol
-      })
-    } else res.status(403).send();
-  });
 })
 
 // batch add applicants
@@ -604,7 +605,7 @@ app.put('/api/batch/instructors', [
 
   req.body.forEach(e => {
     batch.set(db.collection('instructors').doc(e.email), e);
-    batch.update(db.collection('instructors').doc(e.email), { course: [] })
+    batch.update(db.collection('courses').doc(e.email), { course: [] })
   });
 
   batch.commit()
@@ -667,10 +668,10 @@ function checkAllocation(docID) { // called when new courses are added to see if
 //add an instructor
 app.put('/api/instructors', [
   body('email').isEmail().exists(),
-  body('name').trim().escape().exists(),
+  body('name').trim().escape(),
+  
 ], (req, res) => {
   db.collection('instructors').doc(req.body.email).set({
-    course: [],
     email: req.body.email,
     name: req.body.name
   }).then(() => {

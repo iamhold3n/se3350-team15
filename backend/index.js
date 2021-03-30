@@ -206,16 +206,22 @@ app.get('/api/questions/:course', (req, res) => {
       db.collection('courses').doc(req.params.course).get()
         .then(d => res.status(200).send(d.data()))
         .catch(err => res.status(404).send({ error: 'Course not found' }));
-    } else res.status(403).send();
+    } else res.status(401).send();
   });
    
 });
 
 // grab an instructor from an email
 app.get('/api/instructors/:email', (req, res) => {
-  db.collection('instructors').where('email', '==', req.params.email).get().then(q => {
-    if (q.empty || q.size > 1) res.status(404).send(); // expecting only one or none to be found, error out if more than 1
-    else q.forEach(d => res.status(200).send(d.data()));
+  verifyUser(req.header('authorization'), {'professor': true, 'admin': true, 'chair': true}).then((val) =>
+  {
+    if(val)
+    {
+      db.collection('instructors').where('email', '==', req.params.email).get().then(q => {
+        if (q.empty || q.size > 1) res.status(404).send(); // expecting only one or none to be found, error out if more than 1
+        else q.forEach(d => res.status(200).send(d.data()));
+      })
+    } else res.status(401).send();
   })
 });
 
@@ -234,7 +240,7 @@ app.get('/api/courses/', (req, res) => {
         if (allCourses.length > 0) res.status(200).send(allCourses);
         else res.status(404).send();
       })
-    } else res.status(403).send();
+    } else res.status(401).send();
     
   });
   
@@ -256,7 +262,7 @@ app.get('/api/applicants/',(req,res)=>{
         if (allApplicants.length > 0) res.status(200).send(allApplicants);
         else res.status(404).send();
       })
-    } else res.status(403).send();
+    } else res.status(401).send();
     
   });
  
@@ -264,69 +270,81 @@ app.get('/api/applicants/',(req,res)=>{
 
 //grab TA rankings for a course
 app.get('/api/ranking/:course',(req,res)=>{
+  verifyUser(req.header('authorization'), {'professor': true, 'admin': true, 'chair': true}).then((val) =>
+  {
+    if(val)
+    {
 
-  db.collection('courses').where('courseCode', '==', req.params.course).get().then(q => {
-    if (q.empty || q.size > 1) res.status(404).send();
-    else q.forEach(course => {
+      db.collection('courses').where('courseCode', '==', req.params.course).get().then(q => {
+        if (q.empty || q.size > 1) res.status(404).send();
+        else q.forEach(course => {
 
-      let result =[];
-      let ranked_list = course.data().ranked_applicants;
-      let count = 0;
+          let result =[];
+          let ranked_list = course.data().ranked_applicants;
+          let count = 0;
 
-      //if list is empty
-      if(ranked_list.length ==0){
-          //return the empty list of ranked TAs for this course
-          res.status(200).send( {"ranked_applicants":result} );        
-      }
+          //if list is empty
+          if(ranked_list.length ==0){
+              //return the empty list of ranked TAs for this course
+              res.status(200).send( {"ranked_applicants":result} );        
+          }
 
-      //if not empty, then get each of the ranked applicants IN ORDER
-      ranked_list.forEach( (email, index) => {
-        db.collection('applicants').where('email', '==', email).get().then(ta => {
-          if (ta.empty || ta.size > 1) res.status(404).send(); // expecting only one or none TA to be found, error out if more than 1
-          else{
-            //add the ranked applicant IN ORDER
-            ta.forEach(e => { 
-              result[index] = ( e.data() );
-              count ++;
-            });
+          //if not empty, then get each of the ranked applicants IN ORDER
+          ranked_list.forEach( (email, index) => {
+            db.collection('applicants').where('email', '==', email).get().then(ta => {
+              if (ta.empty || ta.size > 1) res.status(404).send(); // expecting only one or none TA to be found, error out if more than 1
+              else{
+                //add the ranked applicant IN ORDER
+                ta.forEach(e => { 
+                  result[index] = ( e.data() );
+                  count ++;
+                });
 
-            //once the last TA has been pushed
-            if(count == ranked_list.length){
-              //return the ordered list of ranked TAs for this course
-              res.status(200).send( {"ranked_applicants":result} );
-            }
+                //once the last TA has been pushed
+                if(count == ranked_list.length){
+                  //return the ordered list of ranked TAs for this course
+                  res.status(200).send( {"ranked_applicants":result} );
+                }
 
-          } 
-          
-        }) //end of querying for ranked TA
-      }) //end of pushing ranked TAs loop
+              } 
+              
+            }) //end of querying for ranked TA
+          }) //end of pushing ranked TAs loop
 
-    })
-  }) //end of querying for the course
+        })
+      }) //end of querying for the course
+    } else res.status(401).send();
+  })
 })
 
 //grab unranked TAs for a course
 app.get('/api/unranked/:course',(req,res)=>{
-  db.collection('courses').where('courseCode', '==', req.params.course).get().then(q => {
-    if (q.empty || q.size > 1) res.status(404).send(); // expecting only one or none course to be found, error out if more than 1
-    else q.forEach(course => {
+  verifyUser(req.header('authorization'), {'professor': true, 'admin': true, 'chair': true}).then((val) =>
+  {
+    if(val)
+    {
+      db.collection('courses').where('courseCode', '==', req.params.course).get().then(q => {
+        if (q.empty || q.size > 1) res.status(404).send(); // expecting only one or none course to be found, error out if more than 1
+        else q.forEach(course => {
 
-      //get all TAs that applied to this course
-      db.collection('applicants').where('course', 'array-contains', req.params.course).get().then(all => {
-        
-        let result = [];
-        all.forEach(c => {
-          result.push(c.data());
+          //get all TAs that applied to this course
+          db.collection('applicants').where('course', 'array-contains', req.params.course).get().then(all => {
+            
+            let result = [];
+            all.forEach(c => {
+              result.push(c.data());
+            })
+
+            //filter out TAs that have already been ranked for this course
+            result = result.filter( ta => {return !course.data().ranked_applicants.includes(ta.email)} )
+
+            //return the list of unranked TAs for this course
+            res.status(200).send( {"unranked_applicants":result} );
+          })
+
         })
-
-        //filter out TAs that have already been ranked for this course
-        result = result.filter( ta => {return !course.data().ranked_applicants.includes(ta.email)} )
-
-        //return the list of unranked TAs for this course
-        res.status(200).send( {"unranked_applicants":result} );
       })
-
-    })
+    } else res.status(401).send();
   })
 })
 
@@ -350,21 +368,27 @@ app.get('/api/allocation', (req, res) => {
         if (allCourses.length > 0) res.status(200).send(allCourses);
         else res.status(404).send();
       })
-    } else res.status(403).send();
+    } else res.status(401).send();
   });
  
 })
 
 //grab all instructors
 app.get('/api/instructors', (req, res) => {
-  db.collection('instructors').get().then(all => {
-    let allProfs = [];
-    all.forEach(c => {
-      allProfs.push(c.data());
-    })
+  verifyUser(req.header('authorization'), {'professor': true, 'admin': true, 'chair': true}).then((val) =>
+  {
+    if(val)
+    {
+      db.collection('instructors').get().then(all => {
+        let allProfs = [];
+        all.forEach(c => {
+          allProfs.push(c.data());
+        })
 
-    if (allProfs.length > 0) res.status(200).send(allProfs);
-    else res.status(404).send();
+        if (allProfs.length > 0) res.status(200).send(allProfs);
+        else res.status(404).send();
+      })
+    } else res.status(401).send();
   })
 })
 
@@ -392,7 +416,7 @@ app.post('/api/questions/:course', [
           res.status(200).send({ success: 'Questions successfully modified.'})
         })
         .catch(err => res.status(404).send({ error: 'Course not found' }));
-    } else res.status(403).send();
+    } else res.status(401).send();
   });
    
 })
@@ -402,18 +426,24 @@ app.post('/api/ranking/:course',(req, res) => {
   const errors = validationResult(req);
   if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
   
-  db.collection('courses').where('courseCode', '==', req.params.course).get().then(q => {
-    if (q.empty || q.size > 1) res.status(404).send();
-    else{
+  verifyUser(req.header('authorization'), {'chair': true, 'admin': true}).then((val) =>
+  {
+    if(val)
+    {
+      db.collection('courses').where('courseCode', '==', req.params.course).get().then(q => {
+        if (q.empty || q.size > 1) res.status(404).send();
+        else{
 
-      //process the req body contents to be stored in database
-      let list = req.body.map( ta => {return ta.email} );
+          //process the req body contents to be stored in database
+          let list = req.body.map( ta => {return ta.email} );
 
-      q.forEach(course => {
-        db.collection('courses').doc(course.id).update({ ranked_applicants : list });
-        res.status(200).send({ success: 'TA-Ranking successfully modified.'});
+          q.forEach(course => {
+            db.collection('courses').doc(course.id).update({ ranked_applicants : list });
+            res.status(200).send({ success: 'TA-Ranking successfully modified.'});
+          })
+        }
       })
-    }
+    } else res.status(401).send();
   })
 })
 
@@ -425,7 +455,7 @@ app.post('/api/allocation/hrs', [
   const errors = validationResult(req);
   if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  verifyUser(req.header('authorization'), {'chair': true}).then((val) =>
+  verifyUser(req.header('authorization'), {'chair': true, 'admin': true}).then((val) =>
   {
     if(val)
     {
@@ -436,7 +466,7 @@ app.post('/api/allocation/hrs', [
       batch.commit()
         .then(() => res.status(200).send({ success: 'Allocated hours successfully modified.' }))
         .catch(err => res.status(400).send({ error: err }));
-    } else res.status(403).send();
+    } else res.status(401).send();
   });
   
 })
@@ -450,7 +480,7 @@ app.post('/api/allocation/tas', [
   const errors = validationResult(req);
   if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  verifyUser(req.header('authorization'), {'chair': true}).then((val) =>
+  verifyUser(req.header('authorization'), {'chair': true, 'admin': true}).then((val) =>
   {
     if(val)
     {
@@ -470,7 +500,7 @@ app.post('/api/allocation/tas', [
       batch.commit()
         .then(() => res.status(200).send({ success: 'Assigned TAs successfully modified.' }))
         .catch(err => res.status(400).send({ error: err }));
-    } else res.status(403).send();
+    } else res.status(401).send();
   });
 
 });
@@ -483,13 +513,19 @@ app.post('/api/allocation/feedback', [
   const errors = validationResult(req);
   if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  req.body.forEach(e => {
-    db.collection('allocation').where('course', '==', e.course).get().then(x => {
-        x.forEach(d => {
+  verifyUser(req.header('authorization'), {'professor': true}).then((val) =>
+  {
+    if(val)
+    {
+      req.body.forEach(e => {
+        db.collection('allocation').where('course', '==', e.course).get().then(x => {
+            x.forEach(d => {
 
-          db.collection('allocation').doc(d.id).update({ prof_accept: e.prof_accept });
+              db.collection('allocation').doc(d.id).update({ prof_accept: e.prof_accept });
+          })
+        })
       })
-    })
+    } else res.status(401).send();
   })
 });
 
@@ -504,18 +540,24 @@ app.put('/api/courses', [
   const errors = validationResult(req);
   if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  db.collection('courses').doc(req.body.courseCode).set({
-    courseCode: req.body.courseCode,
-    courseName: req.body.courseName,
-    labOrTutHrs: req.body.labOrTutHrs,
-    lecHrs: req.body.lecHrs,
-    questions: [],
-    ranked_applicants: [],
-    sec: req.body.sec
-  }).then(() => {
-    res.status(200).send({ success: 'Course successfully added.' });
-  }).catch(err => {
-    res.status(400).send({ error: err });
+  verifyUser(req.header('authorization'), {'chair': true, 'admin': true}).then((val) =>
+  {
+    if(val)
+    {
+      db.collection('courses').doc(req.body.courseCode).set({
+        courseCode: req.body.courseCode,
+        courseName: req.body.courseName,
+        labOrTutHrs: req.body.labOrTutHrs,
+        lecHrs: req.body.lecHrs,
+        questions: [],
+        ranked_applicants: [],
+        sec: req.body.sec
+      }).then(() => {
+        res.status(200).send({ success: 'Course successfully added.' });
+      }).catch(err => {
+        res.status(400).send({ error: err });
+      })
+    } else res.status(401).send();
   })
 })
 
@@ -532,13 +574,19 @@ app.put('/api/batch/applicants', [
   const errors = validationResult(req);
   if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  let batch = db.batch();
+  verifyUser(req.header('authorization'), {'chair': true, 'admin': true}).then((val) =>
+  {
+    if(val)
+    {
+      let batch = db.batch();
 
-  req.body.forEach(e => batch.set(db.collection('applicants').doc(e.email), e));
+      req.body.forEach(e => batch.set(db.collection('applicants').doc(e.email), e));
 
-  batch.commit()
-    .then(() => res.status(200).send({ success: 'Applicants successfully added.' }))
-    .catch(err => res.status(400).send({ error: err }));
+      batch.commit()
+        .then(() => res.status(200).send({ success: 'Applicants successfully added.' }))
+        .catch(err => res.status(400).send({ error: err }));
+    } else res.status(401).send();
+  })
 })
 
 // batch add courses
@@ -553,20 +601,25 @@ app.put('/api/batch/courses', [
   const errors = validationResult(req);
   if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  let batch = db.batch();
+  verifyUser(req.header('authorization'), {'chair': true, 'admin': true}).then((val) =>
+  {
+    if(val)
+    {
+      let batch = db.batch();
 
-  req.body.forEach(e => {
-    batch.set(db.collection('courses').doc(e.courseCode), e);
-    batch.update(db.collection('courses').doc(e.courseCode), { ranked_applicants: [] })
-  });
+      req.body.forEach(e => {
+        batch.set(db.collection('courses').doc(e.courseCode), e);
+        batch.update(db.collection('courses').doc(e.courseCode), { ranked_applicants: [] })
+      });
 
-  batch.commit()
-    .then(() =>  {
-      res.status(200).send({ success: 'Courses successfully added.' });
-      req.body.forEach(e => checkAllocation(e.courseCode));
-    })
-    .catch(err => { if(!res.headerSent) res.status(400).send({ error: err }) });
-
+      batch.commit()
+        .then(() =>  {
+          res.status(200).send({ success: 'Courses successfully added.' });
+          req.body.forEach(e => checkAllocation(e.courseCode));
+        })
+        .catch(err => { if(!res.headerSent) res.status(400).send({ error: err }) });
+    } else res.status(401).send();
+  })
     
 })
 
@@ -581,16 +634,22 @@ app.put('/api/batch/enrolhrs', [
   const errors = validationResult(req);
   if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  let batch = db.batch();
+  verifyUser(req.header('authorization'), {'chair': true, 'admin': true}).then((val) =>
+  {
+    if(val)
+    {
+      let batch = db.batch();
 
-  req.body.forEach(e => batch.set(db.collection('enrolhrs').doc(e.courseCode), e));
+      req.body.forEach(e => batch.set(db.collection('enrolhrs').doc(e.courseCode), e));
 
-  batch.commit()
-    .then(() => { 
-      res.status(200).send({ success: 'Enrolment information successfully added.' });
-      req.body.forEach(e => checkAllocation(e.courseCode));
-    })
-    .catch(err => { if(!res.headerSent) res.status(400).send({ error: err }) });
+      batch.commit()
+        .then(() => { 
+          res.status(200).send({ success: 'Enrolment information successfully added.' });
+          req.body.forEach(e => checkAllocation(e.courseCode));
+        })
+        .catch(err => { if(!res.headerSent) res.status(400).send({ error: err }) });
+    } else res.status(401).send();
+  })
 })
 
 // batch add instructors
@@ -601,16 +660,22 @@ app.put('/api/batch/instructors', [
   const errors = validationResult(req);
   if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  let batch = db.batch();
+  verifyUser(req.header('authorization'), {'chair': true, 'admin': true}).then((val) =>
+  {
+    if(val)
+    {
+      let batch = db.batch();
 
-  req.body.forEach(e => {
-    batch.set(db.collection('instructors').doc(e.email), e);
-    batch.update(db.collection('courses').doc(e.email), { course: [] })
-  });
+      req.body.forEach(e => {
+        batch.set(db.collection('instructors').doc(e.email), e);
+        batch.update(db.collection('courses').doc(e.email), { course: [] })
+      });
 
-  batch.commit()
-    .then(() => res.status(200).send({ success: 'Instructors successfully added.' }))
-    .catch(err => res.status(400).send({ error: err }));
+      batch.commit()
+        .then(() => res.status(200).send({ success: 'Instructors successfully added.' }))
+        .catch(err => res.status(400).send({ error: err }));
+    } else res.status(401).send();
+  })
 })
 
 // assign an instructor to a course, unassign previous
@@ -620,23 +685,29 @@ app.post('/api/instructors/:course/:instructor', [
   const errors = validationResult(req);
   if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  let batch = db.batch();
+  verifyUser(req.header('authorization'), {'chair': true, 'admin': true}).then((val) =>
+  {
+    if(val)
+    {
+      let batch = db.batch();
 
-  req.body.forEach(e => {
-    if (e.email == req.params.instructor) {
-      batch.update(db.collection('instructors').doc(e.email), {
-        course: admin.firestore.FieldValue.arrayUnion(req.params.course)
+      req.body.forEach(e => {
+        if (e.email == req.params.instructor) {
+          batch.update(db.collection('instructors').doc(e.email), {
+            course: admin.firestore.FieldValue.arrayUnion(req.params.course)
+          })
+        } else {
+          batch.update(db.collection('instructors').doc(e.email), {
+            course: admin.firestore.FieldValue.arrayRemove(req.params.course)
+          })
+        }
       })
-    } else {
-      batch.update(db.collection('instructors').doc(e.email), {
-        course: admin.firestore.FieldValue.arrayRemove(req.params.course)
-      })
-    }
+
+      batch.commit()
+        .then(() => res.status(200).send({ success: 'Instructor successfully assigned to course.' }))
+        .catch(err => res.status(400).send({ error: err }));
+    } else res.status(401).send();
   })
-
-  batch.commit()
-    .then(() => res.status(200).send({ success: 'Instructor successfully assigned to course.' }))
-    .catch(err => res.status(400).send({ error: err }));
 })
 
 function checkAllocation(docID) { // called when new courses are added to see if sufficient information is available to add to allocation database
@@ -668,16 +739,24 @@ function checkAllocation(docID) { // called when new courses are added to see if
 //add an instructor
 app.put('/api/instructors', [
   body('email').isEmail().exists(),
-  body('name').trim().escape(),
-  
+  body('name').trim().escape().exists(),
 ], (req, res) => {
-  db.collection('instructors').doc(req.body.email).set({
-    email: req.body.email,
-    name: req.body.name
-  }).then(() => {
-    res.status(200).send({ success: 'Instructor successfully added.' });
-  }).catch(err => {
-    res.status(400).send({ error: err });
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+
+  verifyUser(req.header('authorization'), {'chair': true, 'admin': true}).then((val) =>
+  {
+    if(val)
+    {
+      db.collection('instructors').doc(req.body.email).set({
+        email: req.body.email,
+        name: req.body.name
+      }).then(() => {
+        res.status(200).send({ success: 'Instructor successfully added.' });
+      }).catch(err => {
+        res.status(400).send({ error: err });
+      })
+    } else res.status(401).send();
   })
 })
 

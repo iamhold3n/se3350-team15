@@ -269,8 +269,6 @@ export class AssignTaComponent implements OnInit {
 
       }
 
-      console.log(ta);
-
     });
 
   }//end of processApplicants
@@ -377,7 +375,7 @@ export class AssignTaComponent implements OnInit {
   checkHrs( ta ){
     let total = this.totalViewedHrs();
   
-    return ta.hrs >= total;
+    return ta.hrs <= this.courseHrs(this.viewed_course)-total;
 
   };
 

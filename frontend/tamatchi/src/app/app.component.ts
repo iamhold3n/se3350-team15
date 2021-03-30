@@ -32,4 +32,9 @@ export class AppComponent {
     }
   }//end of markActive
 
+  logout() {
+    this.auth.logOut();
+    alert('Logged out of ' + this.auth.account_email);
+  }
+
 }//end of exports

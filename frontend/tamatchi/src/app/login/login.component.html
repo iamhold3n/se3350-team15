@@ -2,9 +2,8 @@
 
 <div class="login">
     <p><input #email type="email" placeholder="Email"></p>
-    <p><input #pass type = "password" placeholder="Password"></p>
+    <p><input #pass type="password" placeholder="Password" (keyup.enter)="login(email.value, pass.value)"></p>
     <p>
         <button (click) = "login(email.value, pass.value)">LOGIN</button>
-        <button (click) = "logout()">LOGOUT</button>
     </p>
 </div>

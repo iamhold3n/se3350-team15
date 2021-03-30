@@ -20,11 +20,6 @@ export class LoginComponent implements OnInit {
     this.auth.login(username, pass);
   }
 
-  logout()
-  {
-    this.auth.logOut();
-  }
-
   ngOnInit(): void {
   }
 

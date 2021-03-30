@@ -8,7 +8,7 @@
     <!-- SHARED NAV -->
     <div *ngIf="auth.user | async as user; else showLogin">
         <div>Logged in as {{auth.account_email}}</div>
-        <span id="nav-login" class="left" routerLink='/login' (click)="markActive(0)">LOGOUT</span>
+        <span id="nav-login" class="left" routerLink='/login' (click)="logout();markActive(0)">LOGOUT</span>
         <!-- ADMIN/CHAIR NAV -->
         <div style="float: right" *ngIf="auth.admin || auth.chair; else showInstructor">
             <div class="dropdown">

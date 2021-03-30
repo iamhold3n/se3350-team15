@@ -179,7 +179,7 @@ export class AssignTaComponent implements OnInit {
       this.all_assigned_temp = arr.map(crs => {return crs.assignList}); 
       this.all_feedback = arr.map(crs => {return crs.prof_accept});
 
-      console.log(this.all_feedback);
+      //console.log(this.all_feedback);
 
       this.getApplicants();
 
@@ -532,7 +532,7 @@ export class AssignTaComponent implements OnInit {
         prof_rank[1]=99999;
       }
 
-      console.log( a["email"]+":"+(prof_rank[0]+ta_rank[0]) +" - "+ b["email"]+":"+(prof_rank[1]+ta_rank[1]) );
+      //console.log( a["email"]+":"+(prof_rank[0]+ta_rank[0]) +" - "+ b["email"]+":"+(prof_rank[1]+ta_rank[1]) );
   
       return (prof_rank[0]+ta_rank[0]) - (prof_rank[1]+ta_rank[1]) ; 
     }//end of sortTA
@@ -592,22 +592,27 @@ export class AssignTaComponent implements OnInit {
   insertTA(){
 
     let ta = {
-      ranked_courses:[],
-      taHours: 0,
-      priority:0,
 
       email: "test@uwo.ca",
       name: "Test McTesterton",
-      prof_rank: 12,
       questions: ["", "", "", "", "", "", "", ""],
       ranks: [1, 2, 3, 4],
+      course:["SE1202", "ECE1210", "ECE3155", "SE1057"],
+      status:1,
+      hrs: 10,
     };
-    ta["course"] = ["SE1202", "ECE1210", "ECE3155", "SE1057"];
-    ta["hrs"] = 10;
+    ta["prof-rank"]=0;
 
-    ta["course"].forEach(crs =>{
-      this.all_unassigned[this.course_list.indexOf(crs)].push(ta);
+    let body =[ta];
+
+    this.data.batchApplicants(body).subscribe(res => {
+      ta["course"].forEach(crs =>{
+        this.all_unassigned[this.course_list.indexOf(crs)].push(ta);
+      });
+      alert("New TA Added");
     });
+
+
 
   }
 
@@ -632,7 +637,7 @@ export class AssignTaComponent implements OnInit {
 
     });
 
-    console.log(JSON.stringify(feedback_body) );
+    //console.log(JSON.stringify(feedback_body) );
 
     this.data.updateAllocationTas(ta_body).subscribe(res => {
       alert("TA Assignments Saved");

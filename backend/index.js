@@ -504,7 +504,7 @@ app.put('/api/courses', [
   const errors = validationResult(req);
   if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  db.collection('courses').doc(req.params.courseCode).set({
+  db.collection('courses').doc(req.body.courseCode).set({
     courseCode: req.body.courseCode,
     courseName: req.body.courseName,
     labOrTutHrs: req.body.labOrTutHrs,

@@ -65,7 +65,7 @@ export class DataService {
   }
 
   updateAllocationFeedback(feedback) {
-    return this.http.post(`${this.url}/allocation/feedback/`, feedback)
+    return this.http.post(`${this.url}/allocation/feedback/`, feedback, {headers : {'authorization' : this.cookie.get("token")}})
   }
 
   addCourse(c) {
@@ -97,7 +97,7 @@ export class DataService {
   }
 
   assignInstructor(cour, inst, list) {
-    return this.http.post(`${this.url}/instructors/${cour}/${inst}`, list);
+    return this.http.post(`${this.url}/instructors/${cour}/${inst}`, list, {headers : {'authorization' : this.cookie.get("token")}});
   }
 
   

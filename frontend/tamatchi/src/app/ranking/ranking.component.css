@@ -1,32 +1,40 @@
 /* CSS for the list of TAs */
 .list{
-    margin-left: 20px;
-    border: 1px solid;
+    margin: 5px;
+    border: 5px solid transparent;
+    border-radius: 5px;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 50px;
-    width: fit-content;
-    background-color: white;
+    min-width: 300px;
+    width: auto;
+    background-color: #dddddd;
+    color: black;
 }
 
 .number{
     float:left; /*Ensures divs can be placed horizontally adjacent to this*/
     margin-left: 20px;
-    border: 1px solid;
+    border: 5px solid transparent;
+    border-radius: 5px;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 50px;
     width: 50px;
     background-color: grey; 
-    font: red;
+    font-size: 14px;
+    font-weight: 900;
+    color: white;
 }
 
 .cdk-drop-list {
-    height: 500px;
-    overflow-y: scroll;
-    border: 1px solid;
+    height: auto;
+    min-height: 300px;
+    min-width: 325px;
+    vertical-align: middle;
+    width: auto;
 }
 
 /* Animate items as they're being sorted */
@@ -42,4 +50,46 @@
 /* confirmation button */
 .confirm {
     margin-left: 20px;
+}
+
+h2 {
+    text-align: center;
+}
+
+#courses {
+    background-color: #dddddd;
+    border: 5px solid transparent;
+    border-radius: 5px;
+    display: flex;
+    margin: 5px;
+}
+.subnav {
+    background-color: transparent;
+    border: 5px solid transparent;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 900;
+    margin: 5px;
+}
+.active {
+    background-color: black;
+    color: white;
+}
+
+.empty {
+    background-color: white;
+    border: 5px solid transparent;
+    border-radius: 5px;
+    color: gray;
+    font-size: 14px;
+    font-weight: 900;
+    height: 50px;
+    width: 300px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+td {
+    vertical-align: top;
 }

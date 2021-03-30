@@ -43,7 +43,7 @@ export class RankingComponent implements OnInit {
     //initialize the empty course
     this.empty_course="---";
     //initialize the current course to be empty
-    this.viewed_course = this.empty_course;
+    //this.viewed_course = this.empty_course;
     //initialize the viewed TAs to match empty course view
     this.ranked_view=[];
     this.unranked_view=[];
@@ -198,5 +198,17 @@ export class RankingComponent implements OnInit {
       alert("Changes Saved");
     });
 
+  }
+
+  toggleCourse(index) {
+    // toggle which course is selected in course nav
+    this.courseView(index);
+
+    for (let i = 0; i < this.course_list.length; i++) {
+      let e = document.getElementById(this.course_list[i]);
+
+      if (index === i) e.className = 'subnav active';
+      else e.className = 'subnav';
+    }
   }
 }

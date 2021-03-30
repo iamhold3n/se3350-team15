@@ -3,15 +3,12 @@
 <!--Message if not logged in-->
 <span *ngIf = "!loggedIn">Please log in as a professor to view rankings</span>
 
-<!-- '#courses' assigns the name 'courses' to this select element -->
-<label for="courses" *ngIf = "loggedIn">Select a Course</label>
-<select *ngIf = "loggedIn" #courses (change)="courseView(courses.value)" id="courses">
-    <option value="-1">{{empty_course}}</option>
-    <option *ngFor="let c of course_list, index as a" value="{{a}}">{{c}}</option>
-</select>
-
+<div id="courses">
+    <span *ngFor="let c of course_list; index as i" id="{{c}}" class="subnav" (click)="toggleCourse(i)">{{c}}</span>
+</div>
+<hr/>
 <!--TWO main columns will hold the list of ranked and unranked TAs-->
-<table *ngIf = "loggedIn">
+<table *ngIf="viewed_course != undefined; else elseBlock">
     <tr>
         <th>
             RANKED TAS
@@ -26,8 +23,8 @@
             <!-- Accepts incoming list items -->
             <!-- Appears always -->
             <div cdkDropList (cdkDropListDropped)="drop($event)">
-                <div id="ranked" cdkDrag *ngFor='let ta of ranked_view, index as a'>
-
+                <div *ngIf="!(ranked_view.length > 0)" class="empty">EMPTY</div>
+                <div cdkDrag *ngFor='let ta of ranked_view, index as a'>
                     <!--Rank number-->
                     <div class="number" >{{a+1}}</div>
                     <!--Ranked TA details-->
@@ -35,21 +32,29 @@
                 </div>
             </div>
         </td>
-        <td *ngIf="unranked_view.length > 0">
+        <td *ngIf="unranked_view.length > 0; else emptyUnranked">
             <!-- Draggable list for unranked TAs -->
             <!-- Does not accept incoming list items -->
             <!-- Only appears if there is at least one list item -->
             <div cdkDropList *ngIf="unranked_view.length > 0">
-                <div id="unranked" class="list" cdkDrag *ngFor='let ta of unranked_view, index as a'>
+                <div class="list" cdkDrag *ngFor='let ta of unranked_view, index as a'>
                     <!--Unranked TA details-->
                     {{ta.email}}
                 </div>
             </div>
         </td>
+        <ng-template #emptyUnranked>
+            <td>
+                <div class="empty">EMPTY</div>
+            </td>
+        </ng-template>
     </tr>
 
     <br>
-    <button *ngIf="ranked_view.length > 0 || unranked_view.length > 0" (click)="confirmRankings()" class="confirm">Confirm Changes</button>
+    <button *ngIf="ranked_view.length > 0 || unranked_view.length > 0" (click)="confirmRankings()" class="confirm">CONFIRM</button>
 </table>
+<ng-template #elseBlock>
+    Select a course from above to begin ranking TAs.
+</ng-template>
 
 

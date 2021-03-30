@@ -33,6 +33,7 @@
         <ng-template #showInstructor>
             <span id="nav-questions" routerLink='/course-questions' (click)="markActive(1)">QUESTIONS</span>
             <span id="nav-ranking" routerLink='/ranking' (click)="markActive(2)">RANKING <div class="notification" *ngIf="auth.instructor && auth.unranked_count>0" > {{auth.unranked_count}} </div> </span>
+            <span id='nav-review' routerLink='/assign-ta' (click)="markActive(3)">REVIEW</span>
         </ng-template>
     </div>
     <!-- LOGGED OUT NAV -->

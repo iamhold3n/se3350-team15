@@ -426,7 +426,7 @@ app.post('/api/ranking/:course',(req, res) => {
   const errors = validationResult(req);
   if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
   
-  verifyUser(req.header('authorization'), {'chair': true, 'admin': true}).then((val) =>
+  verifyUser(req.header('authorization'), {'professor': true, 'chair': true, 'admin': true}).then((val) =>
   {
     if(val)
     {

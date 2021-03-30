@@ -6,6 +6,7 @@ import 'firebase/auth';
 import { Observable } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { APIService } from './api.service';
+import { DataService } from './data.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,8 +14,17 @@ import { APIService } from './api.service';
 export class AuthService {
   user: Observable<firebase.User>;
 
-  constructor(public af: AngularFireAuth, public cookie: CookieService, public api: APIService) {
+  admin: Observable<boolean>;
+  chair: Observable<boolean>;
+  instructor: Observable<boolean>;
+
+  account_email: Observable<string>;
+  unranked_count: Observable<number>;
+
+  constructor(public af: AngularFireAuth, public cookie: CookieService, public api: APIService, public data: DataService) {
     this.user = af.authState;
+
+    this.getNavObservables();
   }
 
   /*newUser(username, password) //create new user
@@ -39,6 +49,8 @@ export class AuthService {
           user.getIdToken(true).then(token =>
             {
               this.cookie.set('token', token);
+
+              this.getNavObservables();
             });
         });
 
@@ -95,6 +107,32 @@ export class AuthService {
         {
           reject(e);
         });
+    });
+  }
+
+  getNavObservables() {
+    this.getClaims().then(claims => {
+      this.admin = claims['admin'];
+      this.chair = claims['chair'];
+      this.instructor = claims['professor'];
+      
+      this.getUserObject().then(user => {
+        if(user !== null) {
+          this.account_email = user['email'];
+            
+          if(this.instructor) {
+            this.data.getProfessor(user['email']).subscribe(res => {
+              this.unranked_count = null;
+
+              for(let a = 0; a < res["course"].length; a++){
+                this.data.getUnrankedApplicants(res["course"][a]).subscribe(unranked_list => {
+                  this.unranked_count += unranked_list["unranked_applicants"].length;
+                })
+              }
+            })
+          }
+        }
+      })
     });
   }
 }

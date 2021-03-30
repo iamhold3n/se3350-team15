@@ -492,6 +492,32 @@ app.put('/api/courses', [
   })
 })
 
+// add enrolment information
+app.put('/api/enrolhrs', [
+  body('courseCode').isLength({ min: 5, max: 9 }).trim().escape().exists(),
+  body('currEnrol').isLength({ min: 2, max: 3 }).isInt().exists(),
+  body('labOrTutHrs').isLength({ min: 1, max: 2 }).isInt().exists(),
+  body('prevEnrol').isLength({ min: 2, max: 3 }).isInt().exists(),
+  body('prevHrs').isLength({ min: 1, max: 2 }).isInt().exists()
+], (req, res) => {
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+
+  verifyUser(req.header('authorization'), {'chair': true}).then((val) =>
+  {
+    if(val)
+    {
+      db.collection('enrolhrs').doc(req.params.courseCode).set({
+        courseCode: req.body.courseCode,
+        currEnrol: req.body.currEnrol,
+        labOrTutHrs: req.body.labOrTutHrs,
+        prevEnrol: req.body.prevEnrol,
+        prevHrs: req.body.prevEnrol
+      })
+    } else res.status(403).send();
+  });
+})
+
 // batch add applicants
 app.put('/api/batch/applicants', [
   body('*.course').isArray().exists(),

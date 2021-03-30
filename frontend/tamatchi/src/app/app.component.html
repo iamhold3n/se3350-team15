@@ -6,31 +6,39 @@
 <!-- Dashboard -->
 <div id="nav">
     <!-- SHARED NAV -->
-    <div *ngIf = "admin || chair || instructor">Logged in as {{account_email}}</div>
-    <span *ngIf="admin || chair || instructor" id="nav-login" class="left" routerLink='/login' (click)="markActive(0)">LOGOUT</span>
+    <div *ngIf="auth.user | async as user; else showLogin">
+        <div>Logged in as {{auth.account_email}}</div>
+        <span id="nav-login" class="left" routerLink='/login' (click)="markActive(0)">LOGOUT</span>
+        <!-- ADMIN/CHAIR NAV -->
+        <div style="float: right" *ngIf="auth.admin || auth.chair; else showInstructor">
+            <div class="dropdown">
+                <span id="nav-info">INFO / ADD</span>
+                <ul class="dropdown-content">
+                    <li routerLink='/course-information' (click)="markActive(1)">COURSES</li>
+                    <li routerLink='/form' (click)="markActive(1)">INSTRUCTORS</li>
+                </ul>
+            </div>
+            <span id="nav-allocate" routerLink='/allocate-ta-hours' (click)="markActive(2)">ALLOCATE</span>
+            <div class="dropdown">
+                <span id="nav-assign">ASSIGN</span>
+                <ul class="dropdown-content">
+                    <li routerLink='/assign-ta' (click)="markActive(3)">TA</li>
+                    <li routerLink='/assign-instructor' (click)="markActive(3)">INSTRUCTOR</li>
+                </ul>
+            </div>
+            <span id="nav-upload" routerLink='/file-upload' (click)="markActive(4)">UPLOAD</span>
+            <span id="nav-admin" routerLink='/admin' (click)="markActive(5)">ADMIN</span>
+        </div>
+        <!-- INSTRUCTOR NAV -->
+        <ng-template #showInstructor>
+            <span id="nav-questions" routerLink='/course-questions' (click)="markActive(1)">QUESTIONS</span>
+            <span id="nav-ranking" routerLink='/ranking' (click)="markActive(2)">RANKING <div class="notification" *ngIf="auth.instructor && auth.unranked_count>0" > {{auth.unranked_count}} </div> </span>
+        </ng-template>
+    </div>
     <!-- LOGGED OUT NAV -->
-    <span *ngIf="!admin && !chair && !instructor" id="nav-login" class="left" routerLink='/login' (click)="markActive(0)">LOGIN</span>
-    <!-- ADMIN/CHAIR NAV -->
-    <div *ngIf="admin || chair" class="dropdown">
-        <span id="nav-info">INFO / ADD</span>
-        <div class="dropdown-content">
-            <span routerLink='/course-information' (click)="markActive(1)">COURSES</span>
-            <span routerLink='/form' (click)="markActive(1)">INSTRUCTORS</span>
-        </div>
-    </div>
-    <span *ngIf="admin || chair" id="nav-allocate" routerLink='/allocate-ta-hours' (click)="markActive(2)">ALLOCATE</span>
-    <div *ngIf="admin || chair" class="dropdown">
-        <span id="nav-assign">ASSIGN</span>
-        <div class="dropdown-content">
-            <span routerLink='/assign-ta' (click)="markActive(3)">TA</span>
-            <span routerLink='/assign-instructor' (click)="markActive(3)">INSTRUCTOR</span>
-        </div>
-    </div>
-    <span *ngIf="admin || chair" id="nav-upload" routerLink='/file-upload' (click)="markActive(4)">UPLOAD</span>
-    <span *ngIf="admin || chair" id="nav-admin" routerLink='/admin' (click)="markActive(5)">ADMIN</span>
-    <!-- INSTRUCTOR NAV -->
-    <span *ngIf="instructor" id="nav-questions" routerLink='/course-questions' (click)="markActive(1)">QUESTIONS</span>
-    <span *ngIf="instructor" id="nav-ranking" routerLink='/ranking' (click)="markActive(2)">RANKING <div class="notification" *ngIf="instructor && unranked_count>0" > {{unranked_count}} </div> </span>
+    <ng-template #showLogin>
+        <span id="nav-login" class="left" routerLink='/login' (click)="markActive(0)">LOGIN</span>
+    </ng-template>
 </div>
 
 <div id="container">

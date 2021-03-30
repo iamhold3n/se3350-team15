@@ -69,6 +69,10 @@ export class DataService {
 
   }
 
+  addEnrolment(c) {
+    return this.http.put(`${this.url}/enrolhrs/`, c, {headers : {'authorization' : this.cookie.get("token")}});
+  }
+
   // send data from processed XLSX files
   batchApplicants(a) {
     return this.http.put(`${this.url}/batch/applicants/`, a, {headers : {'authorization' : this.cookie.get("token")}});
@@ -86,6 +90,10 @@ export class DataService {
   addInstructor(i){
     return this.http.put(`${this.url}/instructors/`, i, {headers : {'authorization' : this.cookie.get("token")}});
 
+  }
+
+  assignInstructor(cour, inst, list) {
+    return this.http.post(`${this.url}/instructors/${cour}/${inst}`, list);
   }
 
   

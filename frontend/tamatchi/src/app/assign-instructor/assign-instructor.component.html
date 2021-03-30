@@ -1,0 +1,12 @@
+<h2>Instructor Assignment</h2>
+
+<div id='container'>
+    <ul id='courses'>
+        <li *ngFor='let c of courseList; index as i' id='nav-cour{{i}}' (click)='selectCourse(c.courseCode, i)'>{{c.courseCode}}</li>
+    </ul>
+    <ul id='instructors'>
+        <li *ngFor='let inst of instructorList; index as i' id='nav-inst{{i}}' (click)='selectInstructor(inst.email, i)'>{{inst.name}}</li>
+    </ul>
+</div>
+
+<button (click)='assignInstructor()'>SAVE</button>

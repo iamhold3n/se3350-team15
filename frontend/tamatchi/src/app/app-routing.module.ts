@@ -9,6 +9,7 @@ import { LoginComponent } from './login/login.component';
 import { RankingComponent } from './ranking/ranking.component';
 import { FileUploadComponent } from './file-upload/file-upload.component';
 import { CourseQuestionsComponent } from './course-questions/course-questions.component';
+import { AssignInstructorComponent } from './assign-instructor/assign-instructor.component';
 
 const routes: Routes = [
   {path: 'login', component:LoginComponent},
@@ -19,7 +20,8 @@ const routes: Routes = [
   {path: 'assign-ta', component:AssignTaComponent},
   {path: 'ranking', component:RankingComponent},
   {path: 'admin', component:AdminComponent},
-  {path: 'file-upload', component:FileUploadComponent}
+  {path: 'file-upload', component:FileUploadComponent},
+  {path: 'assign-instructor', component:AssignInstructorComponent}
 ];
 
 @NgModule({

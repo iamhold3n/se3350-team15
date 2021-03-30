@@ -40,13 +40,15 @@ span {
     cursor: pointer;
     font-size: 16px;
     font-weight: 900;
+    line-height: 12px;
+    width: 12px;
     padding: 1px;
 }
 li input {
     width: 395px;
 }
 #buttons {
-    padding-left: 200px;
+    float: right;
     white-space: nowrap;
 }
 #courses {

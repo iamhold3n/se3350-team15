@@ -1,0 +1,38 @@
+#container {
+
+}
+#courses {
+    background-color: #dddddd;
+    border: 5px solid transparent;
+    border-radius: 5px;
+    font-weight: 900;
+    padding: 0px;
+}
+#instructors {
+
+}
+ul {
+    float: left;
+    display: block;
+    margin: auto;
+    background-color: white;
+    padding: 10px;
+}
+li {
+    list-style-type: none;
+    vertical-align: middle;
+
+    background-color: transparent;
+    border: 5px solid transparent;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 5px;
+}
+.active {
+    background-color: black;
+    color: white;
+}
+button {
+    float: right;
+}

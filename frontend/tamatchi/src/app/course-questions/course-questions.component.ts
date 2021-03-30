@@ -19,7 +19,6 @@ export class CourseQuestionsComponent implements OnInit {
       else {
         this.data.getProfessor(user["email"]).subscribe(res => {
           this.courseList = res["course"];
-          console.log(this.courseList);
         })
       }
     })

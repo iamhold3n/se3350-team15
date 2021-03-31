@@ -18,7 +18,7 @@ export class AppComponent {
     this.auth.getNavObservables();
     let nav;
 
-    if (this.auth.admin||this.auth.chair) nav = ['nav-login','nav-info','nav-allocate','nav-assign','nav-upload','nav-admin'];
+    if (this.auth.admin||this.auth.chair) nav = ['nav-login','nav-info','nav-allocate','nav-assign','nav-export','nav-upload','nav-admin'];
     else if (this.auth.instructor) nav = ['nav-login','nav-questions','nav-ranking','nav-review'];
     else nav = ['nav-login'];
     

@@ -25,6 +25,7 @@ import { AdminComponent } from './admin/admin.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FileUploadComponent } from './file-upload/file-upload.component';
 import { AssignInstructorComponent } from './assign-instructor/assign-instructor.component';
+import { ExportQuestionsComponent } from './export-questions/export-questions.component';
 
 
 @NgModule({
@@ -40,7 +41,8 @@ import { AssignInstructorComponent } from './assign-instructor/assign-instructor
     CallbackPipe,
     AdminComponent,
     FileUploadComponent,
-    AssignInstructorComponent
+    AssignInstructorComponent,
+    ExportQuestionsComponent
   ],
   imports: [
     BrowserModule,

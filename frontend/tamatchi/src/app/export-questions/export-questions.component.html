@@ -1,0 +1,10 @@
+<h3>COURSES</h3>
+<hr/>
+Press the 'EXPORT' button to download this information as an XSLX. <button (click)='exportQuestions()'>EXPORT</button>
+<div *ngFor="let c of courseList">
+    <span id="courseCode">{{c.courseCode}}</span>
+    <span id="courseName">{{c.courseName}}</span>
+    <ul id='questionList'>
+        <li *ngFor="let q of c.questions; index as i">{{q}}</li>
+    </ul>
+</div>

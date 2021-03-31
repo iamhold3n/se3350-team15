@@ -10,6 +10,7 @@ import { RankingComponent } from './ranking/ranking.component';
 import { FileUploadComponent } from './file-upload/file-upload.component';
 import { CourseQuestionsComponent } from './course-questions/course-questions.component';
 import { AssignInstructorComponent } from './assign-instructor/assign-instructor.component';
+import { ExportQuestionsComponent } from './export-questions/export-questions.component';
 
 const routes: Routes = [
   {path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -22,7 +23,8 @@ const routes: Routes = [
   {path: 'ranking', component:RankingComponent},
   {path: 'admin', component:AdminComponent},
   {path: 'file-upload', component:FileUploadComponent},
-  {path: 'assign-instructor', component:AssignInstructorComponent}
+  {path: 'assign-instructor', component:AssignInstructorComponent},
+  {path: 'export-questions', component:ExportQuestionsComponent}
 ];
 
 @NgModule({

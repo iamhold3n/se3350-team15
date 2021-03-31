@@ -1,0 +1,33 @@
+ul {
+    margin: auto;
+    background-color: white;
+    padding: 10px;
+    padding-left: 30px;
+}
+
+span {
+    display: inline-block;
+}
+h3 {
+    text-align: center;
+}
+#courseCode {
+    color: white;
+    font-weight: 900;
+    font-size: 20px;
+    background-color: #4F2683;
+    border: 1px solid none;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    padding: 10px;
+}
+#courseName {
+    color: white;
+    font-weight: 900;
+    font-size: 20px;
+    background-color: black;
+    border: 1px solid none;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding: 10px;
+}

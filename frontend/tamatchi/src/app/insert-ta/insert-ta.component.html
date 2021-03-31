@@ -1,0 +1,26 @@
+<div>MANUALLY INSERT TA</div>
+
+<div>
+<label for="email">Email</label>
+<input id="email" type="text" [(ngModel)]="email_val">
+
+<label for="name">Name</label>
+<input id="name" type="text" [(ngModel)]="name_val">
+
+<label for="status">Status Code</label>
+<select id="status" [(ngModel)]="status_select">
+    <option value = 1>1</option>
+    <option value = 2>2</option>
+    <option value = 3>3</option>
+</select>
+
+<label for="hrs">Name</label>
+<select id="hrs" [(ngModel)]="hrs_select">
+    <option value = 5>5</option>
+    <option value = 10>10</option>
+</select>
+</div>
+
+<div>
+<button (click)="insertTA()">Insert TA</button>
+</div>

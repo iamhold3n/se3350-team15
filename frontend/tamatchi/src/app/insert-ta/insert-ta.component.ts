@@ -55,9 +55,6 @@ export class InsertTaComponent implements OnInit {
     //only proceed if rnaking values are valid
     if (unique_s.size == unique_a.length){
 
-      console.log(apply_courses);
-      console.log(unique_a);
-
       let ta = {
 
         email: this.email_val,
@@ -75,15 +72,28 @@ export class InsertTaComponent implements OnInit {
       //save the inserted TA to the backend
       this.data.batchApplicants(body).subscribe(res => {
 
-        //update the unassigned list
-        ta["course"].forEach(crs =>{
-          this.all_unassigned[this.course_list.indexOf(crs)].push(ta);
-        });
+        //if TA was successfully sent to back-end, update the front end editor
+        (res) => {
+          //update the unassigned list
+          ta["course"].forEach(crs =>{
+            this.all_unassigned[this.course_list.indexOf(crs)].push(ta);
+          });
 
-        //emit the updated unassigned list to the parent
-        this.new_unassigned.emit(this.all_unassigned);
+          //emit the updated unassigned list to the parent
+          this.new_unassigned.emit(this.all_unassigned);
 
-        alert("New TA Added");
+          alert("New TA Added");
+
+        }
+
+        //if error occurred sending TA to back-end
+        //dispaly error message
+        (error) => {
+
+          alert(error);
+
+        }
+
       });
     }
     else{

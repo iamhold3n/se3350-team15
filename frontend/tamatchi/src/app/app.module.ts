@@ -24,6 +24,7 @@ import { CallbackPipe } from './callback.pipe'; //allows for filtering of *ngFor
 import { AdminComponent } from './admin/admin.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FileUploadComponent } from './file-upload/file-upload.component';
+import { InsertTaComponent } from './insert-ta/insert-ta.component';
 
 
 @NgModule({
@@ -38,7 +39,8 @@ import { FileUploadComponent } from './file-upload/file-upload.component';
     CourseQuestionsComponent,
     CallbackPipe,
     AdminComponent,
-    FileUploadComponent
+    FileUploadComponent,
+    InsertTaComponent
   ],
   imports: [
     BrowserModule,

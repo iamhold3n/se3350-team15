@@ -3,23 +3,37 @@
 <div>
 <label for="email">Email</label>
 <input id="email" type="text" [(ngModel)]="email_val">
+</div>
 
+<div>
 <label for="name">Name</label>
 <input id="name" type="text" [(ngModel)]="name_val">
+</div>
 
+<div>
 <label for="status">Status Code</label>
 <select id="status" [(ngModel)]="status_select">
     <option value = 1>1</option>
     <option value = 2>2</option>
     <option value = 3>3</option>
 </select>
+</div>
 
-<label for="hrs">Name</label>
+<div>
+<label for="hrs">Hrs</label>
 <select id="hrs" [(ngModel)]="hrs_select">
     <option value = 5>5</option>
     <option value = 10>10</option>
 </select>
 </div>
+
+<!--list of TA's ranked courses-->
+<label for="ta_course">Ranked Courses (0 to omit the course)</label>
+<div id="ta_course" *ngFor='let crs of course_list, index as a'>
+    {{crs}}
+    <input type="number" value = "0" [(ngModel)]="ta_rankings[a]" >
+</div>
+
 
 <div>
 <button (click)="insertTA()">Insert TA</button>

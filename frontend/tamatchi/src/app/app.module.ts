@@ -26,6 +26,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FileUploadComponent } from './file-upload/file-upload.component';
 import { AssignInstructorComponent } from './assign-instructor/assign-instructor.component';
 import { ExportQuestionsComponent } from './export-questions/export-questions.component';
+import { InsertTaComponent } from './insert-ta/insert-ta.component';
 
 
 @NgModule({
@@ -42,7 +43,8 @@ import { ExportQuestionsComponent } from './export-questions/export-questions.co
     AdminComponent,
     FileUploadComponent,
     AssignInstructorComponent,
-    ExportQuestionsComponent
+    ExportQuestionsComponent,
+    InsertTaComponent
   ],
   imports: [
     BrowserModule,

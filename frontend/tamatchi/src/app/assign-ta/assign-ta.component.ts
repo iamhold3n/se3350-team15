@@ -2,7 +2,6 @@ import { listLazyRoutes } from '@angular/compiler/src/aot/lazy_routes';
 import { moveItemInArray, CdkDragDrop, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
 import { Candidate } from '../candidate';
-import {Course} from '../course';
 import { DataService } from '../data.service';
 
 import {AuthService} from '../auth.service';
@@ -255,6 +254,11 @@ export class AssignTaComponent implements OnInit {
     //convert the emails of tas for thsi course into their object represnetations
     arr.forEach((ta,r) => {
 
+      //setup the TA's course rankings
+      let temp = [];
+      ta.course.forEach( (crs,index) =>{ temp[ta.ranks[index]-1]= crs } );
+      ta.course = temp;
+
       //determine if the ta has already been assigned to this course
       if(this.all_assigned_temp[index].includes(ta.email) ){
         ta.prof_rank = getRank(r); 
@@ -361,7 +365,7 @@ export class AssignTaComponent implements OnInit {
 
     }
 
-  }
+  }//end of drop
 
   totalViewedHrs(){
 
@@ -589,31 +593,11 @@ export class AssignTaComponent implements OnInit {
     }
   }
 
-  insertTA(){
-
-    let ta = {
-
-      email: "test@uwo.ca",
-      name: "Test McTesterton",
-      questions: ["", "", "", "", "", "", "", ""],
-      ranks: [1, 2, 3, 4],
-      course:["SE1202", "ECE1210", "ECE3155", "SE1057"],
-      status:1,
-      hrs: 10,
-    };
-    ta["prof-rank"]=0;
-
-    let body =[ta];
-
-    this.data.batchApplicants(body).subscribe(res => {
-      ta["course"].forEach(crs =>{
-        this.all_unassigned[this.course_list.indexOf(crs)].push(ta);
-      });
-      alert("New TA Added");
-    });
-
-
-
+  //Receives the emitted value from the child component 'insert-ta'
+  //emitted value is an updated unassigned list
+  //which contains the inserted TA
+  insertTA(new_unassigned){
+    this.all_unassigned = new_unassigned;
   }
 
   //This method will save the changes and send the updated list to the database

@@ -199,7 +199,7 @@ catch(err)
 // grab questions for a specific course
 app.get('/api/questions/:course', (req, res) => {
   
-  verifyUser(req.header('authorization'), {'professor': true}).then((val) =>
+  verifyUser(req.header('authorization'), {'professor': true, 'admin': true, 'chair': true}).then((val) =>
   {
     if(val)
     {

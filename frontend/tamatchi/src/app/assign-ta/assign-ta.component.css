@@ -11,58 +11,47 @@ select{
     margin: 5px;
 }
 .list{
-    margin-left: 20px;
-    border: 1px solid;
+    border: 5px solid transparent;
+    border-radius: 5px;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 50px;
     width: fit-content;
-    background-color: white;
-}
-table {
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-    height: 100%;
-}
-td, th {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
-    height: 100%;
-}
-tr:nth-child(even) {
     background-color: #dddddd;
-}
-input {
-    margin: 10px;
-    height: 20px;
-    width: 159px;
+    color: black;
+    min-width: 200px;
+    position: absolute;
+    top: 0px;
+    left: 60px
 }
 button {
     width: auto;
     height: auto;
     display: inline-block;
-    margin: 20px;
 }
 .number{
     float:left; /*Ensures divs can be placed horizontally adjacent to this*/
-    margin-left: 20px;
-    border: 1px solid;
+    border: 5px solid transparent;
+    border-radius: 5px;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 50px;
     width: 50px;
     background-color: grey; 
-    font: red;
+    font-size: 14px;
+    font-weight: 900;
+    color: white;
+    position: absolute;
+    top: 0px;
+    left: 0px;
 }
 
 .cdk-drop-list {
-    height: 500px;
-    overflow-y: scroll;
-    border: 1px solid;
+    min-height: 500px;
+    min-width: 300px;
+    border-right: 1px solid #dddddd;
 }
 
 /* Animate items as they're being sorted */
@@ -73,4 +62,70 @@ button {
 /* Animate an item that has been dropped */
 .cdk-drag-animating {
     transition: transform 300ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+ul {
+    float: left;
+    display: block;
+    margin: 0px;
+    background-color: white;
+}
+li {
+    list-style-type: none;
+    vertical-align: middle;
+    background-color: transparent;
+    border: 5px solid transparent;
+    border-radius: 5px;
+    font-size: 14px;
+    padding: 0px;
+    margin: 0px;
+}
+#courses-col {
+    background-color: #dddddd;
+    border: 5px solid transparent;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 900;
+    padding: 5px;
+}
+.active {
+    background-color: black;
+    color: white;
+}
+#hours {
+    float: right;
+    color: gray;
+    margin-right: 20px;
+}
+h2 {
+    text-align: center;
+}
+.dragcont {
+    padding-bottom: 70px;
+    position: relative;
+}
+.notavailable {
+    background-color: black;
+    border: 5px solid transparent;
+    border-radius: 5px;
+    position: absolute;
+    z-index: 10;
+    top: 0px;
+    left: 0px;
+    opacity: 0.5;
+    height: 50px;
+    width: 260px;
+}
+p {
+    padding: 10px;
+}
+.instructor-col {
+    min-height: 500px;
+    min-width: 300px;
+}
+.instructorbuttons {
+    position: absolute;
+    top: 35px;
+    left: 75px;
+    width: 260px;
 }

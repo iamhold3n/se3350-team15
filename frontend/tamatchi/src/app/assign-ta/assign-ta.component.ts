@@ -1,6 +1,6 @@
 import { listLazyRoutes } from '@angular/compiler/src/aot/lazy_routes';
 import { moveItemInArray, CdkDragDrop, transferArrayItem } from '@angular/cdk/drag-drop';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Candidate } from '../candidate';
 import {Course} from '../course';
 import { DataService } from '../data.service';
@@ -9,12 +9,15 @@ import {AuthService} from '../auth.service';
 import { templateJitUrl } from '@angular/compiler';
 import { taggedTemplate } from '@angular/compiler/src/output/output_ast';
 
+import { TaInfoComponent } from '../ta-info/ta-info.component';
+
 @Component({
   selector: 'app-assign-ta',
   templateUrl: './assign-ta.component.html',
   styleUrls: ['./assign-ta.component.css']
 })
 export class AssignTaComponent implements OnInit {
+  @ViewChild(TaInfoComponent) private tainfo: TaInfoComponent;
 
   //list of all courses that are available to rank (based on who's logged in)
   course_list: string[];
@@ -51,6 +54,8 @@ export class AssignTaComponent implements OnInit {
   //professor user will have "professor" level permissions on this page
   professor: boolean;
   prof_rank_first: boolean;
+
+  courseNav = [];
 
   constructor(private data: DataService, private auth : AuthService) { 
   }
@@ -162,15 +167,21 @@ export class AssignTaComponent implements OnInit {
       arr = res;
       
       if(!this.professor){
-
         //initialize and popualte the course array
         this.course_list = arr.map(crs => {return crs.course});
+
+        this.courseNav = [];
+        for(let i = 0; i < this.course_list.length; i++) this.courseNav.push(`nav-cour${i}`);
+
         //and the TA hrs array
         this.hrs_list = arr.map(crs => {return crs.currHrs});
         this.finish_loading = arr.map(crs => {return false});
       }
       else{
         arr = arr.filter(e=> {return this.course_list.includes(e.course)});
+
+        this.courseNav = [];
+        for(let i = 0; i < this.course_list.length; i++) this.courseNav.push(`nav-cour${i}`);
       }
 
       ////initialize the arrays holding all assigned tas
@@ -648,6 +659,34 @@ export class AssignTaComponent implements OnInit {
     });
 
 
+  }
+
+  selectCourse(index) {
+    this.courseView(index);
+
+    for (let i = 0; i < this.courseNav.length; i++) {
+      let e = document.getElementById(this.courseNav[i]);
+
+      if (index === i) e.className = 'active';
+      else e.className = '';
+    }
+  }
+
+  manualAdd() {
+    const darkened = document.getElementById('darkened');
+    const popup = document.getElementById('popup');
+    darkened.style.display = 'block';
+    popup.style.display = 'block';
+  }
+
+  viewTaDetails(c, ta) {
+    console.log(this.viewed_assigned);
+    this.tainfo.getInfo(c, ta);
+
+    const darkened = document.getElementById('darkened2');
+    const popup = document.getElementById('popup2');
+    darkened.style.display = 'block';
+    popup.style.display = 'block';
   }
 
 }//end of class

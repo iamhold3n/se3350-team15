@@ -1,0 +1,21 @@
+<div id="popup2">
+    <div id="popupContent2">
+        <h3>TA INFO</h3>
+        <div *ngIf='taDetails != undefined'>
+            <div><b>Name: </b>{{taDetails.name}}</div>
+            <div><b>Email: </b>{{taDetails.email}}</div>
+            <div><b>5 or 10 Hours: </b>{{taDetails.hrs}}</div>
+            <div><b>Status: </b>{{taDetails.status}}</div>
+            <div><b>Course Relevant Questions:</b>
+                <ul>
+                    <li *ngFor='let i of relevant'>
+                        {{taDetails.questions[i].question}}
+                        {{taDetails.questions[i].answer}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <button (click)='closeTaDetails()'>CLOSE</button>
+    </div>
+</div>
+<div id="darkened2"></div>

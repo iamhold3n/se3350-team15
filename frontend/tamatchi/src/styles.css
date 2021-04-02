@@ -4,7 +4,7 @@ body {
     background-color: white;
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }
-#darkened {
+#darkened, #darkened2 {
     background-color: black;
     display: none;
     filter: alpha(opacity=30);
@@ -16,7 +16,7 @@ body {
     width: 100%;
     z-index: 500;
 }
-#popup {
+#popup, #popup2 {
     display: none;
     left: 0px;
     position: fixed;
@@ -24,7 +24,7 @@ body {
     width: 100%;
     z-index: 550;
 }
-#popupContent {
+#popupContent, #popupContent2 {
     background-color: white;
     border: 15px solid transparent;
     border-radius: 15px;

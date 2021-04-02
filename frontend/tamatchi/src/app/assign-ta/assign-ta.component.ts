@@ -664,7 +664,6 @@ export class AssignTaComponent implements OnInit {
   }
 
   viewTaDetails(c, ta) {
-    console.log(this.viewed_assigned);
     this.tainfo.getInfo(c, ta);
 
     const darkened = document.getElementById('darkened2');

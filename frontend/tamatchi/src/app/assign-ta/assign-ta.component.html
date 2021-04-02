@@ -128,6 +128,9 @@
             ></app-insert-ta>
             <button *ngIf="viewed_course != empty_course" (click)="saveChanges()" class="confirm">SAVE</button>
         </li>
+        <li *ngIf='professor'>
+            <button *ngIf="viewed_course != empty_course" (click)="saveFeedback()" class="confirm">SUBMIT FEEDBACK</button>
+        </li>
     </ul>
 </div>
 

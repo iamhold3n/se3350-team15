@@ -661,6 +661,8 @@ export class AssignTaComponent implements OnInit {
     const popup = document.getElementById('popup');
     darkened.style.display = 'block';
     popup.style.display = 'block';
+    popup.style.overflowY = 'scroll';
+    popup.style.marginTop = '-125px';
   }
 
   viewTaDetails(c, ta) {

@@ -25,12 +25,9 @@ import { AdminComponent } from './admin/admin.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FileUploadComponent } from './file-upload/file-upload.component';
 import { AssignInstructorComponent } from './assign-instructor/assign-instructor.component';
-<<<<<<< Updated upstream
-=======
 import { ExportQuestionsComponent } from './export-questions/export-questions.component';
 import { InsertTaComponent } from './insert-ta/insert-ta.component';
 import { TaInfoComponent } from './ta-info/ta-info.component';
->>>>>>> Stashed changes
 
 
 @NgModule({
@@ -46,14 +43,10 @@ import { TaInfoComponent } from './ta-info/ta-info.component';
     CallbackPipe,
     AdminComponent,
     FileUploadComponent,
-<<<<<<< Updated upstream
-    AssignInstructorComponent
-=======
     AssignInstructorComponent,
     ExportQuestionsComponent,
     InsertTaComponent,
     TaInfoComponent
->>>>>>> Stashed changes
   ],
   imports: [
     BrowserModule,

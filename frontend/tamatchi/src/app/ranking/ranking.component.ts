@@ -1,9 +1,11 @@
 import { moveItemInArray, CdkDragDrop, transferArrayItem } from '@angular/cdk/drag-drop';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Candidate } from '../candidate';
 import { DataService } from '../data.service';
 
 import {AuthService} from '../auth.service';
+
+import { TaInfoComponent } from '../ta-info/ta-info.component';
 
 @Component({
   selector: 'app-ranking',
@@ -11,6 +13,7 @@ import {AuthService} from '../auth.service';
   styleUrls: ['./ranking.component.css']
 })
 export class RankingComponent implements OnInit {
+  @ViewChild(TaInfoComponent) private tainfo: TaInfoComponent;
 
   //list of all courses that are available to rank (based on who's logged in)
   course_list: string[];
@@ -211,4 +214,14 @@ export class RankingComponent implements OnInit {
       else e.className = 'subnav';
     }
   }
+
+  viewTaDetails(c, ta) {
+    this.tainfo.getInfo(c, ta);
+
+    const darkened = document.getElementById('darkened2');
+    const popup = document.getElementById('popup2');
+    darkened.style.display = 'block';
+    popup.style.display = 'block';
+  }
+
 }

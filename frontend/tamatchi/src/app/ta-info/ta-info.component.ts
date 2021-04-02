@@ -34,7 +34,6 @@ export class TaInfoComponent implements OnInit {
         this.taDetails.course.forEach((crs,index)=>{
           this.ranked_course[this.taDetails.ranks[index]-1] = crs;
         });
-        console.log(this.ranked_course);
 
         // only get question relevant to selected course
         this.relevant = [];

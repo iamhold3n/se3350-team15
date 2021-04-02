@@ -118,22 +118,19 @@
             <button (click)="clearAssign(viewed_course)">CLEAR</button>
             <button (click)="clearAll()">CLEAR ALL</button><br/><br/>
 
-<<<<<<< Updated upstream
             <!--Insert NEW TA buttons-->
             <button (click)="insertTA()">Insert TA</button>
-=======
             <!--Insert NEW TA editor-->
             <button (click)='manualAdd()'>MANUAL ADD</button><br/><br/>
+            <!--Insert NEW TA editor-->
             <app-insert-ta 
                 [course_list]="course_list" 
                 [all_unassigned]="all_unassigned" 
                 (new_unassigned) = "insertTA($event)"
             ></app-insert-ta>
-
             <button *ngIf="viewed_course != empty_course" (click)="saveChanges()" class="confirm">SAVE</button>
         </li>
     </ul>
 </div>
->>>>>>> Stashed changes
 
 <app-ta-info></app-ta-info>

@@ -15,8 +15,7 @@ export class CourseQuestionsComponent implements OnInit {
 
   ngOnInit(): void {
     this.auth.getUserObject().then(user => {
-      if (user === null) console.log('what are you doing here...');
-      else {
+      if (user !== null) {
         this.data.getProfessor(user["email"]).subscribe(res => {
           this.courseList = res["course"];
         })

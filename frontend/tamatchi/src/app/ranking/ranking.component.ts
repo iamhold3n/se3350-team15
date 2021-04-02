@@ -6,6 +6,8 @@ import { TaInfoComponent } from '../ta-info/ta-info.component';
 
 import {AuthService} from '../auth.service';
 
+import { TaInfoComponent } from '../ta-info/ta-info.component';
+
 @Component({
   selector: 'app-ranking',
   templateUrl: './ranking.component.html',

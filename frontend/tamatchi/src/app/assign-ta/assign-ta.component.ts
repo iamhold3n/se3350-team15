@@ -190,8 +190,6 @@ export class AssignTaComponent implements OnInit {
       this.all_assigned_temp = arr.map(crs => {return crs.assignList}); 
       this.all_feedback = arr.map(crs => {return crs.prof_accept});
 
-      //console.log(this.all_feedback);
-
       this.getApplicants();
 
     });
@@ -286,6 +284,9 @@ export class AssignTaComponent implements OnInit {
       }
 
     });
+
+    //console.log(this.all_assigned);
+    //console.log(this.all_unassigned);
 
   }//end of processApplicants
 
@@ -616,7 +617,6 @@ export class AssignTaComponent implements OnInit {
   saveChanges() {
 
     let ta_body=[];
-    let feedback_body = [];
 
     //construct a valid body for the POST request
     this.course_list.forEach( (crs,index) => {
@@ -626,6 +626,23 @@ export class AssignTaComponent implements OnInit {
         "assignList": this.all_assigned[index].map( ta => {return ta.email} ),
       };
 
+    });
+
+    console.log(JSON.stringify(ta_body));
+
+    this.data.updateAllocationTas(ta_body).subscribe(res => {
+      alert("TA Assignments Saved");
+    });
+
+  }//end of saveChanges
+
+  saveFeedback(){
+
+    let feedback_body = [];
+
+    //construct a valid body for the POST request
+    this.course_list.forEach( (crs,index) => {
+
       feedback_body[index] = {
         "course": crs,
         "prof_accept": this.all_feedback[index],
@@ -633,18 +650,12 @@ export class AssignTaComponent implements OnInit {
 
     });
 
-    //console.log(JSON.stringify(feedback_body) );
-
-    this.data.updateAllocationTas(ta_body).subscribe(res => {
-      alert("TA Assignments Saved");
-    });
+    //console.log(JSON.stringify(feedback_body));
 
     this.data.updateAllocationFeedback(feedback_body).subscribe(res => {
       alert("Feedback Saved");
     });
-
-
-  }
+  }//end of saveFeedback
 
   selectCourse(index) {
     this.courseView(index);
@@ -662,6 +673,8 @@ export class AssignTaComponent implements OnInit {
     const popup = document.getElementById('popup');
     darkened.style.display = 'block';
     popup.style.display = 'block';
+    popup.style.overflowY = 'scroll';
+    popup.style.marginTop = '-125px';
   }
 
   viewTaDetails(c, ta) {

@@ -127,7 +127,11 @@
                 (new_unassigned) = "insertTA($event)"
             ></app-insert-ta>
         </li>
+        <li *ngIf='professor'>
+            <button *ngIf="viewed_course != empty_course" (click)="saveFeedback()" class="confirm">SUBMIT FEEDBACK</button>
+        </li>
     </ul>
 </div>
 
+<!--Ensure the ta-info popup can appear-->
 <app-ta-info></app-ta-info>

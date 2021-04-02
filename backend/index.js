@@ -484,6 +484,7 @@ app.post('/api/allocation/tas', [
   {
     if(val)
     {
+
       let batch = db.batch();
       let prof_accept_arr;
 
@@ -518,13 +519,9 @@ app.post('/api/allocation/feedback', [
     if(val)
     {
       req.body.forEach(e => {
-        db.collection('allocation').where('course', '==', e.course).get().then(x => {
-            x.forEach(d => {
-
-              db.collection('allocation').doc(d.id).update({ prof_accept: e.prof_accept });
-          })
-        })
+        db.collection('allocation').doc(e.course).update({ prof_accept: e.prof_accept });
       })
+      res.status(200).send({ success: 'Feedback successfully modified.' })
     } else res.status(401).send();
   })
 });

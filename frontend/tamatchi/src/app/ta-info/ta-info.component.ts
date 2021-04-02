@@ -10,6 +10,7 @@ export class TaInfoComponent implements OnInit {
   questions;
   taDetails;
   relevant;
+  ranked_course;
 
   constructor(private data: DataService) { }
 
@@ -29,6 +30,12 @@ export class TaInfoComponent implements OnInit {
         for(let i = 0; i < arr.length; i++) {
           if(arr[i].email === ta) this.taDetails = arr[i];
         }
+
+        //get the ranked courses and re-order them for display purposes
+        this.ranked_course = this.taDetails.course.map( e=> {return ""});
+        this.taDetails.course.forEach((crs,index)=>{
+          this.ranked_course[this.taDetails.ranks[index]-1] = crs;
+        });
 
         // only get question relevant to selected course
         this.relevant = [];

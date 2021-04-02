@@ -20,7 +20,7 @@ body {
     display: none;
     left: 0px;
     position: fixed;
-    top: 20%;
+    top: 10%;
     width: 100%;
     z-index: 550;
 }

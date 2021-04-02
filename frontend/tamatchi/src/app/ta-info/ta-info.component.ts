@@ -17,6 +17,8 @@ export class TaInfoComponent implements OnInit {
   }
 
   getInfo(c, ta) {
+    this.taDetails = undefined;
+
     this.data.getQuestions(c).subscribe(ques => {
       this.questions = ques['questions'];
 

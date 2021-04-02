@@ -1,4 +1,28 @@
-ul {
+ul, ol {
     padding-left: 25px;
     margin: 0px;
+}
+.talist{
+    border: 5px solid transparent;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    height: 50px;
+    width: fit-content;
+    background-color: #dddddd;
+    color: black;
+}
+.tanumber{
+    float:left; /*Ensures divs can be placed horizontally adjacent to this*/
+    border: 5px solid transparent;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    width: 50px;
+    background-color: grey; 
+    font-size: 14px;
+    font-weight: 900;
+    color: white;
 }

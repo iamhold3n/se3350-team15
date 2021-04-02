@@ -28,7 +28,7 @@
                     <!--Rank number-->
                     <div class="number" >{{a+1}}</div>
                     <!--Ranked TA details-->
-                    <div class="list" >{{ta.email}}</div>
+                    <div class="list" (click)="viewTaDetails(viewed_course, ta.email)">{{ta.email}}</div>
                 </div>
             </div>
         </td>
@@ -37,7 +37,7 @@
             <!-- Does not accept incoming list items -->
             <!-- Only appears if there is at least one list item -->
             <div cdkDropList *ngIf="unranked_view.length > 0">
-                <div class="list" cdkDrag *ngFor='let ta of unranked_view, index as a'>
+                <div class="list" cdkDrag *ngFor='let ta of unranked_view, index as a' (click)="viewTaDetails(viewed_course, ta.email)">
                     <!--Unranked TA details-->
                     {{ta.email}}
                 </div>
@@ -57,4 +57,4 @@
     Select a course from above to begin ranking TAs.
 </ng-template>
 
-
+<app-ta-info></app-ta-info>

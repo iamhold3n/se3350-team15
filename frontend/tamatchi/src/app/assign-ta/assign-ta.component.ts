@@ -146,6 +146,7 @@ export class AssignTaComponent implements OnInit {
           //list of courses that will be available for ranking
           //reflects whichever professor is currently logged in
           this.course_list = res["course"];
+          this.course_list.sort();
   
           this.getCourseAllocations();
 

@@ -6,10 +6,13 @@
             <div><b>Email: </b>{{taDetails.email}}</div>
             <div><b>5 or 10 Hours: </b>{{taDetails.hrs}}</div>
             <div><b>Status: </b>{{taDetails.status}}</div>
-            <b>Course Ranking: </b>
-            <ol>
-                <li *ngFor="let crs of taDetails.course">{{crs}}</li>
-            </ol>
+            <div><b>Course Ranking: </b>
+                <ol>
+                    <li *ngFor='let crs of ranked_course'>
+                        {{crs}}
+                    </li>
+                </ol>
+            </div>
             <div><b>Course Relevant Questions:</b>
                 <ul>
                     <li *ngFor='let i of relevant'>
@@ -18,13 +21,7 @@
                     </li>
                 </ul>
             </div>
-            <div><b>Ranked Courses:</b>
-                <ol>
-                    <li *ngFor='let crs of ranked_course'>
-                        {{crs}}
-                    </li>
-                </ol>
-            </div>
+
         </div>
         <button (click)='closeTaDetails()'>CLOSE</button>
     </div>

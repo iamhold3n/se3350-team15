@@ -1,5 +1,9 @@
 <h2>TA Assignment</h2>
-<p>Select a course to begin assigning TA's.<button style='float:right' *ngIf="viewed_course != empty_course" (click)="saveChanges()" class="confirm">SAVE</button></p>
+<p>Select a course to begin assigning TA's.
+
+    <button style='float:right' *ngIf="viewed_course != empty_course && admin" (click)="saveChanges()" class="confirm">SAVE</button>
+    <button style='float:right' *ngIf="viewed_course != empty_course && professor" (click)="saveFeedback()" class="confirm">SUBMIT FEEDBACK</button>
+</p>
 
 <!-- NEW UI -->
 <div id='container' cdkDropListGroup>
@@ -127,9 +131,7 @@
                 (new_unassigned) = "insertTA($event)"
             ></app-insert-ta>
         </li>
-        <li *ngIf='professor'>
-            <button *ngIf="viewed_course != empty_course" (click)="saveFeedback()" class="confirm">SUBMIT FEEDBACK</button>
-        </li>
+
     </ul>
 </div>
 
